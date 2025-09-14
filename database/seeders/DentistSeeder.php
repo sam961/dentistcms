@@ -1,0 +1,89 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Dentist;
+use Illuminate\Database\Seeder;
+
+class DentistSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $dentists = [
+            [
+                'first_name' => 'Sarah',
+                'last_name' => 'Johnson',
+                'email' => 'sarah.johnson@dentistcms.com',
+                'phone' => '+1-555-0101',
+                'license_number' => 'DDS-001-2020',
+                'specialization' => 'General Dentistry',
+                'years_of_experience' => 12,
+                'qualifications' => 'DDS from Harvard School of Dental Medicine, Board Certified in General Dentistry',
+                'status' => 'active',
+                'working_hours_start' => '08:00',
+                'working_hours_end' => '17:00',
+                'working_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+            ],
+            [
+                'first_name' => 'Michael',
+                'last_name' => 'Chen',
+                'email' => 'michael.chen@dentistcms.com',
+                'phone' => '+1-555-0102',
+                'license_number' => 'DDS-002-2018',
+                'specialization' => 'Orthodontics',
+                'years_of_experience' => 8,
+                'qualifications' => 'DDS, MS in Orthodontics from UCLA, Invisalign Certified Provider',
+                'status' => 'active',
+                'working_hours_start' => '09:00',
+                'working_hours_end' => '18:00',
+                'working_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+            ],
+            [
+                'first_name' => 'Emily',
+                'last_name' => 'Rodriguez',
+                'email' => 'emily.rodriguez@dentistcms.com',
+                'phone' => '+1-555-0103',
+                'license_number' => 'DDS-003-2015',
+                'specialization' => 'Oral Surgery',
+                'years_of_experience' => 15,
+                'qualifications' => 'DDS, MD in Oral and Maxillofacial Surgery, Board Certified Oral Surgeon',
+                'status' => 'active',
+                'working_hours_start' => '07:00',
+                'working_hours_end' => '16:00',
+                'working_days' => ['monday', 'tuesday', 'wednesday', 'thursday'],
+            ],
+            [
+                'first_name' => 'David',
+                'last_name' => 'Thompson',
+                'email' => 'david.thompson@dentistcms.com',
+                'phone' => '+1-555-0104',
+                'license_number' => 'DDS-004-2019',
+                'specialization' => 'Pediatric Dentistry',
+                'years_of_experience' => 6,
+                'qualifications' => 'DDS, Certificate in Pediatric Dentistry, Board Certified Pediatric Dentist',
+                'status' => 'active',
+                'working_hours_start' => '08:30',
+                'working_hours_end' => '17:30',
+                'working_days' => ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+            ],
+            [
+                'first_name' => 'Lisa',
+                'last_name' => 'Park',
+                'email' => 'lisa.park@dentistcms.com',
+                'phone' => '+1-555-0105',
+                'license_number' => 'DDS-005-2017',
+                'specialization' => 'Endodontics',
+                'years_of_experience' => 10,
+                'qualifications' => 'DDS, MS in Endodontics, Board Certified Endodontist',
+                'status' => 'active',
+                'working_hours_start' => '09:00',
+                'working_hours_end' => '17:00',
+                'working_days' => ['tuesday', 'wednesday', 'thursday', 'friday'],
+            ],
+        ];
+
+        foreach ($dentists as $dentist) {
+            Dentist::create($dentist);
+        }
+    }
+}
