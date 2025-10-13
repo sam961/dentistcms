@@ -23,12 +23,12 @@
                     <div class="flex justify-between items-start mb-6">
                         <h3 class="text-lg font-semibold text-gray-900">Appointment Overview</h3>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                            {{ $appointment->status === 'scheduled' ? 'bg-blue-100 text-blue-800' : '' }}
                             {{ $appointment->status === 'confirmed' ? 'bg-green-100 text-green-800' : '' }}
                             {{ $appointment->status === 'completed' ? 'bg-gray-100 text-gray-800' : '' }}
                             {{ $appointment->status === 'cancelled' ? 'bg-red-100 text-red-800' : '' }}
-                            {{ $appointment->status === 'no-show' ? 'bg-yellow-100 text-yellow-800' : '' }}">
-                            {{ ucfirst($appointment->status) }}
+                            {{ $appointment->status === 'in_progress' ? 'bg-yellow-100 text-yellow-800' : '' }}
+                            {{ $appointment->status === 'no_show' ? 'bg-purple-100 text-purple-800' : '' }}">
+                            {{ ucfirst(str_replace('_', ' ', $appointment->status)) }}
                         </span>
                     </div>
 

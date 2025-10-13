@@ -17,9 +17,6 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-        <!-- Alpine.js for interactivity -->
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
         <!-- Chart.js for data visualization -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </head>
@@ -75,7 +72,7 @@
 
                         <!-- Appointments -->
                         <a href="{{ route('appointments.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('appointments.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
-                            <i class="fas fa-calendar-alt w-5 h-5 mr-3 {{ request()->routeIs('appointments.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
+                            <i class="fas fa-calendar-check w-5 h-5 mr-3 {{ request()->routeIs('appointments.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
                             Appointments
                             @php
                                 $todayCount = \App\Models\Appointment::whereDate('appointment_date', today())->whereNotIn('status', ['cancelled'])->count();
@@ -83,6 +80,12 @@
                             @if($todayCount > 0)
                                 <span class="ml-auto bg-green-100 text-green-600 px-2 py-1 text-xs rounded-full">{{ $todayCount }} today</span>
                             @endif
+                        </a>
+
+                        <!-- Calendar -->
+                        <a href="{{ route('calendar.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('calendar.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <i class="fas fa-calendar-alt w-5 h-5 mr-3 {{ request()->routeIs('calendar.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
+                            Calendar & Timeline
                         </a>
 
                         <!-- Treatments -->
@@ -117,14 +120,26 @@
                             <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
                         </div>
 
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-700 hover:bg-gray-100 transition-all duration-200">
-                            <i class="fas fa-chart-line w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"></i>
+                        <a href="{{ route('reports.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('reports.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <i class="fas fa-chart-line w-5 h-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
                             Reports
+                            @if(request()->routeIs('reports.*'))
+                                <span class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                            @endif
                         </a>
 
                         <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-700 hover:bg-gray-100 transition-all duration-200">
                             <i class="fas fa-chart-pie w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"></i>
                             Analytics
+                        </a>
+
+                        <!-- Subscription -->
+                        <a href="{{ route('subscriptions.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('subscriptions.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <i class="fas fa-credit-card w-5 h-5 mr-3 {{ request()->routeIs('subscriptions.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
+                            Subscription
+                            @if(request()->routeIs('subscriptions.*'))
+                                <span class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                            @endif
                         </a>
 
                         <!-- Settings -->

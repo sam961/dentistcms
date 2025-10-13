@@ -54,26 +54,6 @@
                                     @enderror
                                 </div>
 
-                                <div>
-                                    <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
-                                    <input type="date" id="date_of_birth" name="date_of_birth" value="{{ old('date_of_birth', $dentist->date_of_birth ? $dentist->date_of_birth->format('Y-m-d') : '') }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                    @error('date_of_birth')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
-                                    <select id="gender" name="gender" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="">Select Gender</option>
-                                        <option value="male" {{ old('gender', $dentist->gender) == 'male' ? 'selected' : '' }}>Male</option>
-                                        <option value="female" {{ old('gender', $dentist->gender) == 'female' ? 'selected' : '' }}>Female</option>
-                                        <option value="other" {{ old('gender', $dentist->gender) == 'other' ? 'selected' : '' }}>Other</option>
-                                    </select>
-                                    @error('gender')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
                             </div>
                         </div>
 
@@ -108,17 +88,17 @@
                                 </div>
 
                                 <div>
-                                    <label for="years_experience" class="block text-sm font-medium text-gray-700">Years of Experience</label>
-                                    <input type="number" id="years_experience" name="years_experience" value="{{ old('years_experience', $dentist->years_experience) }}" min="0" max="50" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                    @error('years_experience')
+                                    <label for="years_of_experience" class="block text-sm font-medium text-gray-700">Years of Experience</label>
+                                    <input type="number" id="years_of_experience" name="years_of_experience" value="{{ old('years_of_experience', $dentist->years_of_experience) }}" min="0" max="50" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    @error('years_of_experience')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label for="education" class="block text-sm font-medium text-gray-700">Education</label>
-                                    <input type="text" id="education" name="education" value="{{ old('education', $dentist->education) }}" placeholder="e.g., DDS, Harvard School of Dental Medicine" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                    @error('education')
+                                    <label for="qualifications" class="block text-sm font-medium text-gray-700">Qualifications</label>
+                                    <textarea id="qualifications" name="qualifications" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., DDS, Harvard School of Dental Medicine, Board Certified">{{ old('qualifications', $dentist->qualifications) }}</textarea>
+                                    @error('qualifications')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -132,7 +112,7 @@
                                 <div>
                                     <label for="working_days" class="block text-sm font-medium text-gray-700 mb-3">Working Days</label>
                                     @php
-                                        $selectedDays = old('working_days', $dentist->working_days ? json_decode($dentist->working_days) : []);
+                                        $selectedDays = old('working_days', $dentist->working_days ?? []);
                                     @endphp
                                     <div class="space-y-2">
                                         @foreach(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as $day)
@@ -170,36 +150,18 @@
                             </div>
                         </div>
 
-                        <!-- Additional Information -->
+                        <!-- Status -->
                         <div class="mb-8">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
-                            <div class="space-y-6">
-                                <div>
-                                    <label for="bio" class="block text-sm font-medium text-gray-700">Biography</label>
-                                    <textarea id="bio" name="bio" rows="4" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Brief description about the dentist's background, experience, and approach...">{{ old('bio', $dentist->bio) }}</textarea>
-                                    @error('bio')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="languages" class="block text-sm font-medium text-gray-700">Languages Spoken</label>
-                                    <input type="text" id="languages" name="languages" value="{{ old('languages', $dentist->languages) }}" placeholder="e.g., English, Spanish, French" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                    @error('languages')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-
-                                <div>
-                                    <label for="is_active" class="block text-sm font-medium text-gray-700">Status</label>
-                                    <select id="is_active" name="is_active" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="1" {{ old('is_active', $dentist->is_active) == '1' ? 'selected' : '' }}>Active</option>
-                                        <option value="0" {{ old('is_active', $dentist->is_active) == '0' ? 'selected' : '' }}>Inactive</option>
-                                    </select>
-                                    @error('is_active')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Status</h3>
+                            <div>
+                                <label for="status" class="block text-sm font-medium text-gray-700">Employment Status</label>
+                                <select id="status" name="status" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="active" {{ old('status', $dentist->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                    <option value="inactive" {{ old('status', $dentist->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                </select>
+                                @error('status')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 

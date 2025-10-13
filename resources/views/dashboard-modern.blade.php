@@ -23,17 +23,19 @@
                     <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-users text-white text-xl"></i>
                     </div>
-                    <div class="flex items-center space-x-1 text-green-600 bg-green-50 px-2 py-1 rounded-lg text-xs font-semibold">
-                        <i class="fas fa-arrow-up text-xs"></i>
-                        <span>12%</span>
-                    </div>
+                    @if($stats['patient_growth_percentage'] != 0)
+                        <div class="flex items-center space-x-1 {{ $stats['patient_growth_percentage'] > 0 ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50' }} px-2 py-1 rounded-lg text-xs font-semibold">
+                            <i class="fas fa-arrow-{{ $stats['patient_growth_percentage'] > 0 ? 'up' : 'down' }} text-xs"></i>
+                            <span>{{ abs($stats['patient_growth_percentage']) }}%</span>
+                        </div>
+                    @endif
                 </div>
                 <h3 class="text-3xl font-bold text-gray-900 mb-1">{{ $stats['total_patients'] }}</h3>
                 <p class="text-sm text-gray-500">Total Patients</p>
                 <div class="mt-4 pt-4 border-t border-gray-100">
                     <div class="flex items-center justify-between text-xs">
                         <span class="text-gray-500">New this month</span>
-                        <span class="font-semibold text-gray-700">+24</span>
+                        <span class="font-semibold text-gray-700">{{ $stats['new_patients_this_month'] > 0 ? '+' : '' }}{{ $stats['new_patients_this_month'] }}</span>
                     </div>
                 </div>
             </div>
@@ -95,10 +97,12 @@
                     <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
                         <i class="fas fa-dollar-sign text-white text-xl"></i>
                     </div>
-                    <div class="flex items-center space-x-1 text-green-600 bg-green-50 px-2 py-1 rounded-lg text-xs font-semibold">
-                        <i class="fas fa-arrow-up text-xs"></i>
-                        <span>8%</span>
-                    </div>
+                    @if($stats['revenue_growth_percentage'] != 0)
+                        <div class="flex items-center space-x-1 {{ $stats['revenue_growth_percentage'] > 0 ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50' }} px-2 py-1 rounded-lg text-xs font-semibold">
+                            <i class="fas fa-arrow-{{ $stats['revenue_growth_percentage'] > 0 ? 'up' : 'down' }} text-xs"></i>
+                            <span>{{ abs($stats['revenue_growth_percentage']) }}%</span>
+                        </div>
+                    @endif
                 </div>
                 <h3 class="text-3xl font-bold text-gray-900 mb-1">${{ number_format($stats['monthly_revenue'], 0) }}</h3>
                 <p class="text-sm text-gray-500">Monthly Revenue</p>
@@ -117,6 +121,66 @@
             <div class="h-1 bg-gradient-to-r from-purple-500 to-purple-600"></div>
         </div>
     </div>
+
+    <!-- Subscription Status Widget -->
+    @if($currentSubscription)
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg p-6 mb-8 text-white">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div class="flex items-start gap-4 flex-1">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-crown text-yellow-300 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-1">{{ $currentSubscription->plan_name }}</h3>
+                        <p class="text-indigo-100 text-sm mb-3">
+                            {{ $currentSubscription->formatted_amount }} / {{ ucfirst($currentSubscription->billing_cycle) }}
+                        </p>
+                        <div class="flex items-center gap-4 text-sm">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-indigo-200"></i>
+                                <span class="text-indigo-100">Next renewal: <strong class="text-white">{{ $currentSubscription->renewal_date->format('M d, Y') }}</strong></span>
+                            </div>
+                            @php
+                                $daysUntil = $currentSubscription->daysUntilRenewal();
+                            @endphp
+                            @if($daysUntil >= 0 && $daysUntil <= 7)
+                                <div class="flex items-center gap-2 bg-yellow-400/20 px-3 py-1 rounded-full">
+                                    <i class="fas fa-exclamation-triangle text-yellow-300"></i>
+                                    <span class="text-yellow-100 font-medium">Renews in {{ $daysUntil }} {{ Str::plural('day', $daysUntil) }}</span>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <a href="{{ route('subscriptions.index') }}" class="px-5 py-2.5 bg-white text-indigo-600 rounded-xl font-semibold hover:bg-indigo-50 transition-colors text-sm">
+                        <i class="fas fa-cog mr-2"></i>
+                        Manage Subscription
+                    </a>
+                </div>
+            </div>
+        </div>
+    @elseif(Auth::user())
+        <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl shadow-lg p-6 mb-8 text-white">
+            <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div class="flex items-start gap-4 flex-1">
+                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold mb-1">No Active Subscription</h3>
+                        <p class="text-amber-100 text-sm">Subscribe to a plan to unlock all features and continue using the Dentist CMS without interruption.</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="{{ route('subscriptions.create') }}" class="px-5 py-2.5 bg-white text-amber-600 rounded-xl font-semibold hover:bg-amber-50 transition-colors text-sm inline-flex items-center">
+                        <i class="fas fa-star mr-2"></i>
+                        Subscribe Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <!-- Charts and Activities Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
@@ -148,45 +212,23 @@
         <div class="bg-white rounded-2xl shadow-sm p-6">
             <div class="flex items-center justify-between mb-6">
                 <h2 class="text-lg font-bold text-gray-900">Recent Activity</h2>
-                <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all</a>
             </div>
             <div class="space-y-4">
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-user-plus text-blue-600 text-xs"></i>
+                @forelse($recentActivities as $activity)
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-{{ $activity['color'] }}-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-{{ $activity['icon'] }} text-{{ $activity['color'] }}-600 text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm text-gray-900">{{ $activity['title'] }}</p>
+                            <p class="text-xs text-gray-500">{{ $activity['description'] }} - {{ $activity['time']->diffForHumans() }}</p>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900">New patient registered</p>
-                        <p class="text-xs text-gray-500">John Smith - 5 minutes ago</p>
+                @empty
+                    <div class="text-center py-4">
+                        <p class="text-sm text-gray-500">No recent activity</p>
                     </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-check text-green-600 text-xs"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900">Appointment completed</p>
-                        <p class="text-xs text-gray-500">Sarah Johnson - 1 hour ago</p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-dollar-sign text-purple-600 text-xs"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900">Payment received</p>
-                        <p class="text-xs text-gray-500">Invoice #1234 - 2 hours ago</p>
-                    </div>
-                </div>
-                <div class="flex items-start space-x-3">
-                    <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <i class="fas fa-calendar text-amber-600 text-xs"></i>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm text-gray-900">Appointment scheduled</p>
-                        <p class="text-xs text-gray-500">Mike Davis - 3 hours ago</p>
-                    </div>
-                </div>
+                @endforelse
             </div>
         </div>
     </div>
@@ -344,13 +386,22 @@
     <script>
         // Revenue Chart
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+
+        // Generate month labels for last 6 months
+        const monthLabels = [];
+        for (let i = 5; i >= 0; i--) {
+            const date = new Date();
+            date.setMonth(date.getMonth() - i);
+            monthLabels.push(date.toLocaleDateString('en-US', { month: 'short' }));
+        }
+
         new Chart(revenueCtx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: monthLabels,
                 datasets: [{
                     label: 'Revenue',
-                    data: [30000, 35000, 32000, 40000, 38000, {{ $stats['monthly_revenue'] }}],
+                    data: {!! json_encode($revenueData) !!},
                     borderColor: 'rgb(59, 130, 246)',
                     backgroundColor: 'rgba(59, 130, 246, 0.1)',
                     borderWidth: 3,
@@ -402,9 +453,9 @@
         new Chart(treatmentCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Cleaning', 'Filling', 'Extraction', 'Root Canal', 'Other'],
+                labels: {!! json_encode($treatmentNames) !!},
                 datasets: [{
-                    data: [30, 25, 15, 20, 10],
+                    data: {!! json_encode($treatmentCounts) !!},
                     backgroundColor: [
                         'rgb(59, 130, 246)',
                         'rgb(16, 185, 129)',

@@ -49,18 +49,18 @@
 
                                 <!-- Duration -->
                                 <div>
-                                    <label for="duration_minutes" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
-                                    <select id="duration_minutes" name="duration_minutes" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    <label for="duration" class="block text-sm font-medium text-gray-700">Duration (minutes)</label>
+                                    <select id="duration" name="duration" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                                         <option value="">Select Duration</option>
-                                        <option value="15" {{ old('duration_minutes', $treatment->duration_minutes) == '15' ? 'selected' : '' }}>15 minutes</option>
-                                        <option value="30" {{ old('duration_minutes', $treatment->duration_minutes) == '30' ? 'selected' : '' }}>30 minutes</option>
-                                        <option value="45" {{ old('duration_minutes', $treatment->duration_minutes) == '45' ? 'selected' : '' }}>45 minutes</option>
-                                        <option value="60" {{ old('duration_minutes', $treatment->duration_minutes) == '60' ? 'selected' : '' }}>1 hour</option>
-                                        <option value="90" {{ old('duration_minutes', $treatment->duration_minutes) == '90' ? 'selected' : '' }}>1.5 hours</option>
-                                        <option value="120" {{ old('duration_minutes', $treatment->duration_minutes) == '120' ? 'selected' : '' }}>2 hours</option>
-                                        <option value="180" {{ old('duration_minutes', $treatment->duration_minutes) == '180' ? 'selected' : '' }}>3 hours</option>
+                                        <option value="15" {{ old('duration', $treatment->duration) == '15' ? 'selected' : '' }}>15 minutes</option>
+                                        <option value="30" {{ old('duration', $treatment->duration) == '30' ? 'selected' : '' }}>30 minutes</option>
+                                        <option value="45" {{ old('duration', $treatment->duration) == '45' ? 'selected' : '' }}>45 minutes</option>
+                                        <option value="60" {{ old('duration', $treatment->duration) == '60' ? 'selected' : '' }}>1 hour</option>
+                                        <option value="90" {{ old('duration', $treatment->duration) == '90' ? 'selected' : '' }}>1.5 hours</option>
+                                        <option value="120" {{ old('duration', $treatment->duration) == '120' ? 'selected' : '' }}>2 hours</option>
+                                        <option value="180" {{ old('duration', $treatment->duration) == '180' ? 'selected' : '' }}>3 hours</option>
                                     </select>
-                                    @error('duration_minutes')
+                                    @error('duration')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>

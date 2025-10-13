@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointment;
-use App\Models\Patient;
 use App\Models\Dentist;
+use App\Models\Patient;
 use App\Models\Treatment;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
@@ -31,17 +30,17 @@ class AppointmentController extends Controller
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereHas('patient', function ($q) use ($searchTerm) {
                     $q->where('first_name', 'like', "%{$searchTerm}%")
-                      ->orWhere('last_name', 'like', "%{$searchTerm}%")
-                      ->orWhere('phone', 'like', "%{$searchTerm}%")
-                      ->orWhere('email', 'like', "%{$searchTerm}%");
+                        ->orWhere('last_name', 'like', "%{$searchTerm}%")
+                        ->orWhere('phone', 'like', "%{$searchTerm}%")
+                        ->orWhere('email', 'like', "%{$searchTerm}%");
                 })
-                ->orWhereHas('dentist', function ($q) use ($searchTerm) {
-                    $q->where('first_name', 'like', "%{$searchTerm}%")
-                      ->orWhere('last_name', 'like', "%{$searchTerm}%");
-                })
-                ->orWhere('type', 'like', "%{$searchTerm}%")
-                ->orWhere('reason', 'like', "%{$searchTerm}%")
-                ->orWhere('notes', 'like', "%{$searchTerm}%");
+                    ->orWhereHas('dentist', function ($q) use ($searchTerm) {
+                        $q->where('first_name', 'like', "%{$searchTerm}%")
+                            ->orWhere('last_name', 'like', "%{$searchTerm}%");
+                    })
+                    ->orWhere('type', 'like', "%{$searchTerm}%")
+                    ->orWhere('reason', 'like', "%{$searchTerm}%")
+                    ->orWhere('notes', 'like', "%{$searchTerm}%");
             });
         }
 
@@ -53,13 +52,22 @@ class AppointmentController extends Controller
         return view('appointments.index', compact('appointments'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $patients = Patient::orderBy('last_name')->get();
         $dentists = Dentist::where('status', 'active')->orderBy('last_name')->get();
         $treatments = Treatment::where('is_active', true)->orderBy('name')->get();
-        
-        return view('appointments.create', compact('patients', 'dentists', 'treatments'));
+
+        // Pre-fill data from URL parameters (when coming from calendar)
+        $preselectedData = [
+            'patient_id' => $request->get('patient_id'),
+            'dentist_id' => $request->get('dentist_id'),
+            'appointment_date' => $request->get('date'),
+            'appointment_time' => $request->get('time'),
+            'duration' => $request->get('duration', '30'),
+        ];
+
+        return view('appointments.create', compact('patients', 'dentists', 'treatments', 'preselectedData'));
     }
 
     public function store(Request $request)
@@ -69,39 +77,37 @@ class AppointmentController extends Controller
             'dentist_id' => 'required|exists:dentists,id',
             'appointment_date' => 'required|date|after_or_equal:today',
             'appointment_time' => 'required|date_format:H:i',
-            'duration' => 'required|integer|min:15|max:240',
-            'status' => 'required|in:scheduled,confirmed,in_progress,completed,cancelled,no_show',
+            'duration' => 'required|integer|min:15|max:180|multiple_of:15',
+            'type' => 'required|string|max:255',
+            'reason' => 'required|string',
+            'status' => 'required|in:confirmed,in_progress,completed,cancelled,no_show',
             'notes' => 'nullable|string',
             'treatments' => 'nullable|array',
             'treatments.*' => 'exists:treatments,id',
         ]);
 
-        // Add default values for missing fields
-        $appointmentData = $validated;
-        $appointmentData['type'] = 'General Consultation'; // Default type
-        $appointmentData['reason'] = $validated['notes'] ?? 'Routine appointment'; // Use notes as reason or default
+        $appointment = Appointment::create($validated);
 
-        $appointment = Appointment::create($appointmentData);
-
-        if (!empty($validated['treatments'])) {
+        if (! empty($validated['treatments'])) {
             foreach ($validated['treatments'] as $treatmentId) {
                 $treatment = Treatment::find($treatmentId);
                 if ($treatment) {
                     $appointment->treatments()->attach($treatmentId, [
                         'price' => $treatment->price,
-                        'quantity' => 1
+                        'quantity' => 1,
                     ]);
                 }
             }
         }
 
         return redirect()->route('appointments.show', $appointment)
-            ->with('success', 'Appointment scheduled successfully.');
+            ->with('success', 'Appointment created and confirmed successfully.');
     }
 
     public function show(Appointment $appointment)
     {
         $appointment->load(['patient', 'dentist', 'treatments', 'medicalRecord', 'invoice']);
+
         return view('appointments.show', compact('appointment'));
     }
 
@@ -110,7 +116,7 @@ class AppointmentController extends Controller
         $patients = Patient::orderBy('last_name')->get();
         $dentists = Dentist::where('status', 'active')->orderBy('last_name')->get();
         $treatments = Treatment::where('is_active', true)->orderBy('name')->get();
-        
+
         return view('appointments.edit', compact('appointment', 'patients', 'dentists', 'treatments'));
     }
 
@@ -121,24 +127,24 @@ class AppointmentController extends Controller
             'dentist_id' => 'required|exists:dentists,id',
             'appointment_date' => 'required|date',
             'appointment_time' => 'required|date_format:H:i',
-            'duration' => 'required|integer|min:15|max:240',
+            'duration' => 'required|integer|min:15|max:180|multiple_of:15',
             'type' => 'required|string|max:255',
             'reason' => 'required|string',
             'notes' => 'nullable|string',
-            'status' => 'required|in:scheduled,confirmed,in_progress,completed,cancelled,no_show',
+            'status' => 'required|in:confirmed,in_progress,completed,cancelled,no_show',
             'treatments' => 'nullable|array',
             'treatments.*' => 'exists:treatments,id',
         ]);
 
         $appointment->update($validated);
-        
+
         if (isset($validated['treatments'])) {
             $appointment->treatments()->detach();
             foreach ($validated['treatments'] as $treatmentId) {
                 $treatment = Treatment::find($treatmentId);
                 $appointment->treatments()->attach($treatmentId, [
                     'price' => $treatment->price,
-                    'quantity' => 1
+                    'quantity' => 1,
                 ]);
             }
         }
@@ -150,6 +156,7 @@ class AppointmentController extends Controller
     public function destroy(Appointment $appointment)
     {
         $appointment->delete();
+
         return redirect()->route('appointments.index')
             ->with('success', 'Appointment cancelled successfully.');
     }
@@ -157,7 +164,7 @@ class AppointmentController extends Controller
     public function updateStatus(Request $request, Appointment $appointment)
     {
         $validated = $request->validate([
-            'status' => 'required|in:scheduled,confirmed,in_progress,completed,cancelled,no_show',
+            'status' => 'required|in:confirmed,in_progress,completed,cancelled,no_show',
         ]);
 
         $appointment->update($validated);
@@ -173,7 +180,7 @@ class AppointmentController extends Controller
             ->orderBy('appointment_date', 'desc')
             ->orderBy('appointment_time', 'desc')
             ->paginate(10);
-            
+
         return view('appointments.patient', compact('patient', 'appointments'));
     }
 }

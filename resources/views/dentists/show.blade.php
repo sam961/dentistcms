@@ -30,15 +30,12 @@
                             <div>
                                 <h3 class="text-3xl font-bold text-gray-900">Dr. {{ $dentist->full_name }}</h3>
                                 <p class="text-lg text-indigo-600 font-semibold">{{ $dentist->specialization ?: 'General Dentistry' }}</p>
-                                <p class="text-sm text-gray-500">{{ $dentist->years_experience }} years of experience</p>
-                                @if($dentist->languages)
-                                    <p class="text-sm text-gray-600 mt-1">Languages: {{ $dentist->languages }}</p>
-                                @endif
+                                <p class="text-sm text-gray-500">{{ $dentist->years_of_experience }} years of experience</p>
                             </div>
                         </div>
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                            {{ $dentist->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                            {{ $dentist->is_active ? 'Active' : 'Inactive' }}
+                            {{ $dentist->status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                            {{ $dentist->status === 'active' ? 'Active' : 'Inactive' }}
                         </span>
                     </div>
 
@@ -117,18 +114,6 @@
                                 <p class="text-sm font-medium text-gray-600">Phone</p>
                                 <p class="text-gray-900">{{ $dentist->phone }}</p>
                             </div>
-                            @if($dentist->date_of_birth)
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Date of Birth</p>
-                                    <p class="text-gray-900">{{ $dentist->date_of_birth->format('M d, Y') }} ({{ $dentist->age }} years old)</p>
-                                </div>
-                            @endif
-                            @if($dentist->gender)
-                                <div>
-                                    <p class="text-sm font-medium text-gray-600">Gender</p>
-                                    <p class="text-gray-900">{{ ucfirst($dentist->gender) }}</p>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </div>
@@ -148,12 +133,12 @@
                             </div>
                             <div>
                                 <p class="text-sm font-medium text-gray-600">Years of Experience</p>
-                                <p class="text-gray-900">{{ $dentist->years_experience ?: 'Not specified' }}</p>
+                                <p class="text-gray-900">{{ $dentist->years_of_experience ?: 'Not specified' }}</p>
                             </div>
-                            @if($dentist->education)
+                            @if($dentist->qualifications)
                                 <div>
-                                    <p class="text-sm font-medium text-gray-600">Education</p>
-                                    <p class="text-gray-900">{{ $dentist->education }}</p>
+                                    <p class="text-sm font-medium text-gray-600">Qualifications</p>
+                                    <p class="text-gray-900 whitespace-pre-wrap">{{ $dentist->qualifications }}</p>
                                 </div>
                             @endif
                         </div>
@@ -169,7 +154,7 @@
                                 <div>
                                     <p class="text-sm font-medium text-gray-600">Working Days</p>
                                     <div class="flex flex-wrap gap-1 mt-1">
-                                        @foreach(json_decode($dentist->working_days) as $day)
+                                        @foreach($dentist->working_days as $day)
                                             <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-indigo-100 text-indigo-800">
                                                 {{ $day }}
                                             </span>
@@ -188,17 +173,6 @@
                 </div>
             </div>
 
-            <!-- Biography -->
-            @if($dentist->bio)
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Biography</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="text-gray-700 whitespace-pre-wrap">{{ $dentist->bio }}</p>
-                        </div>
-                    </div>
-                </div>
-            @endif
 
             <!-- Recent Appointments -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -274,11 +248,11 @@
                             Edit Profile
                         </a>
                         
-                        @if($dentist->is_active)
+                        @if($dentist->status === 'active')
                             <form action="{{ route('dentists.update', $dentist) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PUT')
-                                <input type="hidden" name="is_active" value="0">
+                                <input type="hidden" name="status" value="inactive">
                                 <button type="submit" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-medium">
                                     Deactivate Dentist
                                 </button>
@@ -287,7 +261,7 @@
                             <form action="{{ route('dentists.update', $dentist) }}" method="POST" class="inline">
                                 @csrf
                                 @method('PUT')
-                                <input type="hidden" name="is_active" value="1">
+                                <input type="hidden" name="status" value="active">
                                 <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium">
                                     Activate Dentist
                                 </button>

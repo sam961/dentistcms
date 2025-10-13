@@ -8,6 +8,10 @@
                 <p class="text-gray-600 mt-1">Patient ID: #{{ $patient->id }} • Age: {{ $patient->age }} years</p>
             </div>
             <div class="flex space-x-3">
+                <a href="{{ route('patients.dental-chart', $patient) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-green-700 transition-colors">
+                    <i class="fas fa-tooth mr-2"></i>
+                    Dental Chart
+                </a>
                 <a href="{{ route('appointments.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 transition-colors">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>

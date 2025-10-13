@@ -5,41 +5,67 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-12" x-data="invoiceForm()">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <form action="{{ route('invoices.store') }}" method="POST" id="invoice-form">
                         @csrf
-                        
+
                         <!-- Invoice Header -->
                         <div class="mb-8">
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Invoice Information</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label for="patient_id" class="block text-sm font-medium text-gray-700">Patient</label>
-                                    <select id="patient_id" name="patient_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option value="">Select Patient</option>
-                                        @foreach($patients as $patient)
-                                            <option value="{{ $patient->id }}" {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
-                                                {{ $patient->full_name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                <!-- Searchable Patient Dropdown -->
+                                <div class="relative">
+                                    <label for="patient_search" class="block text-sm font-medium text-gray-700">Patient *</label>
+                                    <div class="relative mt-1">
+                                        <input
+                                            type="text"
+                                            x-model="patientSearch"
+                                            @click="patientDropdownOpen = true"
+                                            @input="patientDropdownOpen = true"
+                                            placeholder="Search patient by name..."
+                                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        >
+                                        <input type="hidden" name="patient_id" x-model="selectedPatient" required>
+
+                                        <!-- Dropdown List -->
+                                        <div
+                                            x-show="patientDropdownOpen && filteredPatients.length > 0"
+                                            @click.away="patientDropdownOpen = false"
+                                            class="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                                        >
+                                            <template x-for="patient in filteredPatients" :key="patient.id">
+                                                <div
+                                                    @click="selectPatient(patient)"
+                                                    class="px-3 py-2 cursor-pointer hover:bg-indigo-50 border-b border-gray-100"
+                                                >
+                                                    <div class="font-medium text-gray-900" x-text="patient.full_name"></div>
+                                                    <div class="text-xs text-gray-500" x-text="patient.email"></div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
                                     @error('patient_id')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
+                                <!-- Dynamic Appointment Dropdown -->
                                 <div>
                                     <label for="appointment_id" class="block text-sm font-medium text-gray-700">Related Appointment (Optional)</label>
-                                    <select id="appointment_id" name="appointment_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    <select
+                                        id="appointment_id"
+                                        name="appointment_id"
+                                        x-model="selectedAppointment"
+                                        :disabled="!selectedPatient"
+                                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-100"
+                                    >
                                         <option value="">Select Appointment</option>
-                                        @foreach($appointments as $appointment)
-                                            <option value="{{ $appointment->id }}" {{ old('appointment_id') == $appointment->id ? 'selected' : '' }}>
-                                                {{ $appointment->appointment_date->format('M d, Y') }} - {{ $appointment->patient->full_name }}
-                                            </option>
-                                        @endforeach
+                                        <template x-for="appointment in patientAppointments" :key="appointment.id">
+                                            <option :value="appointment.id" x-text="appointment.display"></option>
+                                        </template>
                                     </select>
                                     @error('appointment_id')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -47,9 +73,9 @@
                                 </div>
 
                                 <div>
-                                    <label for="issue_date" class="block text-sm font-medium text-gray-700">Issue Date</label>
-                                    <input type="date" id="issue_date" name="issue_date" value="{{ old('issue_date', date('Y-m-d')) }}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                    @error('issue_date')
+                                    <label for="invoice_date" class="block text-sm font-medium text-gray-700">Invoice Date</label>
+                                    <input type="date" id="invoice_date" name="invoice_date" value="{{ old('invoice_date', date('Y-m-d')) }}" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                    @error('invoice_date')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
@@ -159,6 +185,11 @@
                             @enderror
                         </div>
 
+                        <!-- Hidden calculated fields -->
+                        <input type="hidden" id="subtotal_input" name="subtotal" value="0">
+                        <input type="hidden" id="tax_amount_input" name="tax_amount" value="0">
+                        <input type="hidden" id="total_amount_input" name="total_amount" value="0">
+
                         <!-- Submit Buttons -->
                         <div class="flex justify-end space-x-3">
                             <a href="{{ route('invoices.index') }}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
@@ -175,6 +206,74 @@
     </div>
 
     <script>
+        // Alpine.js component for invoice form
+        function invoiceForm() {
+            return {
+                patients: @json($patients),
+                allAppointments: @json($appointments),
+                patientSearch: '',
+                patientDropdownOpen: false,
+                selectedPatient: '{{ old('patient_id', '') }}',
+                selectedAppointment: '{{ old('appointment_id', '') }}',
+
+                get filteredPatients() {
+                    if (!this.patientSearch) {
+                        return this.patients;
+                    }
+                    const search = this.patientSearch.toLowerCase();
+                    return this.patients.filter(patient =>
+                        patient.first_name.toLowerCase().includes(search) ||
+                        patient.last_name.toLowerCase().includes(search) ||
+                        patient.full_name.toLowerCase().includes(search) ||
+                        (patient.email && patient.email.toLowerCase().includes(search))
+                    );
+                },
+
+                get patientAppointments() {
+                    if (!this.selectedPatient) {
+                        return [];
+                    }
+                    return this.allAppointments
+                        .filter(apt => apt.patient_id == this.selectedPatient)
+                        .map(apt => {
+                            // Format date
+                            const date = new Date(apt.appointment_date);
+                            const formattedDate = date.toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                            });
+
+                            // Parse start time (in HH:MM format)
+                            const [hours, minutes] = apt.appointment_time.split(':');
+                            const startTime = new Date();
+                            startTime.setHours(parseInt(hours), parseInt(minutes), 0);
+
+                            // Calculate end time
+                            const endTime = new Date(startTime);
+                            endTime.setMinutes(endTime.getMinutes() + apt.duration);
+
+                            // Format times
+                            const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+                            const formattedStart = startTime.toLocaleTimeString('en-US', timeOptions);
+                            const formattedEnd = endTime.toLocaleTimeString('en-US', timeOptions);
+
+                            return {
+                                id: apt.id,
+                                display: `${formattedDate} • ${formattedStart} - ${formattedEnd} (${apt.duration}min)`
+                            };
+                        });
+                },
+
+                selectPatient(patient) {
+                    this.selectedPatient = patient.id;
+                    this.patientSearch = patient.full_name;
+                    this.patientDropdownOpen = false;
+                    this.selectedAppointment = '';
+                }
+            };
+        }
+
         let itemIndex = 1;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -264,6 +363,11 @@
             document.getElementById('subtotal').textContent = '$' + subtotal.toFixed(2);
             document.getElementById('tax-amount').textContent = '$' + taxAmount.toFixed(2);
             document.getElementById('total').textContent = '$' + total.toFixed(2);
+
+            // Update hidden inputs
+            document.getElementById('subtotal_input').value = subtotal.toFixed(2);
+            document.getElementById('tax_amount_input').value = taxAmount.toFixed(2);
+            document.getElementById('total_amount_input').value = total.toFixed(2);
         }
     </script>
 </x-app-sidebar-layout>

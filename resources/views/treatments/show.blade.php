@@ -36,7 +36,7 @@
                         </div>
                         <div class="text-right">
                             <div class="text-3xl font-bold text-indigo-600">${{ number_format($treatment->price, 2) }}</div>
-                            <div class="text-sm text-gray-500">{{ $treatment->duration_minutes }} minutes</div>
+                            <div class="text-sm text-gray-500">{{ $treatment->duration }} minutes</div>
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mt-2
                                 {{ $treatment->is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                                 {{ $treatment->is_active ? 'Active' : 'Inactive' }}
@@ -68,7 +68,7 @@
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-medium text-green-600">Duration</p>
-                                    <p class="text-lg font-semibold text-green-900">{{ $treatment->duration_minutes }} min</p>
+                                    <p class="text-lg font-semibold text-green-900">{{ $treatment->duration }} min</p>
                                 </div>
                             </div>
                         </div>

@@ -142,7 +142,6 @@
                                 Status
                             </label>
                             <select x-model="formData.status" name="status" class="input-modern w-full">
-                                <option value="scheduled" {{ $appointment->status == 'scheduled' ? 'selected' : '' }}>Scheduled</option>
                                 <option value="confirmed" {{ $appointment->status == 'confirmed' ? 'selected' : '' }}>Confirmed</option>
                                 <option value="in_progress" {{ $appointment->status == 'in_progress' ? 'selected' : '' }}>In Progress</option>
                                 <option value="completed" {{ $appointment->status == 'completed' ? 'selected' : '' }}>Completed</option>
@@ -334,10 +333,45 @@
                         </div>
 
                         <!-- Notes -->
+                        <!-- Appointment Type -->
+                        <div>
+                            <label for="type" class="block text-sm font-semibold text-gray-900 mb-2">
+                                <i class="fas fa-tag text-blue-600 mr-2"></i>
+                                Appointment Type
+                            </label>
+                            <select name="type" id="type" required class="input-modern w-full">
+                                <option value="">Select Type</option>
+                                <option value="Checkup" {{ old('type', $appointment->type) == 'Checkup' ? 'selected' : '' }}>Checkup</option>
+                                <option value="Cleaning" {{ old('type', $appointment->type) == 'Cleaning' ? 'selected' : '' }}>Cleaning</option>
+                                <option value="Consultation" {{ old('type', $appointment->type) == 'Consultation' ? 'selected' : '' }}>Consultation</option>
+                                <option value="Treatment" {{ old('type', $appointment->type) == 'Treatment' ? 'selected' : '' }}>Treatment</option>
+                                <option value="Follow-up" {{ old('type', $appointment->type) == 'Follow-up' ? 'selected' : '' }}>Follow-up</option>
+                                <option value="Emergency" {{ old('type', $appointment->type) == 'Emergency' ? 'selected' : '' }}>Emergency</option>
+                            </select>
+                            @error('type')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Reason -->
+                        <div>
+                            <label for="reason" class="block text-sm font-semibold text-gray-900 mb-2">
+                                <i class="fas fa-comment-medical text-blue-600 mr-2"></i>
+                                Reason for Visit
+                            </label>
+                            <textarea name="reason" id="reason" rows="3" required
+                                     class="input-modern w-full resize-none"
+                                     placeholder="e.g., Toothache, routine checkup, cavity filling...">{{ old('reason', $appointment->reason) }}</textarea>
+                            @error('reason')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Notes -->
                         <div>
                             <label for="notes" class="block text-sm font-semibold text-gray-900 mb-2">
                                 <i class="fas fa-sticky-note text-blue-600 mr-2"></i>
-                                Notes
+                                Additional Notes
                             </label>
                             <textarea name="notes" id="notes" rows="4"
                                      class="input-modern w-full resize-none"
