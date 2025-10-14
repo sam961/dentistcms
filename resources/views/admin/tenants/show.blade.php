@@ -1,25 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-                <h2 class="font-bold text-3xl text-gray-900 leading-tight">
-                    <i class="fas fa-clinic-medical text-blue-600 mr-3"></i>
-                    {{ $tenant->name }}
-                </h2>
-                <p class="text-gray-600 mt-2">Client Details and Statistics</p>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </a>
+                <div>
+                    <h2 class="font-bold text-3xl text-gray-900 leading-tight">
+                        <i class="fas fa-clinic-medical text-blue-600 mr-3"></i>
+                        {{ $tenant->name }}
+                    </h2>
+                    <p class="text-gray-600 mt-1">Client Details and Statistics</p>
+                </div>
             </div>
-            <div class="flex gap-3">
-                <a href="{{ route('admin.dashboard') }}" class="btn-modern btn-secondary inline-flex items-center">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Back to Dashboard
-                </a>
-                <a href="{{ route('admin.tenants.subscription', $tenant) }}" class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-purple-500 to-pink-600 border-2 border-purple-300 rounded-xl font-bold text-sm text-white shadow-lg hover:from-purple-600 hover:to-pink-700 hover:shadow-xl transition-all transform hover:scale-105">
-                    <i class="fas fa-credit-card mr-2"></i>
-                    Manage Subscription
-                </a>
-                <a href="{{ route('admin.tenants.edit', $tenant) }}" class="btn-modern btn-primary inline-flex items-center">
+            <div>
+                <a href="{{ route('admin.tenants.edit', $tenant) }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 border border-transparent rounded-xl font-bold text-sm text-white shadow-lg hover:from-blue-700 hover:to-purple-700 hover:shadow-xl transition-all transform hover:scale-105">
                     <i class="fas fa-edit mr-2"></i>
-                    Edit Client
+                    Edit Client Information
                 </a>
             </div>
         </div>
