@@ -14,25 +14,26 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-3 sm:-my-px sm:ms-10 sm:flex items-center">
                     @if(auth()->user()->is_super_admin)
                         <!-- Super Admin Navigation -->
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="nav-link-modern">
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
                             <i class="fas fa-home mr-2"></i>
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.error-logs.index')" :active="request()->routeIs('admin.error-logs.*')" class="nav-link-modern">
+                            Dashboard
+                        </a>
+
+                        @php
+                            $newErrorCount = \App\Models\ErrorLog::where('status', 'new')->count();
+                        @endphp
+                        <a href="{{ route('admin.error-logs.index') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all relative {{ request()->routeIs('admin.error-logs.*') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
-                            {{ __('Error Logs') }}
-                            @php
-                                $newErrorCount = \App\Models\ErrorLog::where('status', 'new')->count();
-                            @endphp
+                            Error Logs
                             @if($newErrorCount > 0)
-                                <span class="ml-2 px-2 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">
+                                <span class="ml-2 px-2.5 py-1 text-xs font-bold rounded-full bg-red-500 text-white shadow-lg animate-pulse">
                                     {{ $newErrorCount }}
                                 </span>
                             @endif
-                        </x-nav-link>
+                        </a>
                     @else
                         <!-- Regular User Navigation -->
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="nav-link-modern">
@@ -121,22 +122,23 @@
         <div class="pt-2 pb-3 space-y-1">
             @if(auth()->user()->is_super_admin)
                 <!-- Super Admin Mobile Navigation -->
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="text-white hover:bg-white/20">
-                    <i class="fas fa-home mr-3"></i>
-                    {{ __('Dashboard') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.error-logs.index')" :active="request()->routeIs('admin.error-logs.*')" class="text-white hover:bg-white/20">
-                    <i class="fas fa-exclamation-triangle mr-3"></i>
-                    {{ __('Error Logs') }}
-                    @php
-                        $newErrorCount = \App\Models\ErrorLog::where('status', 'new')->count();
-                    @endphp
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 text-white font-semibold rounded-lg mx-2 transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-white/30' : 'hover:bg-white/20' }}">
+                    <i class="fas fa-home mr-3 text-lg"></i>
+                    Dashboard
+                </a>
+
+                @php
+                    $newErrorCount = \App\Models\ErrorLog::where('status', 'new')->count();
+                @endphp
+                <a href="{{ route('admin.error-logs.index') }}" class="flex items-center px-4 py-3 text-white font-semibold rounded-lg mx-2 transition-all {{ request()->routeIs('admin.error-logs.*') ? 'bg-white/30' : 'hover:bg-white/20' }}">
+                    <i class="fas fa-exclamation-triangle mr-3 text-lg"></i>
+                    Error Logs
                     @if($newErrorCount > 0)
-                        <span class="ml-2 px-2 py-0.5 text-xs font-bold rounded-full bg-red-500 text-white">
+                        <span class="ml-auto px-2.5 py-1 text-xs font-bold rounded-full bg-red-500 text-white shadow-lg">
                             {{ $newErrorCount }}
                         </span>
                     @endif
-                </x-responsive-nav-link>
+                </a>
             @else
                 <!-- Regular User Mobile Navigation -->
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:bg-white/20">
