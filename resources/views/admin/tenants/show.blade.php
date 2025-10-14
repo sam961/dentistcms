@@ -13,7 +13,7 @@
                     <i class="fas fa-arrow-left mr-2"></i>
                     Back to Dashboard
                 </a>
-                <a href="{{ route('admin.tenants.subscription', $tenant) }}" class="inline-flex items-center px-4 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-purple-700 transition">
+                <a href="{{ route('admin.tenants.subscription', $tenant) }}" class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-purple-500 to-pink-600 border-2 border-purple-300 rounded-xl font-bold text-sm text-white shadow-lg hover:from-purple-600 hover:to-pink-700 hover:shadow-xl transition-all transform hover:scale-105">
                     <i class="fas fa-credit-card mr-2"></i>
                     Manage Subscription
                 </a>
@@ -248,8 +248,8 @@
                             </h3>
                             <p class="text-gray-600 mb-4">Manage billing, plans, and subscription history</p>
                         </div>
-                        <a href="{{ route('admin.tenants.subscription', $tenant) }}" class="inline-flex items-center px-6 py-3 bg-purple-600 border border-transparent rounded-xl font-bold text-sm text-white uppercase tracking-wider hover:bg-purple-700 transition shadow-lg">
-                            <i class="fas fa-arrow-right mr-2"></i>
+                        <a href="{{ route('admin.tenants.subscription', $tenant) }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 border-2 border-purple-400 rounded-2xl font-bold text-base text-white uppercase tracking-wider hover:from-purple-700 hover:to-pink-700 hover:shadow-2xl transition-all transform hover:scale-105 shadow-xl">
+                            <i class="fas fa-arrow-right mr-3"></i>
                             Manage Subscription
                         </a>
                     </div>
