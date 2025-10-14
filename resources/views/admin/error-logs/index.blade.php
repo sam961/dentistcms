@@ -74,6 +74,33 @@
 
             <!-- Filters -->
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+                @php
+                    $filtersActive = request()->has('tenant_id') || request()->has('level') || request()->has('status');
+                @endphp
+                @if($filtersActive)
+                    <div class="mb-4 px-4 py-2 bg-blue-50 border-l-4 border-blue-500 rounded">
+                        <p class="text-sm text-blue-700 font-medium">
+                            <i class="fas fa-filter mr-2"></i>
+                            Filters are active -
+                            @if(request('tenant_id'))
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-semibold mr-1">
+                                    Clinic: {{ $tenants->find(request('tenant_id'))->name ?? 'Unknown' }}
+                                </span>
+                            @endif
+                            @if(request('level'))
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-semibold mr-1">
+                                    Level: {{ ucfirst(request('level')) }}
+                                </span>
+                            @endif
+                            @if(request('status'))
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-semibold mr-1">
+                                    Status: {{ ucfirst(request('status')) }}
+                                </span>
+                            @endif
+                        </p>
+                    </div>
+                @endif
+
                 <form method="GET" action="{{ route('admin.error-logs.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Clinic</label>

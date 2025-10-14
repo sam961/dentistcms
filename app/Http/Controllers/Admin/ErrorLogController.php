@@ -31,7 +31,7 @@ class ErrorLogController extends Controller
             $query->where('status', $request->status);
         }
 
-        $errorLogs = $query->paginate(20);
+        $errorLogs = $query->paginate(20)->appends($request->query());
         $tenants = Tenant::orderBy('name')->get();
 
         // Get counts for badges
