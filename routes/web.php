@@ -45,6 +45,11 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
         ]);
     })->name('dashboard.simple');
 
+    // Test error logging route - REMOVE AFTER TESTING
+    Route::get('/test-error', function () {
+        throw new \Exception('This is a test error to verify error logging system is working correctly!');
+    })->name('test.error');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('patients', PatientController::class);

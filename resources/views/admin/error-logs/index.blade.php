@@ -194,9 +194,31 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('admin.error-logs.show', $log) }}" class="text-blue-600 hover:text-blue-900 mr-3">
-                                                <i class="fas fa-eye"></i> View
-                                            </a>
+                                            <div class="flex items-center gap-3">
+                                                <a href="{{ route('admin.error-logs.show', $log) }}" class="text-blue-600 hover:text-blue-900">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
+
+                                                @if($log->status !== 'resolved')
+                                                    <form method="POST" action="{{ route('admin.error-logs.update-status', $log) }}" class="inline">
+                                                        @csrf
+                                                        <input type="hidden" name="status" value="resolved">
+                                                        <button type="submit" class="text-green-600 hover:text-green-900 font-semibold" title="Mark as Resolved">
+                                                            <i class="fas fa-check-circle"></i> Resolve
+                                                        </button>
+                                                    </form>
+                                                @endif
+
+                                                @if($log->status === 'new')
+                                                    <form method="POST" action="{{ route('admin.error-logs.update-status', $log) }}" class="inline">
+                                                        @csrf
+                                                        <input type="hidden" name="status" value="ignored">
+                                                        <button type="submit" class="text-gray-500 hover:text-gray-700" title="Ignore">
+                                                            <i class="fas fa-times-circle"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
                                         </td>
                                     </tr>
                                 @endforeach
