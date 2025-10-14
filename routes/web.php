@@ -86,6 +86,13 @@ Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('a
     Route::put('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'update'])->name('tenants.subscription.update');
     Route::delete('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'destroy'])->name('tenants.subscription.destroy');
     Route::post('/tenants/{tenant}/subscription/expire', [TenantSubscriptionController::class, 'expire'])->name('tenants.subscription.expire');
+
+    // Error logs management
+    Route::get('/error-logs', [\App\Http\Controllers\Admin\ErrorLogController::class, 'index'])->name('error-logs.index');
+    Route::get('/error-logs/{errorLog}', [\App\Http\Controllers\Admin\ErrorLogController::class, 'show'])->name('error-logs.show');
+    Route::post('/error-logs/{errorLog}/status', [\App\Http\Controllers\Admin\ErrorLogController::class, 'updateStatus'])->name('error-logs.update-status');
+    Route::delete('/error-logs/{errorLog}', [\App\Http\Controllers\Admin\ErrorLogController::class, 'destroy'])->name('error-logs.destroy');
+    Route::post('/error-logs/clear-resolved', [\App\Http\Controllers\Admin\ErrorLogController::class, 'clearResolved'])->name('error-logs.clear-resolved');
 });
 
 // API routes for appointment availability - separate group to avoid redirect issues
