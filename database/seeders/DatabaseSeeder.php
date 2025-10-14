@@ -13,6 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create super admin user
+        User::create([
+            'name' => 'Super Admin',
+            'email' => 'superadmin@dentistcms.com',
+            'password' => bcrypt('password'),
+            'role' => 'super_admin',
+        ]);
+
         // Create admin user
         User::create([
             'name' => 'Admin User',

@@ -18,10 +18,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'tenant_id',
         'name',
         'email',
         'password',
         'role',
+        'is_super_admin',
     ];
 
     /**
@@ -44,7 +46,20 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
         ];
+    }
+
+    // Relationships
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    // Role checking methods
+    public function isSuperAdmin(): bool
+    {
+        return $this->is_super_admin === true;
     }
 
     public function isAdmin(): bool

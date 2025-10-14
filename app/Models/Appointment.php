@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'patient_id',
         'dentist_id',
         'appointment_date',
@@ -65,6 +67,6 @@ class Appointment extends Model
 
     public function getFullDateTimeAttribute()
     {
-        return $this->appointment_date->format('Y-m-d') . ' ' . $this->appointment_time;
+        return $this->appointment_date->format('Y-m-d').' '.$this->appointment_time;
     }
 }

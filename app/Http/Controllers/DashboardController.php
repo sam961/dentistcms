@@ -6,7 +6,6 @@ use App\Models\Appointment;
 use App\Models\Dentist;
 use App\Models\Invoice;
 use App\Models\Patient;
-use App\Models\Subscription;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
@@ -172,11 +171,21 @@ class DashboardController extends Controller
             ->sortByDesc('time')
             ->take(4);
 
-        // Get current subscription
-        $currentSubscription = Subscription::where('user_id', Auth::id())
-            ->where('status', 'active')
-            ->latest()
-            ->first();
+        // Get current tenant and subscription info
+        $tenant = app(\App\Services\TenantContext::class)->getTenant();
+        $currentSubscription = null;
+
+        if ($tenant && $tenant->subscription_status === 'active' && $tenant->subscription_ends_at) {
+            $daysUntil = now()->diffInDays($tenant->subscription_ends_at, false);
+
+            $currentSubscription = (object) [
+                'plan_name' => 'Paid Plan',
+                'formatted_amount' => '$' . number_format($tenant->subscriptionHistory()->where('starts_at', $tenant->subscription_starts_at)->latest()->first()->amount ?? 0, 2),
+                'billing_cycle' => 'custom',
+                'renewal_date' => $tenant->subscription_ends_at,
+                'days_until_renewal' => $daysUntil
+            ];
+        }
 
         return view('dashboard-modern', compact(
             'todayAppointments',

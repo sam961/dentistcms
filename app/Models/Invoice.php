@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    use HasFactory;
+    use BelongsToTenant, HasFactory;
 
     protected $fillable = [
+        'tenant_id',
         'invoice_number',
         'patient_id',
         'appointment_id',
@@ -45,7 +47,7 @@ class Invoice extends Model
 
         static::creating(function ($invoice) {
             if (empty($invoice->invoice_number)) {
-                $invoice->invoice_number = 'INV-' . date('Y') . '-' . str_pad(static::count() + 1, 6, '0', STR_PAD_LEFT);
+                $invoice->invoice_number = 'INV-'.date('Y').'-'.str_pad(static::count() + 1, 6, '0', STR_PAD_LEFT);
             }
         });
     }
@@ -77,8 +79,8 @@ class Invoice extends Model
 
     public function isOverdue()
     {
-        return $this->status === 'overdue' || 
-               ($this->due_date < now() && !$this->isPaid());
+        return $this->status === 'overdue' ||
+               ($this->due_date < now() && ! $this->isPaid());
     }
 
     public function scopePending($query)

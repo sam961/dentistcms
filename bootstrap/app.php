@@ -11,8 +11,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
+            'tenant_user' => \App\Http\Middleware\EnsureTenantUser::class,
+            'identify_tenant' => \App\Http\Middleware\IdentifyTenant::class,
+        ]);
+
+        // Apply tenant identification to all web requests
+        $middleware->web(append: [
+            \App\Http\Middleware\IdentifyTenant::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
-    })->create();
+    })
+    ->create();

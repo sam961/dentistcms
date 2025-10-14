@@ -138,15 +138,12 @@
                         <div class="flex items-center gap-4 text-sm">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-calendar-alt text-indigo-200"></i>
-                                <span class="text-indigo-100">Next renewal: <strong class="text-white">{{ $currentSubscription->renewal_date->format('M d, Y') }}</strong></span>
+                                <span class="text-indigo-100">Expires on: <strong class="text-white">{{ $currentSubscription->renewal_date->format('M d, Y') }}</strong></span>
                             </div>
-                            @php
-                                $daysUntil = $currentSubscription->daysUntilRenewal();
-                            @endphp
-                            @if($daysUntil >= 0 && $daysUntil <= 7)
+                            @if($currentSubscription->days_until_renewal >= 0 && $currentSubscription->days_until_renewal <= 7)
                                 <div class="flex items-center gap-2 bg-yellow-400/20 px-3 py-1 rounded-full">
                                     <i class="fas fa-exclamation-triangle text-yellow-300"></i>
-                                    <span class="text-yellow-100 font-medium">Renews in {{ $daysUntil }} {{ Str::plural('day', $daysUntil) }}</span>
+                                    <span class="text-yellow-100 font-medium">Expires in {{ $currentSubscription->days_until_renewal }} {{ Str::plural('day', $currentSubscription->days_until_renewal) }}</span>
                                 </div>
                             @endif
                         </div>

@@ -13,7 +13,14 @@
       "Bash(php artisan:*)",
       "mcp__laravel-boost__last-error",
       "mcp__laravel-boost__browser-logs",
-      "mcp__laravel-boost__database-schema"
+      "mcp__laravel-boost__database-schema",
+      "Bash(cat:*)",
+      "Bash(lsof:*)",
+      "Bash(curl -i http://127.0.0.1:8000/admin/dashboard)",
+      "Bash(curl:*)",
+      "Bash(php:*)",
+      "Read(//tmp/**)",
+      "Read(//var/folders/x9/f5fkph8s1ls00fblpcc96xb00000gn/T/TemporaryItems/NSIRD_screencaptureui_6vnSxg/**)"
     ]
   },
   "enableAllProjectMcpServers": true,

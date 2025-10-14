@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Domain
+    |--------------------------------------------------------------------------
+    |
+    | This value is the base domain for multi-tenancy. Each tenant will have
+    | a subdomain like: {tenant}.{domain}
+    | Examples: dentistcms.test (local), dentistcms.com (production)
+    |
+    */
+
+    'domain' => env('APP_DOMAIN', 'dentistcms.test'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

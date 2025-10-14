@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\TenantController;
+use App\Http\Controllers\Admin\TenantSubscriptionController;
 use App\Http\Controllers\Api\AppointmentAvailabilityController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CalendarController;
@@ -16,10 +19,27 @@ use App\Http\Controllers\TreatmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    // If user is authenticated, redirect based on role
+    if (Auth::check()) {
+        if (Auth::user()->isSuperAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+        return redirect()->route('dashboard');
+    }
+
     return redirect()->route('login');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'tenant_user'])->group(function () {
+    // Simple test dashboard route
+    Route::get('/dashboard-simple', function () {
+        return response()->json([
+            'message' => 'Dashboard works!',
+            'user' => Auth::user()->only(['id', 'name', 'email', 'role']),
+            'timestamp' => now()->toString(),
+        ]);
+    })->name('dashboard.simple');
+
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('patients', PatientController::class);
@@ -46,10 +66,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Reports routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
-    // Subscription routes
-    Route::resource('subscriptions', SubscriptionController::class);
-    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
-    Route::post('/subscriptions/{subscription}/renew', [SubscriptionController::class, 'renew'])->name('subscriptions.renew');
+    // Subscription routes - View subscription history only
+    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+});
+
+// Super Admin routes - for managing tenants/clients
+Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::resource('tenants', TenantController::class);
+
+    // Tenant subscription management
+    Route::get('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'index'])->name('tenants.subscription');
+    Route::post('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'store'])->name('tenants.subscription.store');
+    Route::put('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'update'])->name('tenants.subscription.update');
+    Route::post('/tenants/{tenant}/subscription/expire', [TenantSubscriptionController::class, 'expire'])->name('tenants.subscription.expire');
 });
 
 // API routes for appointment availability - separate group to avoid redirect issues
