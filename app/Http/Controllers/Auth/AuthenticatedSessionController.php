@@ -16,6 +16,19 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
+        // Get current tenant from context
+        $tenant = app(\App\Services\TenantContext::class)->getTenant();
+
+        // If tenant exists and has custom login view, use it
+        if ($tenant && $tenant->subdomain) {
+            $customView = 'auth.tenants.' . $tenant->subdomain . '.login';
+
+            if (view()->exists($customView)) {
+                return view($customView, compact('tenant'));
+            }
+        }
+
+        // Fall back to default login view
         return view('auth.login');
     }
 

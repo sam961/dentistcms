@@ -122,6 +122,39 @@
                                 @enderror
                             </div>
 
+                            <!-- Admin User Information -->
+                            @if($adminUser)
+                            <div class="col-span-2 mt-6">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                                    <i class="fas fa-user-shield text-purple-600 mr-2"></i>
+                                    Admin User Settings
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-4">Update the admin user's email and password for this client</p>
+                            </div>
+
+                            <div>
+                                <label for="admin_email" class="block text-sm font-medium text-gray-700">Admin Email *</label>
+                                <input type="email" name="admin_email" id="admin_email" value="{{ old('admin_email', $adminUser->email) }}" required
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="admin@clinic.com">
+                                <p class="mt-1 text-xs text-gray-500">The email used to login to this client's dashboard</p>
+                                @error('admin_email')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="admin_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                                <input type="password" name="admin_password" id="admin_password" value="{{ old('admin_password') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    placeholder="Leave blank to keep current password">
+                                <p class="mt-1 text-xs text-gray-500">Leave blank to keep the existing password</p>
+                                @error('admin_password')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            @endif
+
                             <!-- Status -->
                             <div class="col-span-2 mt-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Account Status</h3>
