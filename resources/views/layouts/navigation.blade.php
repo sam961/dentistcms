@@ -16,15 +16,7 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-1 sm:-my-px sm:ms-10 sm:flex">
                     @if(auth()->user()->is_super_admin)
-                        <!-- Super Admin Navigation -->
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="nav-link-modern">
-                            <i class="fas fa-crown mr-2"></i>
-                            {{ __('Dashboard') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.tenants.index')" :active="request()->routeIs('admin.tenants.*')" class="nav-link-modern">
-                            <i class="fas fa-clinic-medical mr-2"></i>
-                            {{ __('Manage Clients') }}
-                        </x-nav-link>
+                        <!-- Super Admin Navigation - Empty for clean header -->
                     @else
                         <!-- Regular User Navigation -->
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="nav-link-modern">
@@ -110,15 +102,7 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-gradient-to-b from-blue-600/95 to-purple-600/95 backdrop-blur-sm">
         <div class="pt-2 pb-3 space-y-1">
             @if(auth()->user()->is_super_admin)
-                <!-- Super Admin Mobile Navigation -->
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="text-white hover:bg-white/20">
-                    <i class="fas fa-crown mr-3"></i>
-                    {{ __('Dashboard') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('admin.tenants.index')" :active="request()->routeIs('admin.tenants.*')" class="text-white hover:bg-white/20">
-                    <i class="fas fa-clinic-medical mr-3"></i>
-                    {{ __('Manage Clients') }}
-                </x-responsive-nav-link>
+                <!-- Super Admin Mobile Navigation - Empty for clean header -->
             @else
                 <!-- Regular User Mobile Navigation -->
                 <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-white hover:bg-white/20">
