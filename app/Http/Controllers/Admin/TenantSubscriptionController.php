@@ -182,4 +182,81 @@ class TenantSubscriptionController extends Controller
             ->route('admin.tenants.subscription', $tenant)
             ->with('success', 'Subscription has been expired.');
     }
+
+    /**
+     * Remove a subscription by its history ID
+     */
+    public function destroy(Request $request, Tenant $tenant)
+    {
+        // Get the subscription start date from the request (passed as a parameter)
+        $startDate = $request->input('start_date');
+
+        if (!$startDate) {
+            return redirect()
+                ->route('admin.tenants.subscription', $tenant)
+                ->with('error', 'Invalid subscription to delete.');
+        }
+
+        // Find and delete the specific subscription history record
+        $subscription = TenantSubscriptionHistory::where('tenant_id', $tenant->id)
+            ->where('starts_at', $startDate)
+            ->first();
+
+        if (!$subscription) {
+            return redirect()
+                ->route('admin.tenants.subscription', $tenant)
+                ->with('error', 'Subscription not found.');
+        }
+
+        $isCurrentSubscription = $tenant->subscription_starts_at
+            && $tenant->subscription_starts_at->equalTo($subscription->starts_at);
+
+        // Delete the subscription history record
+        $subscription->delete();
+
+        // Only reset tenant fields if we're deleting the CURRENT active subscription
+        if ($isCurrentSubscription) {
+            // Check if there's a previous subscription to fall back to
+            $previousSubscription = TenantSubscriptionHistory::where('tenant_id', $tenant->id)
+                ->whereIn('action', ['created', 'updated'])
+                ->latest('starts_at')
+                ->first();
+
+            if ($previousSubscription && $previousSubscription->ends_at && $previousSubscription->ends_at->isFuture()) {
+                // Restore the previous subscription as active
+                $tenant->update([
+                    'subscription_tier' => 'paid',
+                    'subscription_status' => 'active',
+                    'subscription_starts_at' => $previousSubscription->starts_at,
+                    'subscription_ends_at' => $previousSubscription->ends_at,
+                    'next_billing_date' => $previousSubscription->ends_at,
+                    'payment_status' => 'paid',
+                ]);
+                $message = 'Subscription removed. Previous subscription is now active.';
+            } else {
+                // No previous subscription, reset to expired
+                $tenant->update([
+                    'subscription_tier' => 'paid',
+                    'subscription_status' => 'expired',
+                    'subscription_starts_at' => null,
+                    'subscription_ends_at' => null,
+                    'next_billing_date' => null,
+                    'payment_status' => 'none',
+                    'last_payment_date' => null,
+                    'auto_renew' => false,
+                    'scheduled_tier' => null,
+                    'scheduled_change_date' => null,
+                    'grace_period_ends_at' => null,
+                ]);
+                $message = 'Subscription removed successfully.';
+            }
+        } else {
+            // Deleting a future subscription, keep current one active
+            $message = 'Future subscription removed. Current subscription is still active.';
+        }
+
+        return redirect()
+            ->route('admin.tenants.subscription', $tenant)
+            ->with('success', $message);
+    }
 }

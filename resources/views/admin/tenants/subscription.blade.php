@@ -241,15 +241,22 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($tenant->subscriptionHistory as $history)
                                         @php
+                                            // Check if this is the current active subscription
                                             $isCurrent = $tenant->subscription_status === 'active'
                                                 && $tenant->subscription_starts_at
                                                 && $history->starts_at
-                                                && $tenant->subscription_starts_at->equalTo($history->starts_at)
-                                                && $history->action !== 'expired';
+                                                && $tenant->subscription_starts_at->equalTo($history->starts_at);
 
+                                            // Calculate duration
                                             $monthsDuration = null;
                                             if ($history->starts_at && $history->ends_at) {
                                                 $monthsDuration = $history->starts_at->diffInMonths($history->ends_at);
+                                            }
+
+                                            // Determine subscription status (active or expired)
+                                            $subscriptionStatus = 'expired';
+                                            if ($history->ends_at && $history->ends_at->isFuture()) {
+                                                $subscriptionStatus = 'active';
                                             }
                                         @endphp
 
@@ -276,12 +283,10 @@
                                             </td>
                                             <td class="px-4 py-3 whitespace-nowrap">
                                                 <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
-                                                    @if($history->action === 'created') bg-green-100 text-green-800
-                                                    @elseif($history->action === 'updated') bg-blue-100 text-blue-800
-                                                    @elseif($history->action === 'expired') bg-red-100 text-red-800
-                                                    @else bg-gray-100 text-gray-800
+                                                    @if($subscriptionStatus === 'active') bg-green-100 text-green-800
+                                                    @else bg-red-100 text-red-800
                                                     @endif">
-                                                    {{ ucfirst($history->action) }}
+                                                    {{ ucfirst($subscriptionStatus) }}
                                                     @if($isCurrent)
                                                         <span class="ml-1">(Current)</span>
                                                     @endif
@@ -360,7 +365,18 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="flex justify-end mt-4">
+                                                        <div class="flex justify-between items-center mt-4">
+                                                            <form method="POST" action="{{ route('admin.tenants.subscription.destroy', $tenant) }}"
+                                                                  onsubmit="return confirm('Are you sure you want to remove this subscription? This action cannot be undone.');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <input type="hidden" name="start_date" value="{{ $history->starts_at->toDateTimeString() }}">
+                                                                <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 shadow">
+                                                                    <i class="fas fa-trash mr-2"></i>
+                                                                    Remove Subscription
+                                                                </button>
+                                                            </form>
+
                                                             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 shadow">
                                                                 <i class="fas fa-save mr-2"></i>
                                                                 Update Subscription

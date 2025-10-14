@@ -30,7 +30,12 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::middleware(['auth', 'verified', 'tenant_user'])->group(function () {
+// Subscription expired page - accessible without subscription check
+Route::middleware(['auth', 'verified'])->get('/subscription-expired', function () {
+    return view('subscription-expired');
+})->name('subscription.expired');
+
+Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->group(function () {
     // Simple test dashboard route
     Route::get('/dashboard-simple', function () {
         return response()->json([
@@ -79,6 +84,7 @@ Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('a
     Route::get('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'index'])->name('tenants.subscription');
     Route::post('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'store'])->name('tenants.subscription.store');
     Route::put('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'update'])->name('tenants.subscription.update');
+    Route::delete('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'destroy'])->name('tenants.subscription.destroy');
     Route::post('/tenants/{tenant}/subscription/expire', [TenantSubscriptionController::class, 'expire'])->name('tenants.subscription.expire');
 });
 

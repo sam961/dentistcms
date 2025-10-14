@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
             'tenant_user' => \App\Http\Middleware\EnsureTenantUser::class,
             'identify_tenant' => \App\Http\Middleware\IdentifyTenant::class,
+            'check_subscription' => \App\Http\Middleware\CheckSubscriptionStatus::class,
         ]);
 
         // Apply tenant identification to all web requests

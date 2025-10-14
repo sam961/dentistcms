@@ -166,13 +166,13 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-bold mb-1">No Active Subscription</h3>
-                        <p class="text-amber-100 text-sm">Subscribe to a plan to unlock all features and continue using the Dentist CMS without interruption.</p>
+                        <p class="text-amber-100 text-sm">Your subscription has expired or not been set up yet. Please contact your administrator to renew or activate your subscription.</p>
                     </div>
                 </div>
                 <div>
-                    <a href="{{ route('subscriptions.create') }}" class="px-5 py-2.5 bg-white text-amber-600 rounded-xl font-semibold hover:bg-amber-50 transition-colors text-sm inline-flex items-center">
-                        <i class="fas fa-star mr-2"></i>
-                        Subscribe Now
+                    <a href="{{ route('subscriptions.index') }}" class="px-5 py-2.5 bg-white text-amber-600 rounded-xl font-semibold hover:bg-amber-50 transition-colors text-sm inline-flex items-center">
+                        <i class="fas fa-history mr-2"></i>
+                        View History
                     </a>
                 </div>
             </div>
