@@ -27,22 +27,26 @@
                             </h2>
 
                             <p style="margin: 0 0 20px; color: #666666; font-size: 16px; line-height: 1.5;">
-                                Thank you for creating an account with us. To complete your registration and ensure the security of your account, please verify your email address.
+                                Thank you for creating an account with us. To complete your registration and ensure the security of your account, please verify your email address by clicking the button below.
                             </p>
 
-                            <p style="margin: 0 0 10px; color: #666666; font-size: 16px; line-height: 1.5;">
-                                Your verification code is:
-                            </p>
-
-                            <!-- Verification Code Box -->
-                            <div style="background-color: #f8f9fa; border: 2px solid #667eea; border-radius: 8px; padding: 30px; text-align: center; margin: 20px 0;">
-                                <div style="font-size: 42px; font-weight: bold; letter-spacing: 8px; color: #667eea; font-family: 'Courier New', monospace;">
-                                    {{ $verificationCode->code }}
-                                </div>
+                            <!-- Verification Button -->
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="{{ route('verification.verify', ['token' => $verificationCode->code]) }}"
+                                   style="display: inline-block; padding: 16px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                    Verify Email Address
+                                </a>
                             </div>
 
                             <p style="margin: 20px 0; color: #666666; font-size: 14px; line-height: 1.5;">
-                                <strong>This code will expire in {{ $verificationCode->expires_at->diffInMinutes(now()) }} minutes.</strong>
+                                <strong>This link will expire in 24 hours.</strong>
+                            </p>
+
+                            <p style="margin: 20px 0; color: #666666; font-size: 14px; line-height: 1.5;">
+                                If the button doesn't work, copy and paste this link into your browser:
+                            </p>
+                            <p style="margin: 0 0 20px; color: #667eea; font-size: 12px; word-break: break-all;">
+                                {{ route('verification.verify', ['token' => $verificationCode->code]) }}
                             </p>
 
                             <p style="margin: 0 0 20px; color: #666666; font-size: 14px; line-height: 1.5;">

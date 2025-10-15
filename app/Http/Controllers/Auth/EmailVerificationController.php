@@ -10,55 +10,36 @@ use Illuminate\Http\Request;
 class EmailVerificationController extends Controller
 {
     /**
-     * Show the email verification form
+     * Verify email via token link
      */
-    public function show(Request $request)
+    public function verify(Request $request, $token)
     {
-        // Get email from query parameter or session
-        $email = $request->query('email') ?? $request->session()->get('verification_email');
+        // Find the verification code by token
+        $verificationCode = VerificationCode::where('code', $token)
+            ->where('type', VerificationCode::TYPE_EMAIL_VERIFICATION)
+            ->where('is_used', false)
+            ->first();
 
-        if (! $email) {
-            return redirect()->route('login')->with('error', 'Invalid verification request.');
+        if (! $verificationCode || ! $verificationCode->isValid()) {
+            return redirect()->route('login')
+                ->with('error', 'Invalid or expired verification link. Please request a new one.');
         }
 
-        $request->session()->put('verification_email', $email);
-
-        return view('auth.verify-email-code', compact('email'));
-    }
-
-    /**
-     * Verify the email code
-     */
-    public function verify(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'code' => 'required|string|size:6',
-        ]);
-
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user) {
-            return back()->withErrors(['email' => 'User not found.']);
-        }
-
-        // Verify the code
-        if (! VerificationCode::verify($user, $request->code, VerificationCode::TYPE_EMAIL_VERIFICATION)) {
-            return back()->withErrors(['code' => 'Invalid or expired verification code.']);
-        }
+        $user = $verificationCode->user;
 
         // Mark email as verified
         $user->email_verified_at = now();
         $user->save();
 
-        // Clear the session
-        $request->session()->forget('verification_email');
+        // Mark token as used
+        $verificationCode->markAsUsed();
 
-        return redirect()->route('login')->with('success', 'Email verified successfully! You can now log in.');
+        return redirect()->route('login')
+            ->with('success', 'Email verified successfully! You can now log in.');
     }
 
     /**
-     * Resend verification code
+     * Resend verification link
      */
     public function resend(Request $request)
     {
@@ -69,24 +50,27 @@ class EmailVerificationController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user) {
-            return back()->withErrors(['email' => 'User not found.']);
+            return redirect()->route('login')
+                ->withErrors(['email' => 'User not found.']);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return back()->with('info', 'Email is already verified.');
+            return redirect()->route('login')
+                ->with('info', 'Email is already verified.');
         }
 
-        // Create new verification code
+        // Create new verification token
         $verificationCode = VerificationCode::createFor(
             $user,
             VerificationCode::TYPE_EMAIL_VERIFICATION,
-            60
+            1440 // 24 hours
         );
 
         // Send email
         \Illuminate\Support\Facades\Mail::to($user->email)
             ->send(new \App\Mail\VerificationCodeMail($verificationCode));
 
-        return back()->with('success', 'A new verification code has been sent to your email.');
+        return redirect()->route('login')
+            ->with('success', 'A new verification link has been sent to your email.');
     }
 }

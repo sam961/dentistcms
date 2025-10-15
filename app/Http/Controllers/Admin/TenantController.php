@@ -57,11 +57,11 @@ class TenantController extends Controller
             'email_verified_at' => null, // Require email verification
         ]);
 
-        // Send email verification code
+        // Send email verification link
         $verificationCode = \App\Models\VerificationCode::createFor(
             $adminUser,
             \App\Models\VerificationCode::TYPE_EMAIL_VERIFICATION,
-            60 // 1 hour expiration
+            1440 // 24 hours expiration
         );
 
         \Illuminate\Support\Facades\Mail::to($adminUser->email)

@@ -36,18 +36,18 @@ class AuthenticatedSessionController extends Controller
 
         // Check if email is verified
         if (! $user->hasVerifiedEmail()) {
-            // Send verification code
+            // Send verification link
             $verificationCode = \App\Models\VerificationCode::createFor(
                 $user,
                 \App\Models\VerificationCode::TYPE_EMAIL_VERIFICATION,
-                60
+                1440 // 24 hours
             );
 
             \Illuminate\Support\Facades\Mail::to($user->email)
                 ->send(new \App\Mail\VerificationCodeMail($verificationCode));
 
-            return redirect()->route('verification.show', ['email' => $user->email])
-                ->with('info', 'Please verify your email address first. A verification code has been sent to your email.');
+            return redirect()->route('login')
+                ->with('error', 'Please verify your email address first. A verification link has been sent to '.$user->email);
         }
 
         // Send 2FA code

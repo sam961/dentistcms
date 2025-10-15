@@ -75,6 +75,14 @@ class VerificationCode extends Model
     }
 
     /**
+     * Generate a secure token for email verification links
+     */
+    public static function generateToken(): string
+    {
+        return \Illuminate\Support\Str::random(64);
+    }
+
+    /**
      * Create a new verification code for a user
      */
     public static function createFor(User $user, string $type, int $expiresInMinutes = 15): self
@@ -85,10 +93,15 @@ class VerificationCode extends Model
             ->where('is_used', false)
             ->update(['is_used' => true]);
 
+        // For email verification, use a secure token instead of a 6-digit code
+        $code = $type === static::TYPE_EMAIL_VERIFICATION
+            ? static::generateToken()
+            : static::generateCode();
+
         // Create new code
         return static::create([
             'user_id' => $user->id,
-            'code' => static::generateCode(),
+            'code' => $code,
             'type' => $type,
             'expires_at' => now()->addMinutes($expiresInMinutes),
         ]);

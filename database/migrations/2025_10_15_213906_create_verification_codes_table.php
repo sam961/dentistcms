@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('verification_codes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('code', 6); // 6-digit code
+            $table->string('code', 64); // 6-digit code for 2FA, 64-char token for email verification
             $table->string('type'); // 'email_verification' or 'login_2fa'
             $table->timestamp('expires_at');
             $table->boolean('is_used')->default(false);
@@ -24,6 +24,7 @@ return new class extends Migration
 
             $table->index(['user_id', 'type', 'is_used']);
             $table->index('expires_at');
+            $table->index('code'); // Add index for token lookups
         });
     }
 
