@@ -76,6 +76,12 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
     // Reports routes
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
+    // Notification routes
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::delete('/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
+
     // Subscription routes - View subscription history only
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
 });
@@ -84,6 +90,9 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
 Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('tenants', TenantController::class);
+
+    // Subscription analytics
+    Route::get('/subscriptions/analytics', [\App\Http\Controllers\Admin\SubscriptionAnalyticsController::class, 'index'])->name('subscriptions.analytics');
 
     // Tenant subscription management
     Route::get('/tenants/{tenant}/subscription', [TenantSubscriptionController::class, 'index'])->name('tenants.subscription');

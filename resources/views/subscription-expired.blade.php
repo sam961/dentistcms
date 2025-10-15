@@ -82,13 +82,13 @@
                                     Please reach out to your clinic administrator or our support team
                                 </p>
                                 <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                    <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-200">
+                                        <i class="fas fa-play mr-2"></i>
+                                        Try Now
+                                    </a>
                                     <a href="mailto:support@dentistcms.com" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200">
                                         <i class="fas fa-envelope mr-2"></i>
                                         Email Support
-                                    </a>
-                                    <a href="{{ route('subscriptions.index') }}" class="inline-flex items-center justify-center px-6 py-3 bg-white text-gray-700 border-2 border-gray-300 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200">
-                                        <i class="fas fa-history mr-2"></i>
-                                        View Subscription History
                                     </a>
                                 </div>
                             </div>

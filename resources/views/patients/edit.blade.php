@@ -76,6 +76,19 @@
                                 @enderror
                             </div>
 
+                            <div>
+                                <label for="nationality" class="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
+                                <select name="nationality" id="nationality" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors nationality-select">
+                                    <option value="">Select Nationality</option>
+                                    @foreach(['Afghan', 'Albanian', 'Algerian', 'American', 'Andorran', 'Angolan', 'Argentinian', 'Armenian', 'Australian', 'Austrian', 'Azerbaijani', 'Bahamian', 'Bahraini', 'Bangladeshi', 'Barbadian', 'Belarusian', 'Belgian', 'Belizean', 'Beninese', 'Bhutanese', 'Bolivian', 'Bosnian', 'Brazilian', 'British', 'Bruneian', 'Bulgarian', 'Burkinabe', 'Burmese', 'Burundian', 'Cambodian', 'Cameroonian', 'Canadian', 'Cape Verdean', 'Central African', 'Chadian', 'Chilean', 'Chinese', 'Colombian', 'Comoran', 'Congolese', 'Costa Rican', 'Croatian', 'Cuban', 'Cypriot', 'Czech', 'Danish', 'Djiboutian', 'Dominican', 'Dutch', 'East Timorese', 'Ecuadorean', 'Egyptian', 'Emirati', 'Equatorial Guinean', 'Eritrean', 'Estonian', 'Ethiopian', 'Fijian', 'Filipino', 'Finnish', 'French', 'Gabonese', 'Gambian', 'Georgian', 'German', 'Ghanaian', 'Greek', 'Grenadian', 'Guatemalan', 'Guinean', 'Guyanese', 'Haitian', 'Honduran', 'Hungarian', 'Icelandic', 'Indian', 'Indonesian', 'Iranian', 'Iraqi', 'Irish', 'Israeli', 'Italian', 'Ivorian', 'Jamaican', 'Japanese', 'Jordanian', 'Kazakhstani', 'Kenyan', 'Kittian', 'Kuwaiti', 'Kyrgyz', 'Laotian', 'Latvian', 'Lebanese', 'Liberian', 'Libyan', 'Liechtensteiner', 'Lithuanian', 'Luxembourger', 'Macedonian', 'Malagasy', 'Malawian', 'Malaysian', 'Maldivian', 'Malian', 'Maltese', 'Marshallese', 'Mauritanian', 'Mauritian', 'Mexican', 'Micronesian', 'Moldovan', 'Monacan', 'Mongolian', 'Montenegrin', 'Moroccan', 'Mozambican', 'Namibian', 'Nauruan', 'Nepalese', 'New Zealander', 'Nicaraguan', 'Nigerian', 'Nigerien', 'North Korean', 'Norwegian', 'Omani', 'Pakistani', 'Palauan', 'Palestinian', 'Panamanian', 'Papua New Guinean', 'Paraguayan', 'Peruvian', 'Polish', 'Portuguese', 'Qatari', 'Romanian', 'Russian', 'Rwandan', 'Saint Lucian', 'Salvadoran', 'Samoan', 'San Marinese', 'Sao Tomean', 'Saudi', 'Senegalese', 'Serbian', 'Seychellois', 'Sierra Leonean', 'Singaporean', 'Slovak', 'Slovenian', 'Solomon Islander', 'Somali', 'South African', 'South Korean', 'South Sudanese', 'Spanish', 'Sri Lankan', 'Sudanese', 'Surinamese', 'Swazi', 'Swedish', 'Swiss', 'Syrian', 'Taiwanese', 'Tajik', 'Tanzanian', 'Thai', 'Togolese', 'Tongan', 'Trinidadian', 'Tunisian', 'Turkish', 'Turkmen', 'Tuvaluan', 'Ugandan', 'Ukrainian', 'Uruguayan', 'Uzbekistani', 'Vanuatuan', 'Venezuelan', 'Vietnamese', 'Yemeni', 'Zambian', 'Zimbabwean'] as $nat)
+                                        <option value="{{ $nat }}" {{ old('nationality', $patient->nationality) == $nat ? 'selected' : '' }}>{{ $nat }}</option>
+                                    @endforeach
+                                </select>
+                                @error('nationality')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- Contact Information -->
                             <div class="col-span-2 mt-8">
                                 <div class="flex items-center mb-6">
@@ -87,8 +100,8 @@
                             </div>
 
                             <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                                <input type="email" name="email" id="email" value="{{ old('email', $patient->email) }}" required
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" name="email" id="email" value="{{ old('email', $patient->email) }}"
                                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors">
                                 @error('email')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -105,8 +118,8 @@
                             </div>
 
                             <div class="col-span-2">
-                                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address *</label>
-                                <input type="text" name="address" id="address" value="{{ old('address', $patient->address) }}" required
+                                <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                <input type="text" name="address" id="address" value="{{ old('address', $patient->address) }}"
                                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors">
                                 @error('address')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
@@ -114,19 +127,10 @@
                             </div>
 
                             <div>
-                                <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City *</label>
-                                <input type="text" name="city" id="city" value="{{ old('city', $patient->city) }}" required
+                                <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                                <input type="text" name="city" id="city" value="{{ old('city', $patient->city) }}"
                                     class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors">
                                 @error('city')
-                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="postal_code" class="block text-sm font-medium text-gray-700 mb-2">Postal Code *</label>
-                                <input type="text" name="postal_code" id="postal_code" value="{{ old('postal_code', $patient->postal_code) }}" required
-                                    class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 transition-colors">
-                                @error('postal_code')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -251,4 +255,21 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.nationality-select').select2({
+                placeholder: 'Search and select nationality',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
+    @endpush
 </x-app-sidebar-layout>

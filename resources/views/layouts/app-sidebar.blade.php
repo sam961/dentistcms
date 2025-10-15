@@ -115,22 +115,17 @@
                         <!-- Divider -->
                         <div class="my-4 border-t border-gray-200"></div>
 
-                        <!-- Reports -->
+                        <!-- Reports & Analytics -->
                         <div class="px-4 py-2">
-                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Analytics</p>
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Insights</p>
                         </div>
 
                         <a href="{{ route('reports.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('reports.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
-                            <i class="fas fa-chart-line w-5 h-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
-                            Reports
+                            <i class="fas fa-chart-bar w-5 h-5 mr-3 {{ request()->routeIs('reports.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
+                            Reports & Analytics
                             @if(request()->routeIs('reports.*'))
                                 <span class="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></span>
                             @endif
-                        </a>
-
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-700 hover:bg-gray-100 transition-all duration-200">
-                            <i class="fas fa-chart-pie w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"></i>
-                            Analytics
                         </a>
 
                         <!-- Subscription -->
@@ -150,11 +145,6 @@
                         <a href="{{ route('profile.edit') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-700 hover:bg-gray-100 transition-all duration-200">
                             <i class="fas fa-user-cog w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"></i>
                             Profile Settings
-                        </a>
-
-                        <a href="#" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl text-gray-700 hover:bg-gray-100 transition-all duration-200">
-                            <i class="fas fa-cog w-5 h-5 mr-3 text-gray-400 group-hover:text-blue-600"></i>
-                            Settings
                         </a>
                     </nav>
 
@@ -224,10 +214,16 @@
                             </div>
 
                             <!-- Notifications -->
+                            @php
+                                $unreadNotifications = Auth::user()->unreadNotifications()->limit(5)->get();
+                                $unreadCount = Auth::user()->unreadNotifications()->count();
+                            @endphp
                             <div class="relative" x-data="{ notifications: false }">
                                 <button @click="notifications = !notifications" class="relative p-2 text-gray-600 hover:text-gray-900 transition-colors duration-200">
                                     <i class="fas fa-bell text-xl"></i>
-                                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                                    @if($unreadCount > 0)
+                                        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full min-w-[18px]">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                                    @endif
                                 </button>
 
                                 <!-- Notifications Dropdown -->
@@ -237,46 +233,38 @@
                                      x-transition:enter-start="opacity-0 transform scale-95"
                                      x-transition:enter-end="opacity-100 transform scale-100"
                                      class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-100 z-50">
-                                    <div class="px-4 py-3 border-b border-gray-100">
+                                    <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
                                         <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+                                        @if($unreadCount > 0)
+                                            <form method="POST" action="{{ route('notifications.read-all') }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="text-xs text-blue-600 hover:text-blue-700 font-medium">Mark all read</button>
+                                            </form>
+                                        @endif
                                     </div>
                                     <div class="max-h-96 overflow-y-auto">
-                                        <div class="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50">
-                                            <div class="flex items-start">
-                                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                                    <i class="fas fa-calendar text-blue-600 text-xs"></i>
+                                        @forelse($unreadNotifications as $notification)
+                                            <a href="{{ route('notifications.index') }}" class="block px-4 py-3 hover:bg-gray-50 border-b border-gray-50 {{ $notification->read_at ? 'bg-white' : 'bg-blue-50' }}">
+                                                <div class="flex items-start">
+                                                    <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                                        <i class="fas fa-info-circle text-blue-600 text-xs"></i>
+                                                    </div>
+                                                    <div class="flex-1">
+                                                        <p class="text-sm text-gray-900 font-medium">{{ $notification->data['title'] ?? 'Notification' }}</p>
+                                                        <p class="text-xs text-gray-500 mt-1">{{ $notification->data['message'] ?? '' }}</p>
+                                                        <p class="text-xs text-gray-400 mt-1">{{ $notification->created_at->diffForHumans() }}</p>
+                                                    </div>
                                                 </div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm text-gray-900">New appointment scheduled</p>
-                                                    <p class="text-xs text-gray-500 mt-1">John Doe - Tomorrow at 10:00 AM</p>
-                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="px-4 py-8 text-center">
+                                                <i class="fas fa-bell-slash text-gray-300 text-3xl mb-2"></i>
+                                                <p class="text-sm text-gray-500">No new notifications</p>
                                             </div>
-                                        </div>
-                                        <div class="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50">
-                                            <div class="flex items-start">
-                                                <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                                    <i class="fas fa-check text-green-600 text-xs"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm text-gray-900">Payment received</p>
-                                                    <p class="text-xs text-gray-500 mt-1">Invoice #1234 - $250.00</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="px-4 py-3 hover:bg-gray-50 cursor-pointer">
-                                            <div class="flex items-start">
-                                                <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                                    <i class="fas fa-exclamation text-amber-600 text-xs"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <p class="text-sm text-gray-900">Appointment reminder</p>
-                                                    <p class="text-xs text-gray-500 mt-1">3 appointments scheduled for today</p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        @endforelse
                                     </div>
                                     <div class="px-4 py-3 border-t border-gray-100">
-                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all notifications</a>
+                                        <a href="{{ route('notifications.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">View all notifications</a>
                                     </div>
                                 </div>
                             </div>
@@ -307,12 +295,8 @@
                                         <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                                     </div>
                                     <a href="{{ route('profile.edit') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-user w-4 h-4 mr-3 text-gray-400"></i>
-                                        My Profile
-                                    </a>
-                                    <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                        <i class="fas fa-cog w-4 h-4 mr-3 text-gray-400"></i>
-                                        Settings
+                                        <i class="fas fa-user-cog w-4 h-4 mr-3 text-gray-400"></i>
+                                        Profile Settings
                                     </a>
                                     <div class="border-t border-gray-100 mt-2 pt-2">
                                         <form method="POST" action="{{ route('logout') }}">

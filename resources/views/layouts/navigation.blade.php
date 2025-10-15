@@ -22,6 +22,11 @@
                             Dashboard
                         </a>
 
+                        <a href="{{ route('admin.subscriptions.analytics') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.subscriptions.*') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Subscriptions
+                        </a>
+
                         @php
                             $newErrorCount = \App\Models\ErrorLog::where('status', 'new')->count();
                         @endphp
@@ -125,6 +130,11 @@
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 text-white font-semibold rounded-lg mx-2 transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-white/30' : 'hover:bg-white/20' }}">
                     <i class="fas fa-home mr-3 text-lg"></i>
                     Dashboard
+                </a>
+
+                <a href="{{ route('admin.subscriptions.analytics') }}" class="flex items-center px-4 py-3 text-white font-semibold rounded-lg mx-2 transition-all {{ request()->routeIs('admin.subscriptions.*') ? 'bg-white/30' : 'hover:bg-white/20' }}">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    Subscriptions
                 </a>
 
                 @php
