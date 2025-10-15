@@ -60,33 +60,6 @@
                                 @enderror
                             </div>
 
-                            <div>
-                                <label for="subdomain" class="block text-sm font-medium text-gray-700">Subdomain</label>
-                                <div class="mt-1 flex rounded-md shadow-sm">
-                                    <input type="text" name="subdomain" id="subdomain" value="{{ old('subdomain', $tenant->subdomain) }}"
-                                        class="block w-full rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                                        placeholder="clinic-name">
-                                    <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                                        .{{ config('app.domain') }}
-                                    </span>
-                                </div>
-                                <p class="mt-1 text-xs text-gray-500">Only letters, numbers, and hyphens allowed</p>
-                                @error('subdomain')
-                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div>
-                                <label for="domain" class="block text-sm font-medium text-gray-700">Custom Domain</label>
-                                <input type="text" name="domain" id="domain" value="{{ old('domain', $tenant->domain) }}"
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                                    placeholder="www.clinic.com">
-                                <p class="mt-1 text-xs text-gray-500">Optional custom domain</p>
-                                @error('domain')
-                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
                             <!-- Contact Information -->
                             <div class="col-span-2 mt-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>

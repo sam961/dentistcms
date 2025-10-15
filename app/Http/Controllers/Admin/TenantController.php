@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Domain;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -37,8 +36,6 @@ class TenantController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'subdomain' => 'nullable|string|max:255|alpha_dash|unique:domains,domain',
-            'domain' => 'nullable|string|max:255|unique:domains,domain',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
@@ -48,29 +45,6 @@ class TenantController extends Controller
         ]);
 
         $tenant = Tenant::create($validated);
-
-        // Create domain entries
-        if (! empty($validated['subdomain'])) {
-            $appDomain = config('app.domain', 'dentistcms.test');
-
-            Domain::create([
-                'tenant_id' => $tenant->id,
-                'domain' => $validated['subdomain'].'.'.$appDomain,
-            ]);
-
-            // Also create localhost domain for development testing
-            Domain::create([
-                'tenant_id' => $tenant->id,
-                'domain' => $validated['subdomain'].'.localhost',
-            ]);
-        }
-
-        if (! empty($validated['domain'])) {
-            Domain::create([
-                'tenant_id' => $tenant->id,
-                'domain' => $validated['domain'],
-            ]);
-        }
 
         // Create admin user for this tenant with provided credentials
         $adminUser = User::create([
@@ -129,8 +103,6 @@ class TenantController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'subdomain' => 'nullable|string|max:255|alpha_dash|unique:domains,domain,'.$tenant->id.',tenant_id',
-            'domain' => 'nullable|string|max:255|unique:domains,domain,'.$tenant->id.',tenant_id',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
@@ -146,42 +118,15 @@ class TenantController extends Controller
             $adminUser->email = $validated['admin_email'];
 
             // Only update password if provided
-            if (!empty($validated['admin_password'])) {
+            if (! empty($validated['admin_password'])) {
                 $adminUser->password = bcrypt($validated['admin_password']);
             }
 
             $adminUser->save();
         }
 
-        // Update domain entries
-        // Delete existing domains
-        $tenant->domains()->delete();
-
-        // Create new domain entries
-        if (! empty($validated['subdomain'])) {
-            $appDomain = config('app.domain', 'dentistcms.test');
-
-            Domain::create([
-                'tenant_id' => $tenant->id,
-                'domain' => $validated['subdomain'].'.'.$appDomain,
-            ]);
-
-            // Also recreate localhost domain for development testing
-            Domain::create([
-                'tenant_id' => $tenant->id,
-                'domain' => $validated['subdomain'].'.localhost',
-            ]);
-        }
-
-        if (! empty($validated['domain'])) {
-            Domain::create([
-                'tenant_id' => $tenant->id,
-                'domain' => $validated['domain'],
-            ]);
-        }
-
         $message = 'Client updated successfully!';
-        if (!empty($validated['admin_password'])) {
+        if (! empty($validated['admin_password'])) {
             $message .= ' Admin password has been changed.';
         }
 
