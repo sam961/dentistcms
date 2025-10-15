@@ -6,7 +6,6 @@ use App\Models\Tenant;
 use App\Services\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class IdentifyTenant
@@ -22,93 +21,39 @@ class IdentifyTenant
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $host = $request->getHost();
-        $subdomain = $this->extractSubdomain($host);
-
-        // If no subdomain, this is the base domain - allow it
-        if (! $subdomain) {
+        // If user is not authenticated, skip tenant identification
+        if (! $request->user()) {
             return $next($request);
         }
 
-        // Check if subdomain is reserved (admin, www, api, etc.)
-        if ($this->isReservedSubdomain($subdomain)) {
-            // Reserved subdomains bypass tenant identification
+        // If user is super admin, skip tenant identification (they don't belong to any tenant)
+        if ($request->user()->isSuperAdmin()) {
             return $next($request);
         }
 
-        // At this point, we have a non-reserved subdomain
-        // It MUST exist in the domains table as a valid tenant
+        // For regular users, set tenant from their tenant_id
+        $tenantId = $request->user()->tenant_id;
 
-        // Look up tenant by subdomain in domains table
-        $appDomain = config('app.domain', 'dentistcms.test');
-        $domain = DB::table('domains')
-            ->where('domain', $subdomain.'.'.$appDomain)
-            ->orWhere('domain', $host)
-            ->first();
-
-        if (! $domain) {
-            // Subdomain not found - this is an invalid/non-existent clinic
-            abort(404, 'Clinic not found. The subdomain "'.$subdomain.'" is not registered. Please check the URL or contact support.');
+        // If user has no tenant_id, they're not properly configured
+        if (! $tenantId) {
+            abort(403, 'Your account is not associated with any clinic. Please contact support.');
         }
 
         // Load the tenant
-        $tenant = Tenant::find($domain->tenant_id);
+        $tenant = Tenant::find($tenantId);
 
         if (! $tenant) {
-            abort(404, 'Clinic not found.');
+            abort(404, 'Clinic not found. Please contact support.');
         }
 
         // Check if tenant is active
         if ($tenant->status !== 'active') {
-            abort(403, 'This clinic is currently '.$tenant->status.'. Please contact support.');
+            abort(403, 'Your clinic is currently '.$tenant->status.'. Please contact support.');
         }
 
         // Set tenant in context
         $this->tenantContext->setTenant($tenant);
 
         return $next($request);
-    }
-
-    /**
-     * Check if subdomain is reserved and cannot be used by tenants
-     */
-    protected function isReservedSubdomain(string $subdomain): bool
-    {
-        $reserved = config('tenancy.reserved_subdomains', [
-            'www', 'admin', 'api', 'mail', 'ftp', 'localhost',
-            'webmail', 'smtp', 'pop', 'ns1', 'ns2', 'cpanel',
-            'whm', 'webdisk', 'blog', 'shop',
-        ]);
-
-        return in_array(strtolower($subdomain), $reserved);
-    }
-
-    /**
-     * Extract subdomain from host
-     */
-    protected function extractSubdomain(string $host): ?string
-    {
-        // Remove port if present
-        $host = explode(':', $host)[0];
-
-        // Get the configured app domain (e.g., dentistcms.test or dentistcms.com)
-        $appDomain = config('app.domain', 'dentistcms.test');
-
-        // Check if host matches the app domain pattern: subdomain.{appDomain}
-        if (str_ends_with($host, ".{$appDomain}")) {
-            $parts = explode('.', $host);
-            // For pattern: subdomain.domain.tld (e.g., beauty-smile.dentistcms.test)
-            $domainParts = explode('.', $appDomain);
-            if (count($parts) > count($domainParts)) {
-                return $parts[0];
-            }
-        }
-
-        // For localhost testing: beauty-smile.localhost
-        if (str_ends_with($host, '.localhost')) {
-            return explode('.', $host)[0];
-        }
-
-        return null;
     }
 }
