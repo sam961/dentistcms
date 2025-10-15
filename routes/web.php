@@ -32,6 +32,22 @@ Route::get('/contact', [LandingController::class, 'contact'])->name('landing.con
 // ===================================================================
 require __DIR__.'/auth.php';
 
+// Email Verification Routes
+Route::get('/verify-email', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'show'])
+    ->name('verification.show');
+Route::post('/verify-email', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'verify'])
+    ->name('verification.verify');
+Route::post('/verify-email/resend', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'resend'])
+    ->name('verification.resend');
+
+// 2FA Login Routes
+Route::get('/login/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'show'])
+    ->name('login.2fa.show');
+Route::post('/login/verify', [\App\Http\Controllers\Auth\TwoFactorController::class, 'verify'])
+    ->name('login.2fa.verify');
+Route::post('/login/verify/resend', [\App\Http\Controllers\Auth\TwoFactorController::class, 'resend'])
+    ->name('login.2fa.resend');
+
 // ===================================================================
 // SUPER ADMIN ROUTES
 // ===================================================================

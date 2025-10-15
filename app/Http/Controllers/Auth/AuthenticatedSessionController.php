@@ -24,16 +24,48 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        // First, validate credentials
+        $credentials = $request->only('email', 'password');
+        $user = \App\Models\User::where('email', $credentials['email'])->first();
 
-        $request->session()->regenerate();
-
-        // Redirect super admins to admin dashboard
-        if (Auth::user()->isSuperAdmin()) {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
+        if (! $user || ! \Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Check if email is verified
+        if (! $user->hasVerifiedEmail()) {
+            // Send verification code
+            $verificationCode = \App\Models\VerificationCode::createFor(
+                $user,
+                \App\Models\VerificationCode::TYPE_EMAIL_VERIFICATION,
+                60
+            );
+
+            \Illuminate\Support\Facades\Mail::to($user->email)
+                ->send(new \App\Mail\VerificationCodeMail($verificationCode));
+
+            return redirect()->route('verification.show', ['email' => $user->email])
+                ->with('info', 'Please verify your email address first. A verification code has been sent to your email.');
+        }
+
+        // Send 2FA code
+        $verificationCode = \App\Models\VerificationCode::createFor(
+            $user,
+            \App\Models\VerificationCode::TYPE_LOGIN_2FA,
+            15 // 15 minutes for login codes
+        );
+
+        \Illuminate\Support\Facades\Mail::to($user->email)
+            ->send(new \App\Mail\VerificationCodeMail($verificationCode));
+
+        // Store user ID in session for 2FA verification
+        $request->session()->put('2fa_user_id', $user->id);
+        $request->session()->put('2fa_remember', $request->boolean('remember'));
+
+        return redirect()->route('login.2fa.show')
+            ->with('success', 'A verification code has been sent to your email.');
     }
 
     /**

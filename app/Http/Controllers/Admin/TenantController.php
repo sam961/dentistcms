@@ -47,19 +47,32 @@ class TenantController extends Controller
         $tenant = Tenant::create($validated);
 
         // Create admin user for this tenant with provided credentials
+        // Set email_verified_at to null - they need to verify
         $adminUser = User::create([
             'tenant_id' => $tenant->id,
             'name' => $tenant->name.' Admin',
             'email' => $validated['admin_email'],
             'password' => bcrypt($validated['admin_password']),
             'role' => 'admin',
+            'email_verified_at' => null, // Require email verification
         ]);
+
+        // Send email verification code
+        $verificationCode = \App\Models\VerificationCode::createFor(
+            $adminUser,
+            \App\Models\VerificationCode::TYPE_EMAIL_VERIFICATION,
+            60 // 1 hour expiration
+        );
+
+        \Illuminate\Support\Facades\Mail::to($adminUser->email)
+            ->send(new \App\Mail\VerificationCodeMail($verificationCode));
 
         return redirect()
             ->route('admin.tenants.show', $tenant)
-            ->with('success', 'Client created successfully!')
+            ->with('success', 'Client created successfully! Verification email sent to '.$validated['admin_email'])
             ->with('admin_email', $validated['admin_email'])
-            ->with('admin_password', $validated['admin_password']);
+            ->with('admin_password', $validated['admin_password'])
+            ->with('info', 'The admin must verify their email before they can log in.');
     }
 
     /**
