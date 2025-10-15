@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tenant extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'subdomain',
@@ -111,9 +114,8 @@ class Tenant extends Model
     /**
      * Get the full URL for this tenant
      *
-     * @param string|null $path Optional path to append
-     * @param bool $secure Use HTTPS
-     * @return string
+     * @param  string|null  $path  Optional path to append
+     * @param  bool  $secure  Use HTTPS
      */
     public function getUrl(?string $path = null, bool $secure = false): string
     {
@@ -122,7 +124,7 @@ class Tenant extends Model
         $url = "{$protocol}://{$this->subdomain}.{$appDomain}";
 
         if ($path) {
-            $url .= '/' . ltrim($path, '/');
+            $url .= '/'.ltrim($path, '/');
         }
 
         return $url;
@@ -130,8 +132,6 @@ class Tenant extends Model
 
     /**
      * Get the dashboard URL for this tenant
-     *
-     * @return string
      */
     public function getDashboardUrlAttribute(): string
     {
@@ -159,7 +159,7 @@ class Tenant extends Model
      */
     public function isSubscriptionExpired(): bool
     {
-        if (!$this->subscription_ends_at) {
+        if (! $this->subscription_ends_at) {
             return false; // Free tier never expires
         }
 
@@ -187,7 +187,7 @@ class Tenant extends Model
      */
     public function hasScheduledChange(): bool
     {
-        return !is_null($this->scheduled_tier);
+        return ! is_null($this->scheduled_tier);
     }
 
     /**
@@ -195,7 +195,7 @@ class Tenant extends Model
      */
     public function daysUntilExpiration(): ?int
     {
-        if (!$this->subscription_ends_at) {
+        if (! $this->subscription_ends_at) {
             return null;
         }
 

@@ -20,7 +20,17 @@
       "Bash(curl:*)",
       "Bash(php:*)",
       "Read(//tmp/**)",
-      "Read(//var/folders/x9/f5fkph8s1ls00fblpcc96xb00000gn/T/TemporaryItems/NSIRD_screencaptureui_6vnSxg/**)"
+      "Read(//var/folders/x9/f5fkph8s1ls00fblpcc96xb00000gn/T/TemporaryItems/NSIRD_screencaptureui_6vnSxg/**)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd patient nationality field, notifications system, and subscription analytics\n\nThis commit includes several enhancements to the Dental CMS:\n\nPatient Management:\n- Add nationality field with searchable Select2 dropdown\n- Make email, address, city, and postal_code optional fields\n- Remove postal_code requirement from patient forms\n\nNotifications System:\n- Create notifications table and controller\n- Add unread notification counter to header\n- Implement notification center with mark as read functionality\n- Add notification routes and views\n\nSuper Admin Features:\n- Add subscription analytics page\n- Update navigation with subscription analytics link\n- Consolidate Reports and Analytics in sidebar\n\nUI/UX Improvements:\n- Streamline sidebar navigation menu\n- Update profile settings in navigation\n- Enhance notification display in header dropdown\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(vendor/bin/pint:*)",
+      "Bash(git commit:*)",
+      "Bash(ln:*)",
+      "Read(//Users/salamelkadri/.config/valet/Log/**)",
+      "Bash(ping:*)",
+      "Read(//Users/salamelkadri/.config/valet/Nginx/**)"
     ]
   },
   "enableAllProjectMcpServers": true,

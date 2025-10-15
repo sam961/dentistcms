@@ -16,11 +16,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        // Get current tenant from context for dynamic branding
-        $tenant = app(\App\Services\TenantContext::class)->getTenant();
-
-        // Use single unified login view with tenant data
-        return view('auth.login', compact('tenant'));
+        return view('auth.login');
     }
 
     /**
