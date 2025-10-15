@@ -71,11 +71,12 @@ class TwoFactorController extends Controller
         $request->session()->regenerate();
 
         // Redirect based on user role
+        // Don't use intended() to avoid redirecting to wrong dashboard
         if ($user->isSuperAdmin()) {
-            return redirect()->intended(route('admin.dashboard', absolute: false));
+            return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('dashboard');
     }
 
     /**
