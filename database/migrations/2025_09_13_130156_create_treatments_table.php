@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('treatments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('name');
             $table->text('description');
             $table->string('category');
@@ -23,6 +24,7 @@ return new class extends Migration
             $table->timestamps();
             $table->index('category');
             $table->index('is_active');
+            $table->index('tenant_id');
         });
     }
 

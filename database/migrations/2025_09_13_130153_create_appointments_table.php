@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('dentist_id')->constrained()->onDelete('cascade');
             $table->date('appointment_date');
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->timestamps();
             $table->index(['appointment_date', 'appointment_time']);
             $table->index('status');
+            $table->index('tenant_id');
         });
     }
 

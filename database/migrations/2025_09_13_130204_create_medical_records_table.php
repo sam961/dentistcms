@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('medical_records', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
             $table->foreignId('dentist_id')->constrained()->onDelete('cascade');
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->json('xray_images')->nullable();
             $table->timestamps();
             $table->index('visit_date');
+            $table->index('tenant_id');
         });
     }
 

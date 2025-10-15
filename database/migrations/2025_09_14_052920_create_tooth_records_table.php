@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('tooth_records', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->string('tooth_number'); // Universal numbering system (1-32 for permanent, A-T for primary)
             $table->string('tooth_type')->default('permanent'); // permanent or primary
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['patient_id', 'tooth_number']);
+            $table->index('tenant_id');
         });
     }
 

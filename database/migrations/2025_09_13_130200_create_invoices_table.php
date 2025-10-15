@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('invoice_number')->unique();
             $table->foreignId('patient_id')->constrained()->onDelete('cascade');
             $table->foreignId('appointment_id')->nullable()->constrained()->onDelete('set null');
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->index('invoice_number');
             $table->index('status');
             $table->index('invoice_date');
+            $table->index('tenant_id');
         });
     }
 

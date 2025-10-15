@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('dentists', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email')->unique();
@@ -26,6 +27,8 @@ return new class extends Migration
             $table->time('working_hours_end')->default('17:00');
             $table->json('working_days')->default('["monday","tuesday","wednesday","thursday","friday"]');
             $table->timestamps();
+
+            $table->index('tenant_id');
         });
     }
 
