@@ -1,7 +1,13 @@
 <div class="bg-white rounded-2xl shadow-sm p-6">
+    <!-- Debug Info -->
+    <div class="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+        <strong>Livewire Debug:</strong> Component is loaded! Current Quadrant: <span class="font-bold text-blue-600">{{ $quadrant }}</span> |
+        Selected Tooth: <span class="font-bold text-blue-600">{{ $selectedTooth ?? 'None' }}</span>
+    </div>
+
     <!-- Quadrant Selector -->
     <div class="mb-6">
-        <h3 class="text-lg font-semibold text-gray-900 mb-4">Select Quadrant</h3>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Select Quadrant (Click buttons below)</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <button wire:click="changeQuadrant(1)"
                     type="button"
