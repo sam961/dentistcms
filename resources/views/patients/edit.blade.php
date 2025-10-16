@@ -1,18 +1,15 @@
 <x-app-sidebar-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
+        <div class="space-y-4">
+            <x-back-button href="{{ route('patients.show', $patient) }}" text="Back to Patient" />
+
             <div>
-                <h2 class="font-bold text-2xl text-gray-800 leading-tight">
-                    Edit Patient: {{ $patient->full_name }}
+                <h2 class="font-bold text-3xl text-gray-900 leading-tight">
+                    <i class="fas fa-user-edit text-blue-600 mr-3"></i>
+                    Edit Patient
                 </h2>
-                <p class="text-gray-600 mt-1">Update patient information and medical details</p>
+                <p class="text-gray-600 mt-2">Update {{ $patient->full_name }}'s information and medical details</p>
             </div>
-            <a href="{{ route('patients.show', $patient) }}" class="inline-flex items-center px-4 py-2 bg-gray-500 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-gray-600 transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                Back to Patient
-            </a>
         </div>
     </x-slot>
 

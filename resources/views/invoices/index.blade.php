@@ -8,10 +8,9 @@
                 </h2>
                 <p class="text-gray-600 mt-2">Manage billing and payment records</p>
             </div>
-            <a href="{{ route('invoices.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i>
+            <x-action-button href="{{ route('invoices.create') }}" icon="file-invoice" color="green">
                 Create New Invoice
-            </a>
+            </x-action-button>
         </div>
     </x-slot>
 

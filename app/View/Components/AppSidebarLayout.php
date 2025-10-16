@@ -12,6 +12,6 @@ class AppSidebarLayout extends Component
      */
     public function render(): View
     {
-        return view('layouts.app-sidebar');
+        return view('components.app-sidebar-layout');
     }
 }

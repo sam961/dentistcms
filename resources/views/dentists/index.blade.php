@@ -8,10 +8,9 @@
                 </h2>
                 <p class="text-gray-600 mt-2">Manage dental professionals and staff members</p>
             </div>
-            <a href="{{ route('dentists.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                <i class="fas fa-user-plus mr-2"></i>
+            <x-action-button href="{{ route('dentists.create') }}" icon="user-md" color="teal">
                 Add New Dentist
-            </a>
+            </x-action-button>
         </div>
     </x-slot>
 

@@ -56,6 +56,11 @@ class Patient extends Model
         return $this->hasMany(ToothRecord::class);
     }
 
+    public function dentalImages()
+    {
+        return $this->hasMany(DentalImage::class);
+    }
+
     public function getFullNameAttribute()
     {
         return $this->first_name.' '.$this->last_name;

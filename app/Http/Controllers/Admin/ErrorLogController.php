@@ -14,7 +14,21 @@ class ErrorLogController extends Controller
      */
     public function index(Request $request)
     {
-        $query = ErrorLog::with(['tenant', 'user'])->latest();
+        // Group repetitive errors by message and show occurrence count
+        $query = ErrorLog::selectRaw('
+                message,
+                level,
+                status,
+                tenant_id,
+                user_id,
+                COUNT(*) as occurrence_count,
+                MAX(id) as latest_id,
+                MAX(created_at) as last_occurred,
+                MIN(created_at) as first_occurred
+            ')
+            ->groupBy('message', 'level', 'status', 'tenant_id', 'user_id')
+            ->with(['tenant', 'user'])
+            ->orderBy('last_occurred', 'desc');
 
         // Filter by tenant
         if ($request->filled('tenant_id')) {
@@ -44,9 +58,9 @@ class ErrorLogController extends Controller
     /**
      * Display the specified error log.
      */
-    public function show(ErrorLog $errorLog)
+    public function show($id)
     {
-        $errorLog->load(['tenant', 'user']);
+        $errorLog = ErrorLog::with(['tenant', 'user'])->findOrFail($id);
 
         return view('admin.error-logs.show', compact('errorLog'));
     }

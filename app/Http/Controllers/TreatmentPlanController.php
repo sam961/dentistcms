@@ -4,21 +4,38 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTreatmentPlanRequest;
 use App\Http\Requests\UpdateTreatmentPlanRequest;
+use App\Mail\TreatmentPlanMail;
 use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\Treatment;
 use App\Models\TreatmentPlan;
 use App\Models\TreatmentPlanItem;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
 
 class TreatmentPlanController extends Controller
 {
     public function index(): View
     {
-        $treatmentPlans = TreatmentPlan::with(['patient', 'dentist'])
-            ->latest()
-            ->paginate(15);
+        $query = TreatmentPlan::with(['patient', 'dentist']);
+
+        // Filter by patient if provided
+        if (request()->has('patient_id')) {
+            $query->where('patient_id', request('patient_id'));
+        }
+
+        // Filter by status if provided
+        if (request()->has('status') && request('status') !== '') {
+            $query->where('status', request('status'));
+        }
+
+        // Filter by phase if provided
+        if (request()->has('phase') && request('phase') !== '') {
+            $query->where('phase', request('phase'));
+        }
+
+        $treatmentPlans = $query->latest()->paginate(15);
 
         return view('treatment-plans.index', compact('treatmentPlans'));
     }
@@ -26,10 +43,13 @@ class TreatmentPlanController extends Controller
     public function create(): View
     {
         $patients = Patient::orderBy('first_name')->get();
-        $dentists = Dentist::orderBy('name')->get();
+        $dentists = Dentist::orderBy('first_name')->get();
         $treatments = Treatment::orderBy('name')->get();
 
-        return view('treatment-plans.create', compact('patients', 'dentists', 'treatments'));
+        // Pre-select patient if coming from patient profile
+        $selectedPatientId = request('patient_id');
+
+        return view('treatment-plans.create', compact('patients', 'dentists', 'treatments', 'selectedPatientId'));
     }
 
     public function store(StoreTreatmentPlanRequest $request): RedirectResponse
@@ -75,7 +95,7 @@ class TreatmentPlanController extends Controller
     {
         $treatmentPlan->load('items.treatment');
         $patients = Patient::orderBy('first_name')->get();
-        $dentists = Dentist::orderBy('name')->get();
+        $dentists = Dentist::orderBy('first_name')->get();
         $treatments = Treatment::orderBy('name')->get();
 
         return view('treatment-plans.edit', compact('treatmentPlan', 'patients', 'dentists', 'treatments'));
@@ -197,5 +217,17 @@ class TreatmentPlanController extends Controller
         }
 
         return back()->with('success', 'Treatment item status updated successfully.');
+    }
+
+    public function sendEmail(TreatmentPlan $treatmentPlan): RedirectResponse
+    {
+        try {
+            Mail::to($treatmentPlan->patient->email)
+                ->send(new TreatmentPlanMail($treatmentPlan));
+
+            return back()->with('success', 'Treatment plan emailed to '.$treatmentPlan->patient->full_name.' successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send email: '.$e->getMessage());
+        }
     }
 }

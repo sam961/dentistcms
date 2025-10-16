@@ -8,10 +8,9 @@
                 </h2>
                 <p class="text-gray-600 mt-2">Manage your patient database and records</p>
             </div>
-            <a href="{{ route('patients.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                <i class="fas fa-user-plus mr-2"></i>
+            <x-action-button href="{{ route('patients.create') }}" icon="user-plus" color="blue">
                 Add New Patient
-            </a>
+            </x-action-button>
         </div>
     </x-slot>
 

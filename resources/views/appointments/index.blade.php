@@ -8,10 +8,9 @@
                 </h2>
                 <p class="text-gray-600 mt-2">Manage appointment schedules and bookings</p>
             </div>
-            <a href="{{ route('appointments.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                <i class="fas fa-calendar-plus mr-2"></i>
+            <x-action-button href="{{ route('appointments.create') }}" icon="calendar-plus" color="blue">
                 Schedule New Appointment
-            </a>
+            </x-action-button>
         </div>
     </x-slot>
 

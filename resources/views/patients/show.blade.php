@@ -1,35 +1,73 @@
 <x-app-sidebar-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <div>
-                <h2 class="font-bold text-2xl text-gray-800 leading-tight">
-                    {{ $patient->full_name }}
-                </h2>
-                <p class="text-gray-600 mt-1">Patient ID: #{{ $patient->id }} • Age: {{ $patient->age }} years</p>
-            </div>
-            <div class="flex space-x-3">
-                <a href="{{ route('patients.dental-chart', $patient) }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-green-700 transition-colors">
-                    <i class="fas fa-tooth mr-2"></i>
-                    Dental Chart
-                </a>
-                <a href="{{ route('appointments.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-blue-700 transition-colors">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    Schedule Appointment
-                </a>
-                <a href="{{ route('patients.edit', $patient) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-indigo-700 transition-colors">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                    </svg>
-                    Edit Patient
-                </a>
-                <a href="{{ route('patients.index') }}" class="inline-flex items-center px-4 py-2 bg-gray-500 border border-transparent rounded-lg font-medium text-sm text-white hover:bg-gray-600 transition-colors">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                    </svg>
-                    Back to Patients
-                </a>
+        <div class="space-y-4">
+            <x-back-button href="{{ route('patients.index') }}" text="Back to Patients" />
+
+            <!-- Main Header with Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <!-- Patient Info -->
+                <div>
+                    <h2 class="font-bold text-3xl text-gray-900 leading-tight">
+                        {{ $patient->full_name }}
+                    </h2>
+                    <p class="text-gray-600 mt-1 flex items-center gap-3">
+                        <span class="inline-flex items-center">
+                            <i class="fas fa-id-badge text-gray-400 mr-1.5"></i>
+                            Patient ID: #{{ $patient->id }}
+                        </span>
+                        <span class="inline-flex items-center">
+                            <i class="fas fa-birthday-cake text-gray-400 mr-1.5"></i>
+                            Age: {{ $patient->age }} years
+                        </span>
+                        <span class="inline-flex items-center">
+                            <i class="fas fa-venus-mars text-gray-400 mr-1.5"></i>
+                            {{ ucfirst($patient->gender) }}
+                        </span>
+                    </p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <!-- Dental Chart Button -->
+                    <a href="{{ route('patients.dental-chart', $patient) }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-green-700 hover:to-green-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                        <i class="fas fa-tooth mr-2"></i>
+                        Dental Chart
+                    </a>
+
+                    <!-- Images Button -->
+                    <a href="{{ route('patients.images.index', $patient) }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-indigo-700 hover:to-indigo-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 relative">
+                        <i class="fas fa-images mr-2"></i>
+                        Images
+                        @if($patient->dentalImages->count() > 0)
+                            <span class="ml-2 px-2.5 py-1 text-xs font-bold rounded-full bg-white text-indigo-700 shadow-sm">
+                                {{ $patient->dentalImages->count() }}
+                            </span>
+                        @endif
+                    </a>
+
+                    <!-- Treatment Plans Button -->
+                    <a href="{{ route('treatment-plans.index') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-purple-700 hover:to-purple-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 relative">
+                        <i class="fas fa-clipboard-list mr-2"></i>
+                        Treatment Plans
+                        @if($patient->treatmentPlans->count() > 0)
+                            <span class="ml-2 px-2.5 py-1 text-xs font-bold rounded-full bg-white text-purple-700 shadow-sm">
+                                {{ $patient->treatmentPlans->count() }}
+                            </span>
+                        @endif
+                    </a>
+
+                    <!-- Schedule Appointment Button -->
+                    <a href="{{ route('appointments.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                        <i class="fas fa-calendar-plus mr-2"></i>
+                        Schedule Appointment
+                    </a>
+
+                    <!-- Edit Patient Button -->
+                    <a href="{{ route('patients.edit', $patient) }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-orange-500 to-orange-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-orange-600 hover:to-orange-700 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                        <i class="fas fa-user-edit mr-2"></i>
+                        Edit Patient
+                    </a>
+                </div>
             </div>
         </div>
     </x-slot>

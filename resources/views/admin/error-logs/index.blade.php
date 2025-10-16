@@ -154,9 +154,9 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Time</th>
+                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Occurrences</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Clinic</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Level</th>
-                                    <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Type</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Message</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Actions</th>
@@ -166,8 +166,13 @@
                                 @foreach($errorLogs as $log)
                                     <tr class="hover:bg-gray-50 transition">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            <div class="font-medium">{{ $log->created_at->format('M d, Y') }}</div>
-                                            <div class="text-gray-500 text-xs">{{ $log->created_at->format('H:i:s') }}</div>
+                                            <div class="font-medium">{{ \Carbon\Carbon::parse($log->last_occurred)->format('M d, Y') }}</div>
+                                            <div class="text-gray-500 text-xs">{{ \Carbon\Carbon::parse($log->last_occurred)->format('H:i:s') }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-purple-100 text-purple-800">
+                                                <i class="fas fa-redo mr-1"></i> {{ $log->occurrence_count }}x
+                                            </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             @if($log->tenant)
@@ -193,15 +198,12 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {{ $log->type }}
-                                        </td>
                                         <td class="px-6 py-4 text-sm text-gray-900">
                                             <div class="max-w-md truncate" title="{{ $log->message }}">
                                                 {{ Str::limit($log->message, 80) }}
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 whitespace-nowrap" data-status-cell>
                                             @if($log->status === 'new')
                                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-100 text-red-800">
                                                     <i class="fas fa-bell mr-1"></i> New
@@ -220,14 +222,14 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium" data-actions-cell>
                                             <div class="flex items-center gap-3">
-                                                <a href="{{ route('admin.error-logs.show', $log) }}" class="text-blue-600 hover:text-blue-900">
+                                                <a href="{{ route('admin.error-logs.show', $log->latest_id) }}" class="text-blue-600 hover:text-blue-900">
                                                     <i class="fas fa-eye"></i> View
                                                 </a>
 
                                                 @if($log->status !== 'resolved')
-                                                    <form method="POST" action="{{ route('admin.error-logs.update-status', $log) }}" class="inline">
+                                                    <form method="POST" action="{{ route('admin.error-logs.update-status', $log->latest_id) }}" class="inline" data-ajax="true">
                                                         @csrf
                                                         <input type="hidden" name="status" value="resolved">
                                                         <button type="submit" class="text-green-600 hover:text-green-900 font-semibold" title="Mark as Resolved">
@@ -237,7 +239,7 @@
                                                 @endif
 
                                                 @if($log->status === 'new')
-                                                    <form method="POST" action="{{ route('admin.error-logs.update-status', $log) }}" class="inline">
+                                                    <form method="POST" action="{{ route('admin.error-logs.update-status', $log->latest_id) }}" class="inline" data-ajax="true">
                                                         @csrf
                                                         <input type="hidden" name="status" value="ignored">
                                                         <button type="submit" class="text-gray-500 hover:text-gray-700" title="Ignore">
@@ -267,4 +269,83 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // AJAX handler for resolve and ignore actions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle all forms with data-ajax attribute
+            document.querySelectorAll('form[data-ajax="true"]').forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const formData = new FormData(this);
+                    const url = this.action;
+                    const row = this.closest('tr');
+                    const statusCell = row.querySelector('[data-status-cell]');
+                    const actionsCell = row.querySelector('[data-actions-cell]');
+
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                            }
+                        });
+
+                        if (response.ok) {
+                            const newStatus = formData.get('status');
+
+                            // Update status badge
+                            if (newStatus === 'resolved') {
+                                statusCell.innerHTML = `
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-green-100 text-green-800">
+                                        <i class="fas fa-check mr-1"></i> Resolved
+                                    </span>
+                                `;
+                                // Remove resolve and ignore buttons
+                                actionsCell.querySelectorAll('form[data-ajax="true"]').forEach(f => f.remove());
+                            } else if (newStatus === 'ignored') {
+                                statusCell.innerHTML = `
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-gray-100 text-gray-800">
+                                        <i class="fas fa-ban mr-1"></i> Ignored
+                                    </span>
+                                `;
+                                // Remove ignore button, keep resolve button
+                                this.remove();
+                            }
+
+                            // Show success toast
+                            showToast('Status updated successfully!', 'success');
+                        } else {
+                            showToast('Failed to update status', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showToast('An error occurred', 'error');
+                    }
+                });
+            });
+        });
+
+        // Simple toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 z-50 ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } text-white`;
+            toast.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
 </x-app-layout>

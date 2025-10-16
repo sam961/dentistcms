@@ -8,6 +8,7 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DentalChartController;
+use App\Http\Controllers\DentalImageController;
 use App\Http\Controllers\DentistController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LandingController;
@@ -110,11 +111,23 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
     Route::get('/patients/{patient}/dental-chart/tooth/{toothNumber}', [DentalChartController::class, 'getToothHistory'])->name('patients.dental-chart.tooth');
     Route::post('/patients/{patient}/dental-chart/tooth/{toothNumber}', [DentalChartController::class, 'updateTooth'])->name('patients.dental-chart.update');
 
+    // Dental Image routes
+    Route::prefix('patients/{patient}/images')->group(function () {
+        Route::get('/', [DentalImageController::class, 'index'])->name('patients.images.index');
+        Route::get('/create', [DentalImageController::class, 'create'])->name('patients.images.create');
+        Route::post('/', [DentalImageController::class, 'store'])->name('patients.images.store');
+        Route::get('/{image}', [DentalImageController::class, 'show'])->name('patients.images.show');
+        Route::get('/{image}/download', [DentalImageController::class, 'download'])->name('patients.images.download');
+        Route::get('/{image}/thumbnail', [DentalImageController::class, 'thumbnail'])->name('patients.images.thumbnail');
+        Route::delete('/{image}', [DentalImageController::class, 'destroy'])->name('patients.images.destroy');
+    });
+
     // Treatment Plan additional routes
     Route::post('/treatment-plans/{treatmentPlan}/status/{status}', [TreatmentPlanController::class, 'updateStatus'])->name('treatment-plans.update-status');
     Route::post('/treatment-plans/{treatmentPlan}/items', [TreatmentPlanController::class, 'addItem'])->name('treatment-plans.add-item');
     Route::delete('/treatment-plans/{treatmentPlan}/items/{item}', [TreatmentPlanController::class, 'removeItem'])->name('treatment-plans.remove-item');
     Route::post('/treatment-plans/{treatmentPlan}/items/{item}/status/{status}', [TreatmentPlanController::class, 'updateItemStatus'])->name('treatment-plans.update-item-status');
+    Route::post('/treatment-plans/{treatmentPlan}/email', [TreatmentPlanController::class, 'sendEmail'])->name('treatment-plans.email');
 
     // Calendar routes
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');

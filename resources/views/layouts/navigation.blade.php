@@ -62,6 +62,10 @@
                             <i class="fas fa-procedures mr-2"></i>
                             {{ __('Treatments') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('treatment-plans.index')" :active="request()->routeIs('treatment-plans.*')" class="nav-link-modern">
+                            <i class="fas fa-clipboard-list mr-2"></i>
+                            {{ __('Treatment Plans') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')" class="nav-link-modern">
                             <i class="fas fa-file-invoice-dollar mr-2"></i>
                             {{ __('Invoices') }}
@@ -179,6 +183,10 @@
                         <path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547A8.014 8.014 0 004 21h16a8.014 8.014 0 00-.244-5.572zM12 10a4 4 0 100-8 4 4 0 000 8z"/>
                     </svg>
                     {{ __('Treatments') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('treatment-plans.index')" :active="request()->routeIs('treatment-plans.*')" class="text-white hover:bg-white/20">
+                    <i class="fas fa-clipboard-list w-4 h-4 mr-3"></i>
+                    {{ __('Treatment Plans') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')" class="text-white hover:bg-white/20">
                     <svg class="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 24 24">

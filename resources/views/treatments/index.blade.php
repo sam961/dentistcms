@@ -8,10 +8,9 @@
                 </h2>
                 <p class="text-gray-600 mt-2">Manage dental treatment types and procedures</p>
             </div>
-            <a href="{{ route('treatments.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i>
+            <x-action-button href="{{ route('treatments.create') }}" icon="procedures" color="indigo">
                 Add New Treatment
-            </a>
+            </x-action-button>
         </div>
     </x-slot>
 

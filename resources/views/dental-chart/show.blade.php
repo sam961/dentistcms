@@ -95,7 +95,7 @@
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
             <button onclick="showToothHistory(currentToothNumber)" class="bg-white rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left group">
                 <div class="flex items-center gap-3">
                     <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
@@ -107,6 +107,18 @@
                     </div>
                 </div>
             </button>
+
+            <a href="{{ route('patients.images.index', $patient) }}?tooth_number=" onclick="event.preventDefault(); window.location.href = this.href + currentToothNumber;" class="bg-white rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left group cursor-pointer">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                        <i class="fas fa-images text-purple-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">View Images</p>
+                        <p class="text-sm text-gray-600">X-rays & photos</p>
+                    </div>
+                </div>
+            </a>
 
             <button onclick="openAddRecordForm()" class="bg-white rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left group">
                 <div class="flex items-center gap-3">
