@@ -162,6 +162,41 @@ class PerioChartController extends Controller
     }
 
     /**
+     * Update a single measurement via AJAX.
+     */
+    public function updateMeasurement(Request $request, PerioChart $perioChart)
+    {
+        $validated = $request->validate([
+            'tooth_number' => 'required|integer|min:1|max:32',
+            'field' => 'required|string',
+            'value' => 'nullable',
+        ]);
+
+        $measurement = $perioChart->measurements()
+            ->where('tooth_number', $validated['tooth_number'])
+            ->firstOrFail();
+
+        // Convert value based on field type
+        $value = $validated['value'];
+        if (in_array($validated['field'], ['bop_mb', 'bop_b', 'bop_db', 'bop_ml', 'bop_l', 'bop_dl',
+                                             'plaque_mb', 'plaque_b', 'plaque_db', 'plaque_ml', 'plaque_l', 'plaque_dl',
+                                             'missing', 'implant'])) {
+            $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+        } elseif ($value === '' || $value === null) {
+            $value = null;
+        } elseif (is_numeric($value)) {
+            $value = (int) $value;
+        }
+
+        $measurement->update([$validated['field'] => $value]);
+
+        return response()->json([
+            'success' => true,
+            'measurement' => $measurement->fresh(),
+        ]);
+    }
+
+    /**
      * Compare two perio charts for the same patient.
      */
     public function compare(Request $request)

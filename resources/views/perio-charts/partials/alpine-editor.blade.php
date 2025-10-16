@@ -57,12 +57,6 @@
     }
 }" class="bg-white rounded-2xl shadow-sm p-6">
 
-    <!-- Debug Info -->
-    <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-sm">
-        <strong>✅ Alpine.js Editor:</strong> Quadrant: <span class="font-bold text-green-600" x-text="quadrant"></span> |
-        Selected Tooth: <span class="font-bold text-green-600" x-text="selectedTooth || 'None'"></span>
-    </div>
-
     <!-- Quadrant Selector -->
     <div class="mb-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Select Quadrant (Click Below!)</h3>
@@ -152,24 +146,154 @@
 
     <!-- Measurement Form -->
     <div x-show="selectedTooth" class="border-t-2 border-gray-200 pt-6">
-        <h3 class="text-xl font-semibold text-gray-900 mb-6">
-            <i class="fas fa-tooth text-blue-600 mr-2"></i>
-            Tooth #<span x-text="selectedTooth"></span> Measurements
-        </h3>
+        @foreach($toothNumbers as $toothNum)
+            @php $m = $measurements->get($toothNum); @endphp
+            <template x-if="selectedTooth === {{ $toothNum }}">
+                <div>
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                            <i class="fas fa-tooth text-blue-600 mr-2"></i>
+                            Tooth #{{ $toothNum }} Measurements
+                        </h3>
+                        <div class="flex gap-2">
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox"
+                                       {{ $m && $m->missing ? 'checked' : '' }}
+                                       @change="updateMeasurement({{ $toothNum }}, 'missing', $event.target.checked)"
+                                       class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                <span class="ml-2 text-sm text-gray-700">Missing</span>
+                            </label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox"
+                                       {{ $m && $m->implant ? 'checked' : '' }}
+                                       @change="updateMeasurement({{ $toothNum }}, 'implant', $event.target.checked)"
+                                       class="rounded border-gray-300 text-purple-600 focus:ring-purple-500">
+                                <span class="ml-2 text-sm text-gray-700">Implant</span>
+                            </label>
+                        </div>
+                    </div>
 
-        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-            <p class="text-sm text-yellow-700">
-                <i class="fas fa-tools mr-2"></i>
-                <strong>Full measurement form coming next!</strong> For now, click teeth to select them.
-                The complete form with all measurement fields will be added shortly.
-            </p>
-        </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Pocket Depth -->
+                        <div class="space-y-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-ruler-vertical text-blue-600 mr-2"></i>
+                                Pocket Depth (mm)
+                            </h4>
+                            <div class="grid grid-cols-3 gap-3">
+                                @foreach(['mb', 'b', 'db', 'ml', 'l', 'dl'] as $site)
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 uppercase">{{ $site }}</label>
+                                        <input type="number"
+                                               value="{{ $m ? $m->{'pd_'.$site} : '' }}"
+                                               @change="updateMeasurement({{ $toothNum }}, 'pd_{{ $site }}', $event.target.value)"
+                                               min="0" max="15"
+                                               class="w-full rounded-lg border-gray-300 text-center focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
 
-        <!-- Save indicator -->
-        <div x-show="saving" class="mt-4 flex items-center justify-center text-blue-600">
-            <i class="fas fa-spinner fa-spin mr-2"></i>
-            <span class="text-sm">Saving...</span>
-        </div>
+                        <!-- Gingival Margin -->
+                        <div class="space-y-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-arrows-alt-v text-green-600 mr-2"></i>
+                                Gingival Margin (mm)
+                            </h4>
+                            <div class="grid grid-cols-3 gap-3">
+                                @foreach(['mb', 'b', 'db', 'ml', 'l', 'dl'] as $site)
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-600 mb-1 uppercase">{{ $site }}</label>
+                                        <input type="number"
+                                               value="{{ $m ? $m->{'gm_'.$site} : '' }}"
+                                               @change="updateMeasurement({{ $toothNum }}, 'gm_{{ $site }}', $event.target.value)"
+                                               min="-10" max="10"
+                                               class="w-full rounded-lg border-gray-300 text-center focus:border-blue-500 focus:ring-blue-500">
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Bleeding on Probing -->
+                        <div class="space-y-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-droplet text-red-600 mr-2"></i>
+                                Bleeding on Probing
+                            </h4>
+                            <div class="grid grid-cols-6 gap-2">
+                                @foreach(['mb', 'b', 'db', 'ml', 'l', 'dl'] as $site)
+                                    <label class="flex flex-col items-center p-2 border rounded-lg cursor-pointer {{ $m && $m->{'bop_'.$site} ? 'bg-red-50 border-red-300' : 'bg-gray-50 border-gray-300' }}">
+                                        <input type="checkbox"
+                                               {{ $m && $m->{'bop_'.$site} ? 'checked' : '' }}
+                                               @change="updateMeasurement({{ $toothNum }}, 'bop_{{ $site }}', $event.target.checked)"
+                                               class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                                        <span class="text-xs mt-1 uppercase">{{ $site }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Plaque Index -->
+                        <div class="space-y-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-bacteria text-yellow-600 mr-2"></i>
+                                Plaque Index
+                            </h4>
+                            <div class="grid grid-cols-6 gap-2">
+                                @foreach(['mb', 'b', 'db', 'ml', 'l', 'dl'] as $site)
+                                    <label class="flex flex-col items-center p-2 border rounded-lg cursor-pointer {{ $m && $m->{'plaque_'.$site} ? 'bg-yellow-50 border-yellow-300' : 'bg-gray-50 border-gray-300' }}">
+                                        <input type="checkbox"
+                                               {{ $m && $m->{'plaque_'.$site} ? 'checked' : '' }}
+                                               @change="updateMeasurement({{ $toothNum }}, 'plaque_{{ $site }}', $event.target.checked)"
+                                               class="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500">
+                                        <span class="text-xs mt-1 uppercase">{{ $site }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <!-- Mobility & Furcation -->
+                        <div class="space-y-4 lg:col-span-2">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-arrows-alt text-orange-600 mr-2"></i>
+                                        Mobility (0-3)
+                                    </label>
+                                    <select @change="updateMeasurement({{ $toothNum }}, 'mobility', $event.target.value)"
+                                            class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                        <option value="0" {{ $m && $m->mobility == 0 ? 'selected' : '' }}>0 - None</option>
+                                        <option value="1" {{ $m && $m->mobility == 1 ? 'selected' : '' }}>1 - Slight</option>
+                                        <option value="2" {{ $m && $m->mobility == 2 ? 'selected' : '' }}>2 - Moderate</option>
+                                        <option value="3" {{ $m && $m->mobility == 3 ? 'selected' : '' }}>3 - Severe</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        <i class="fas fa-sitemap text-purple-600 mr-2"></i>
+                                        Furcation (0-3)
+                                    </label>
+                                    <select @change="updateMeasurement({{ $toothNum }}, 'furcation', $event.target.value)"
+                                            class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                                        <option value="0" {{ $m && $m->furcation == 0 ? 'selected' : '' }}>0 - None</option>
+                                        <option value="1" {{ $m && $m->furcation == 1 ? 'selected' : '' }}>1 - Class I</option>
+                                        <option value="2" {{ $m && $m->furcation == 2 ? 'selected' : '' }}>2 - Class II</option>
+                                        <option value="3" {{ $m && $m->furcation == 3 ? 'selected' : '' }}>3 - Class III</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Save indicator -->
+                    <div x-show="saving" class="mt-4 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        <span class="text-sm">Saving...</span>
+                    </div>
+                </div>
+            </template>
+        @endforeach
     </div>
 
     <div x-show="!selectedTooth" class="border-t-2 border-gray-200 pt-6 text-center text-gray-500">

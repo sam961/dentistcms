@@ -132,6 +132,7 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
 
     // Perio Charting routes
     Route::resource('perio-charts', PerioChartController::class);
+    Route::post('/perio-charts/{perioChart}/measurement', [PerioChartController::class, 'updateMeasurement'])->name('perio-charts.update-measurement');
     Route::get('/perio-charts/{perioChart}/print', [PerioChartController::class, 'print'])->name('perio-charts.print');
     Route::post('/perio-charts/compare', [PerioChartController::class, 'compare'])->name('perio-charts.compare');
 
