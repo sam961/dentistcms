@@ -85,11 +85,6 @@ class Tenant extends Model
         return $this->hasMany(Invoice::class);
     }
 
-    public function domains()
-    {
-        return $this->hasMany(Domain::class);
-    }
-
     public function subscriptionHistory()
     {
         return $this->hasMany(TenantSubscriptionHistory::class)->orderBy('created_at', 'desc');
@@ -99,16 +94,6 @@ class Tenant extends Model
     public function isActive(): bool
     {
         return $this->status === 'active';
-    }
-
-    /**
-     * Get the primary domain for this tenant
-     */
-    public function getPrimaryDomainAttribute(): ?string
-    {
-        $domain = $this->domains()->first();
-
-        return $domain?->domain;
     }
 
     /**

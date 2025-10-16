@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MedicalRecord;
-use App\Models\Patient;
 use App\Models\Appointment;
 use App\Models\Dentist;
+use App\Models\MedicalRecord;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 
 class MedicalRecordController extends Controller
@@ -15,6 +15,7 @@ class MedicalRecordController extends Controller
         $medicalRecords = MedicalRecord::with(['patient', 'dentist', 'appointment'])
             ->orderBy('visit_date', 'desc')
             ->paginate(15);
+
         return view('medical-records.index', compact('medicalRecords'));
     }
 
@@ -23,6 +24,7 @@ class MedicalRecordController extends Controller
         $patients = Patient::orderBy('last_name')->get();
         $dentists = Dentist::where('status', 'active')->orderBy('last_name')->get();
         $appointments = Appointment::with(['patient', 'dentist'])->get();
+
         return view('medical-records.create', compact('patients', 'dentists', 'appointments'));
     }
 
@@ -45,12 +47,14 @@ class MedicalRecordController extends Controller
         ]);
 
         MedicalRecord::create($validated);
+
         return redirect()->route('medical-records.index')->with('success', 'Medical record created successfully.');
     }
 
     public function show(MedicalRecord $medicalRecord)
     {
         $medicalRecord->load(['patient', 'dentist', 'appointment']);
+
         return view('medical-records.show', compact('medicalRecord'));
     }
 
@@ -59,6 +63,7 @@ class MedicalRecordController extends Controller
         $patients = Patient::orderBy('last_name')->get();
         $dentists = Dentist::where('status', 'active')->orderBy('last_name')->get();
         $appointments = Appointment::with(['patient', 'dentist'])->get();
+
         return view('medical-records.edit', compact('medicalRecord', 'patients', 'dentists', 'appointments'));
     }
 
@@ -81,12 +86,14 @@ class MedicalRecordController extends Controller
         ]);
 
         $medicalRecord->update($validated);
+
         return redirect()->route('medical-records.index')->with('success', 'Medical record updated successfully.');
     }
 
     public function destroy(MedicalRecord $medicalRecord)
     {
         $medicalRecord->delete();
+
         return redirect()->route('medical-records.index')->with('success', 'Medical record deleted successfully.');
     }
 
@@ -96,6 +103,7 @@ class MedicalRecordController extends Controller
             ->with(['dentist', 'appointment'])
             ->orderBy('visit_date', 'desc')
             ->paginate(10);
+
         return view('medical-records.patient', compact('patient', 'medicalRecords'));
     }
 }

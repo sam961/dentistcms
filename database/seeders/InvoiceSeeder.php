@@ -2,13 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Appointment;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Patient;
-use App\Models\Appointment;
 use App\Models\Treatment;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class InvoiceSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class InvoiceSeeder extends Seeder
         $patients = Patient::all();
         $appointments = Appointment::with('treatments')->get();
         $treatments = Treatment::all();
-        
+
         if ($patients->isEmpty()) {
             return;
         }
@@ -107,7 +107,7 @@ class InvoiceSeeder extends Seeder
 
         foreach ($invoices as $invoiceData) {
             $invoice = Invoice::create($invoiceData);
-            
+
             // Create invoice items based on the appointment treatments or random treatments
             if ($invoice->appointment && $invoice->appointment->treatments->isNotEmpty()) {
                 foreach ($invoice->appointment->treatments as $treatment) {

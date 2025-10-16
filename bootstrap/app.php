@@ -73,7 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ]);
             } catch (\Exception $logException) {
                 // Fail silently - don't break the app if logging fails
-                \Log::error('Failed to log error to database: ' . $logException->getMessage());
+                \Log::error('Failed to log error to database: '.$logException->getMessage());
             }
         });
     })

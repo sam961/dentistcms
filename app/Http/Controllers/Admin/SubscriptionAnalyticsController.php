@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Models\TenantSubscriptionHistory;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class SubscriptionAnalyticsController extends Controller
 {
@@ -27,11 +25,12 @@ class SubscriptionAnalyticsController extends Controller
                     ->latest()
                     ->first();
 
-                if (!$history || !$history->starts_at || !$history->ends_at) {
+                if (! $history || ! $history->starts_at || ! $history->ends_at) {
                     return 0;
                 }
 
                 $months = $history->starts_at->diffInMonths($history->ends_at) ?: 1;
+
                 return $history->amount / $months;
             });
 

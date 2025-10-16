@@ -360,26 +360,35 @@
                                                             <div>
                                                                 <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
                                                                 <input type="text" name="notes"
+                                                                       value="{{ $history->notes }}"
                                                                        class="block w-full rounded-md border-gray-300 shadow-sm"
                                                                        placeholder="e.g., Extended duration">
                                                             </div>
                                                         </div>
 
-                                                        <div class="flex justify-between items-center mt-4">
-                                                            <form method="POST" action="{{ route('admin.tenants.subscription.destroy', $tenant) }}"
-                                                                  onsubmit="return confirm('Are you sure you want to remove this subscription? This action cannot be undone.');">
-                                                                @csrf
-                                                                @method('DELETE')
-                                                                <input type="hidden" name="start_date" value="{{ $history->starts_at->toDateTimeString() }}">
-                                                                <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 shadow">
-                                                                    <i class="fas fa-trash mr-2"></i>
-                                                                    Remove Subscription
-                                                                </button>
-                                                            </form>
-
+                                                        <div class="flex justify-end mt-4">
                                                             <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 shadow">
                                                                 <i class="fas fa-save mr-2"></i>
                                                                 Update Subscription
+                                                            </button>
+                                                        </div>
+                                                    </form>
+
+                                                    <!-- Separate Delete Form (Outside the update form) -->
+                                                    <form method="POST" action="{{ route('admin.tenants.subscription.destroy', $tenant) }}"
+                                                          class="bg-white rounded-lg p-4 shadow mt-4"
+                                                          onsubmit="return confirm('Are you sure you want to remove this subscription? This action cannot be undone.');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <input type="hidden" name="start_date" value="{{ $history->starts_at->toDateTimeString() }}">
+                                                        <div class="flex items-center justify-between">
+                                                            <p class="text-sm text-gray-600">
+                                                                <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
+                                                                Removing this subscription will immediately deactivate the tenant's access.
+                                                            </p>
+                                                            <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 shadow">
+                                                                <i class="fas fa-trash mr-2"></i>
+                                                                Remove Subscription
                                                             </button>
                                                         </div>
                                                     </form>

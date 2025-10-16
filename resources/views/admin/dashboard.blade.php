@@ -20,7 +20,12 @@
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
             <!-- Quick Stats Section -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-users text-purple-600 mr-2"></i>
+                    Tenant Overview
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Total Clients Card -->
                 <div class="group relative transform transition-all duration-500 hover:scale-105 hover:-translate-y-1">
                     <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-blue-500 to-purple-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-80 transition-opacity duration-500 animate-pulse"></div>
@@ -132,6 +137,7 @@
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
 
             <!-- Clients Table -->

@@ -22,8 +22,13 @@
                             Dashboard
                         </a>
 
-                        <a href="{{ route('admin.subscriptions.analytics') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.subscriptions.*') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
+                        <a href="{{ route('admin.revenue.analytics') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.revenue.*') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
                             <i class="fas fa-chart-line mr-2"></i>
+                            Revenue Analytics
+                        </a>
+
+                        <a href="{{ route('admin.subscriptions.analytics') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.subscriptions.*') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
+                            <i class="fas fa-credit-card mr-2"></i>
                             Subscriptions
                         </a>
 

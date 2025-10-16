@@ -7,7 +7,6 @@ use App\Models\Tenant;
 use App\Models\TenantSubscriptionHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class TenantSubscriptionController extends Controller
 {
@@ -81,8 +80,8 @@ class TenantSubscriptionController extends Controller
         ]);
 
         $message = $startsAt->isToday()
-            ? "Subscription created successfully! Expires on " . $endsAt->format('M d, Y')
-            : "Subscription created successfully! Starts on " . $startsAt->format('M d, Y') . " and expires on " . $endsAt->format('M d, Y') . " (continuous from current subscription)";
+            ? 'Subscription created successfully! Expires on '.$endsAt->format('M d, Y')
+            : 'Subscription created successfully! Starts on '.$startsAt->format('M d, Y').' and expires on '.$endsAt->format('M d, Y').' (continuous from current subscription)';
 
         return redirect()
             ->route('admin.tenants.subscription', $tenant)
@@ -139,7 +138,7 @@ class TenantSubscriptionController extends Controller
             ]);
         }
 
-        $message = "Subscription updated successfully! Expires on " . $endsAt->format('M d, Y');
+        $message = 'Subscription updated successfully! Expires on '.$endsAt->format('M d, Y');
 
         return redirect()
             ->route('admin.tenants.subscription', $tenant)
@@ -174,7 +173,7 @@ class TenantSubscriptionController extends Controller
             'starts_at' => $tenant->subscription_starts_at,
             'ends_at' => now(),
             'status' => 'expired',
-            'notes' => "Subscription manually expired by admin",
+            'notes' => 'Subscription manually expired by admin',
             'performed_by' => Auth::id(),
         ]);
 
@@ -191,7 +190,7 @@ class TenantSubscriptionController extends Controller
         // Get the subscription start date from the request (passed as a parameter)
         $startDate = $request->input('start_date');
 
-        if (!$startDate) {
+        if (! $startDate) {
             return redirect()
                 ->route('admin.tenants.subscription', $tenant)
                 ->with('error', 'Invalid subscription to delete.');
@@ -202,7 +201,7 @@ class TenantSubscriptionController extends Controller
             ->where('starts_at', $startDate)
             ->first();
 
-        if (!$subscription) {
+        if (! $subscription) {
             return redirect()
                 ->route('admin.tenants.subscription', $tenant)
                 ->with('error', 'Subscription not found.');

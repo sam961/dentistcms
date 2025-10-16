@@ -24,9 +24,9 @@ class CheckSubscriptionStatus
         $tenant = app(\App\Services\TenantContext::class)->getTenant();
 
         // If no tenant or subscription is not active or expired
-        if (!$tenant ||
+        if (! $tenant ||
             $tenant->subscription_status !== 'active' ||
-            !$tenant->subscription_ends_at ||
+            ! $tenant->subscription_ends_at ||
             $tenant->subscription_ends_at->isPast()) {
 
             // Allow access to subscription-expired page and logout

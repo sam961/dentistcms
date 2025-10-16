@@ -10,6 +10,7 @@ class PatientController extends Controller
     public function index()
     {
         $patients = Patient::latest()->paginate(10);
+
         return view('patients.index', compact('patients'));
     }
 
@@ -48,6 +49,7 @@ class PatientController extends Controller
     public function show(Patient $patient)
     {
         $patient->load(['appointments.dentist', 'invoices', 'medicalRecords.dentist']);
+
         return view('patients.show', compact('patient'));
     }
 
@@ -86,6 +88,7 @@ class PatientController extends Controller
     public function destroy(Patient $patient)
     {
         $patient->delete();
+
         return redirect()->route('patients.index')
             ->with('success', 'Patient deleted successfully.');
     }

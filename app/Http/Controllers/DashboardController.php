@@ -7,7 +7,6 @@ use App\Models\Dentist;
 use App\Models\Invoice;
 use App\Models\Patient;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -180,10 +179,10 @@ class DashboardController extends Controller
 
             $currentSubscription = (object) [
                 'plan_name' => 'Paid Plan',
-                'formatted_amount' => '$' . number_format($tenant->subscriptionHistory()->where('starts_at', $tenant->subscription_starts_at)->latest()->first()->amount ?? 0, 2),
+                'formatted_amount' => '$'.number_format($tenant->subscriptionHistory()->where('starts_at', $tenant->subscription_starts_at)->latest()->first()->amount ?? 0, 2),
                 'billing_cycle' => 'custom',
                 'renewal_date' => $tenant->subscription_ends_at,
-                'days_until_renewal' => $daysUntil
+                'days_until_renewal' => $daysUntil,
             ];
         }
 

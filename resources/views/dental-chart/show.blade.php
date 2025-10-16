@@ -71,6 +71,70 @@
         </div>
     </div>
 
+    <!-- Selected Tooth Details Panel -->
+    <div id="toothDetailsPanel" class="mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 hidden">
+        <div class="flex justify-between items-start mb-4">
+            <div class="flex items-start gap-4">
+                <div class="w-20 h-20 bg-white rounded-xl shadow-lg flex items-center justify-center">
+                    <i id="selectedToothIcon" class="fas fa-tooth text-4xl text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900" id="selectedToothTitle">Tooth #0</h3>
+                    <p class="text-gray-600 mt-1" id="selectedToothDescription">Click on a tooth to view details</p>
+                    <div class="mt-2 flex items-center gap-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium" id="selectedToothBadge">
+                            <i class="fas fa-circle text-xs mr-2"></i>
+                            <span id="selectedToothCondition">Unknown</span>
+                        </span>
+                        <span class="text-sm text-gray-600" id="selectedToothType">Adult Tooth</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="hideToothDetails()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <button onclick="showToothHistory(currentToothNumber)" class="bg-white rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left group">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                        <i class="fas fa-history text-blue-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">View History</p>
+                        <p class="text-sm text-gray-600">Treatment records</p>
+                    </div>
+                </div>
+            </button>
+
+            <button onclick="openAddRecordForm()" class="bg-white rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left group">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                        <i class="fas fa-plus text-green-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Add Record</p>
+                        <p class="text-sm text-gray-600">New treatment</p>
+                    </div>
+                </div>
+            </button>
+
+            <button onclick="hideToothDetails()" class="bg-white rounded-xl p-4 hover:shadow-lg transition-all duration-200 text-left group">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                        <i class="fas fa-arrow-left text-gray-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Back to Chart</p>
+                        <p class="text-sm text-gray-600">Select another tooth</p>
+                    </div>
+                </div>
+            </button>
+        </div>
+
+    </div>
+
     <!-- Dental Chart -->
     <div class="relative mx-auto" style="max-width: 800px;">
         <!-- Adult Teeth Chart -->
@@ -80,20 +144,26 @@
                 <div class="flex justify-center gap-1">
                     @for($i = 1; $i <= 16; $i++)
                         @php
-                            $toothData = $toothRecords->get((string)$i)?->first();
+                            $records = $toothRecords->get((string)$i);
+                            $recordCount = $records ? $records->count() : 0;
+                            $toothData = $records?->first();
                             $condition = $toothData?->condition ?? 'healthy';
                             $color = \App\Models\ToothRecord::getConditionColor($condition);
                         @endphp
                         <div class="tooth-container">
                             <button
-                                onclick="showToothHistory('{{ $i }}')"
-                                class="tooth tooth-{{ $color }} relative hover:scale-110 transition-transform"
+                                onclick="selectTooth('{{ $i }}', '{{ $condition }}', {{ $recordCount }})"
+                                class="tooth tooth-{{ $color }} relative hover:scale-110 transition-all duration-200 hover:shadow-lg"
                                 data-tooth="{{ $i }}"
-                                title="Tooth #{{ $i }}"
+                                data-condition="{{ $condition }}"
+                                data-record-count="{{ $recordCount }}"
+                                title="Tooth #{{ $i }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}{{ $recordCount > 0 ? ' ('.$recordCount.' record'.($recordCount > 1 ? 's' : '').')' : '' }}"
                             >
                                 <span class="tooth-number">{{ $i }}</span>
-                                @if($toothData && $toothData->condition !== 'healthy')
-                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full"></span>
+                                @if($recordCount > 0)
+                                    <span class="absolute -bottom-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-600 text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center shadow-md">
+                                        {{ $recordCount }}
+                                    </span>
                                 @endif
                             </button>
                         </div>
@@ -106,20 +176,26 @@
                 <div class="flex justify-center gap-1">
                     @for($i = 32; $i >= 17; $i--)
                         @php
-                            $toothData = $toothRecords->get((string)$i)?->first();
+                            $records = $toothRecords->get((string)$i);
+                            $recordCount = $records ? $records->count() : 0;
+                            $toothData = $records?->first();
                             $condition = $toothData?->condition ?? 'healthy';
                             $color = \App\Models\ToothRecord::getConditionColor($condition);
                         @endphp
                         <div class="tooth-container">
                             <button
-                                onclick="showToothHistory('{{ $i }}')"
-                                class="tooth tooth-{{ $color }} relative hover:scale-110 transition-transform"
+                                onclick="selectTooth('{{ $i }}', '{{ $condition }}', {{ $recordCount }})"
+                                class="tooth tooth-{{ $color }} relative hover:scale-110 transition-all duration-200 hover:shadow-lg"
                                 data-tooth="{{ $i }}"
-                                title="Tooth #{{ $i }}"
+                                data-condition="{{ $condition }}"
+                                data-record-count="{{ $recordCount }}"
+                                title="Tooth #{{ $i }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}{{ $recordCount > 0 ? ' ('.$recordCount.' record'.($recordCount > 1 ? 's' : '').')' : '' }}"
                             >
                                 <span class="tooth-number">{{ $i }}</span>
-                                @if($toothData && $toothData->condition !== 'healthy')
-                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full"></span>
+                                @if($recordCount > 0)
+                                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-600 text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center shadow-md">
+                                        {{ $recordCount }}
+                                    </span>
                                 @endif
                             </button>
                         </div>
@@ -135,20 +211,26 @@
                 <div class="flex justify-center gap-2">
                     @foreach(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'] as $tooth)
                         @php
-                            $toothData = $toothRecords->get($tooth)?->first();
+                            $records = $toothRecords->get($tooth);
+                            $recordCount = $records ? $records->count() : 0;
+                            $toothData = $records?->first();
                             $condition = $toothData?->condition ?? 'healthy';
                             $color = \App\Models\ToothRecord::getConditionColor($condition);
                         @endphp
                         <div class="tooth-container">
                             <button
-                                onclick="showToothHistory('{{ $tooth }}')"
-                                class="tooth tooth-primary tooth-{{ $color }} relative hover:scale-110 transition-transform"
+                                onclick="selectTooth('{{ $tooth }}', '{{ $condition }}', {{ $recordCount }})"
+                                class="tooth tooth-primary tooth-{{ $color }} relative hover:scale-110 transition-all duration-200 hover:shadow-lg"
                                 data-tooth="{{ $tooth }}"
-                                title="Primary Tooth {{ $tooth }}"
+                                data-condition="{{ $condition }}"
+                                data-record-count="{{ $recordCount }}"
+                                title="Primary Tooth {{ $tooth }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}{{ $recordCount > 0 ? ' ('.$recordCount.' record'.($recordCount > 1 ? 's' : '').')' : '' }}"
                             >
                                 <span class="tooth-number">{{ $tooth }}</span>
-                                @if($toothData && $toothData->condition !== 'healthy')
-                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full"></span>
+                                @if($recordCount > 0)
+                                    <span class="absolute -bottom-1 -right-1 min-w-[16px] h-[16px] px-1 bg-blue-600 text-white text-[9px] font-bold rounded-full border-2 border-white flex items-center justify-center shadow-md">
+                                        {{ $recordCount }}
+                                    </span>
                                 @endif
                             </button>
                         </div>
@@ -167,14 +249,16 @@
                         @endphp
                         <div class="tooth-container">
                             <button
-                                onclick="showToothHistory('{{ $tooth }}')"
-                                class="tooth tooth-primary tooth-{{ $color }} relative hover:scale-110 transition-transform"
+                                onclick="selectTooth('{{ $tooth }}', '{{ $condition }}')"
+                                ondblclick="showToothHistory('{{ $tooth }}')"
+                                class="tooth tooth-primary tooth-{{ $color }} relative hover:scale-110 transition-all duration-200 hover:shadow-lg"
                                 data-tooth="{{ $tooth }}"
-                                title="Primary Tooth {{ $tooth }}"
+                                data-condition="{{ $condition }}"
+                                title="Primary Tooth {{ $tooth }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}"
                             >
                                 <span class="tooth-number">{{ $tooth }}</span>
                                 @if($toothData && $toothData->condition !== 'healthy')
-                                    <span class="absolute -top-1 -right-1 w-2 h-2 bg-yellow-400 rounded-full"></span>
+                                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full border-2 border-white animate-pulse"></span>
                                 @endif
                             </button>
                         </div>
@@ -285,9 +369,9 @@
 
 <style>
     .tooth {
-        width: 40px;
-        height: 50px;
-        border: 2px solid #ddd;
+        width: 45px;
+        height: 55px;
+        border: 3px solid #ddd;
         border-radius: 8px 8px 12px 12px;
         display: flex;
         align-items: center;
@@ -295,57 +379,65 @@
         cursor: pointer;
         background: white;
         position: relative;
-        font-size: 12px;
+        font-size: 13px;
         font-weight: bold;
-        transition: all 0.3s;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .tooth-primary {
-        width: 35px;
-        height: 45px;
+        width: 38px;
+        height: 48px;
     }
 
     .tooth-number {
         color: #333;
+        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        z-index: 1;
     }
 
     .tooth-green {
-        background-color: #10b981;
-        border-color: #059669;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-color: #047857;
     }
 
     .tooth-red {
-        background-color: #ef4444;
-        border-color: #dc2626;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border-color: #b91c1c;
     }
 
     .tooth-blue {
-        background-color: #3b82f6;
-        border-color: #2563eb;
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-color: #1d4ed8;
     }
 
     .tooth-purple {
-        background-color: #a855f7;
-        border-color: #9333ea;
+        background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
+        border-color: #7e22ce;
     }
 
     .tooth-orange {
-        background-color: #f97316;
-        border-color: #ea580c;
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        border-color: #c2410c;
     }
 
     .tooth-gray {
-        background-color: #6b7280;
-        border-color: #4b5563;
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        border-color: #374151;
     }
 
     .tooth-indigo {
-        background-color: #6366f1;
-        border-color: #4f46e5;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        border-color: #4338ca;
     }
 
     .tooth:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .tooth:active {
+        transform: scale(0.95);
     }
 
     .upper-teeth .tooth {
@@ -355,11 +447,97 @@
     .lower-teeth .tooth {
         border-radius: 8px 8px 12px 12px;
     }
+
+    .tooth-container {
+        position: relative;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
 </style>
 
 <script>
     let currentToothNumber = null;
     let currentChartType = 'adult';
+
+    // Select tooth and show details panel
+    function selectTooth(toothNumber, condition, recordCount = 0) {
+        currentToothNumber = toothNumber;
+
+        // Show the details panel
+        const panel = document.getElementById('toothDetailsPanel');
+        panel.classList.remove('hidden');
+
+        // Update tooth title and description
+        document.getElementById('selectedToothTitle').textContent = `Tooth #${toothNumber}`;
+
+        // Determine tooth type
+        const num = parseInt(toothNumber);
+        let toothType = 'Molar';
+        let description = 'Large back tooth used for grinding food';
+
+        if ([1, 2, 7, 8, 9, 10, 15, 16, 17, 18, 23, 24, 25, 26, 31, 32].includes(num)) {
+            toothType = 'Incisor';
+            description = 'Front tooth used for cutting food';
+        } else if ([3, 6, 11, 14, 19, 22, 27, 30].includes(num)) {
+            toothType = 'Canine';
+            description = 'Pointed tooth used for tearing food';
+        } else if ([4, 5, 12, 13, 20, 21, 28, 29].includes(num)) {
+            toothType = 'Premolar';
+            description = 'Transitional tooth used for grinding';
+        }
+
+        // Add record count to description
+        if (recordCount > 0) {
+            description += ` • ${recordCount} treatment record${recordCount > 1 ? 's' : ''}`;
+        }
+
+        document.getElementById('selectedToothDescription').textContent = description;
+        document.getElementById('selectedToothType').textContent = toothType;
+
+        // Update condition badge
+        const conditionText = condition.replace('_', ' ');
+        const conditionFormatted = conditionText.charAt(0).toUpperCase() + conditionText.slice(1);
+        document.getElementById('selectedToothCondition').textContent = conditionFormatted;
+
+        // Update badge styling based on condition
+        const badge = document.getElementById('selectedToothBadge');
+        const badgeColors = {
+            'healthy': 'bg-green-100 text-green-800',
+            'cavity': 'bg-red-100 text-red-800',
+            'filled': 'bg-blue-100 text-blue-800',
+            'crown': 'bg-purple-100 text-purple-800',
+            'root_canal': 'bg-orange-100 text-orange-800',
+            'missing': 'bg-gray-100 text-gray-800',
+            'implant': 'bg-indigo-100 text-indigo-800'
+        };
+
+        badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ' + (badgeColors[condition] || 'bg-gray-100 text-gray-800');
+
+        // Update tooth icon color
+        const icon = document.getElementById('selectedToothIcon');
+        const iconColors = {
+            'healthy': 'text-green-600',
+            'cavity': 'text-red-600',
+            'filled': 'text-blue-600',
+            'crown': 'text-purple-600',
+            'root_canal': 'text-orange-600',
+            'missing': 'text-gray-600',
+            'implant': 'text-indigo-600'
+        };
+
+        icon.className = 'fas fa-tooth text-4xl ' + (iconColors[condition] || 'text-blue-600');
+
+        // Scroll to details panel
+        panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function hideToothDetails() {
+        document.getElementById('toothDetailsPanel').classList.add('hidden');
+        currentToothNumber = null;
+    }
 
     function toggleChartType() {
         const adultChart = document.getElementById('adultChart');
