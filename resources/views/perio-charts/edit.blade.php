@@ -149,8 +149,8 @@
             </div>
         </div>
 
-        <!-- Livewire Perio Chart Editor -->
-        @livewire('perio-chart-editor', ['perioChartId' => $perioChart->id])
+        <!-- Alpine.js Perio Chart Editor -->
+        @include('perio-charts.partials.alpine-editor', ['perioChart' => $perioChart])
 
         <!-- Action Buttons -->
         <div class="mt-6 flex justify-between items-center bg-white rounded-2xl shadow-sm p-6">
