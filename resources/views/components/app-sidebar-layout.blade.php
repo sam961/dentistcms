@@ -19,6 +19,9 @@
 
         <!-- Chart.js for data visualization -->
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- Livewire Styles -->
+        @livewireStyles
     </head>
     <body class="font-sans antialiased bg-gray-50">
         <div x-data="{ sidebarOpen: false, profileDropdown: false, notificationDropdown: false }" class="flex h-screen overflow-hidden">
@@ -354,5 +357,8 @@
              x-transition:leave-start="opacity-100"
              x-transition:leave-end="opacity-0"
              class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 lg:hidden"></div>
+
+        <!-- Livewire Scripts -->
+        @livewireScripts
     </body>
 </html>
