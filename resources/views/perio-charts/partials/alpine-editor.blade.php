@@ -46,11 +46,13 @@
             });
 
             if (response.ok) {
-                // Refresh the page to show updated stats
-                location.reload();
+                const data = await response.json();
+                // Success! Data saved without page reload
+                console.log('Saved:', data);
             }
         } catch (error) {
             console.error('Error saving:', error);
+            alert('Error saving measurement. Please try again.');
         } finally {
             this.saving = false;
         }
