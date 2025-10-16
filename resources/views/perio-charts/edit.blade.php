@@ -67,7 +67,7 @@
                         <select id="dentist_id" name="dentist_id" required class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             @foreach($dentists as $dentist)
                                 <option value="{{ $dentist->id }}" {{ $perioChart->dentist_id == $dentist->id ? 'selected' : '' }}>
-                                    {{ $dentist->name }}
+                                    {{ $dentist->full_name }}
                                 </option>
                             @endforeach
                         </select>

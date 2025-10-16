@@ -66,7 +66,7 @@
                         <option value="">All Dentists</option>
                         @foreach($dentists as $dentist)
                             <option value="{{ $dentist->id }}" {{ request('dentist_id') == $dentist->id ? 'selected' : '' }}>
-                                {{ $dentist->name }}
+                                {{ $dentist->full_name }}
                             </option>
                         @endforeach
                     </select>

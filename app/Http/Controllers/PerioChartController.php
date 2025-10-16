@@ -49,7 +49,7 @@ class PerioChartController extends Controller
 
         $perioCharts = $query->paginate(20);
         $patients = Patient::orderBy('last_name')->get();
-        $dentists = Dentist::orderBy('name')->get();
+        $dentists = Dentist::orderBy('first_name')->get();
 
         return view('perio-charts.index', compact('perioCharts', 'patients', 'dentists'));
     }
@@ -60,7 +60,7 @@ class PerioChartController extends Controller
     public function create(Request $request)
     {
         $patients = Patient::orderBy('last_name')->get();
-        $dentists = Dentist::orderBy('name')->get();
+        $dentists = Dentist::orderBy('first_name')->get();
         $selectedPatientId = $request->query('patient_id');
 
         return view('perio-charts.create', compact('patients', 'dentists', 'selectedPatientId'));
@@ -108,7 +108,7 @@ class PerioChartController extends Controller
     {
         $perioChart->load(['patient', 'dentist', 'measurements']);
         $patients = Patient::orderBy('last_name')->get();
-        $dentists = Dentist::orderBy('name')->get();
+        $dentists = Dentist::orderBy('first_name')->get();
 
         return view('perio-charts.edit', compact('perioChart', 'patients', 'dentists'));
     }
