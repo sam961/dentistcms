@@ -14,6 +14,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\MedicalRecordController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\PerioChartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubscriptionController;
@@ -128,6 +129,11 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
     Route::delete('/treatment-plans/{treatmentPlan}/items/{item}', [TreatmentPlanController::class, 'removeItem'])->name('treatment-plans.remove-item');
     Route::post('/treatment-plans/{treatmentPlan}/items/{item}/status/{status}', [TreatmentPlanController::class, 'updateItemStatus'])->name('treatment-plans.update-item-status');
     Route::post('/treatment-plans/{treatmentPlan}/email', [TreatmentPlanController::class, 'sendEmail'])->name('treatment-plans.email');
+
+    // Perio Charting routes
+    Route::resource('perio-charts', PerioChartController::class);
+    Route::get('/perio-charts/{perioChart}/print', [PerioChartController::class, 'print'])->name('perio-charts.print');
+    Route::post('/perio-charts/compare', [PerioChartController::class, 'compare'])->name('perio-charts.compare');
 
     // Calendar routes
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');

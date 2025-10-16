@@ -30,7 +30,9 @@
       "Bash(ln:*)",
       "Read(//Users/salamelkadri/.config/valet/Log/**)",
       "Bash(ping:*)",
-      "Read(//Users/salamelkadri/.config/valet/Nginx/**)"
+      "Read(//Users/salamelkadri/.config/valet/Nginx/**)",
+      "Bash(composer search:*)",
+      "Bash(composer require:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

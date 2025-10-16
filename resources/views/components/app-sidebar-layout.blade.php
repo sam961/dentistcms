@@ -94,6 +94,18 @@
                             Treatments
                         </a>
 
+                        <!-- Treatment Plans -->
+                        <a href="{{ route('treatment-plans.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('treatment-plans.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <i class="fas fa-clipboard-list w-5 h-5 mr-3 {{ request()->routeIs('treatment-plans.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
+                            Treatment Plans
+                        </a>
+
+                        <!-- Perio Charts -->
+                        <a href="{{ route('perio-charts.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('perio-charts.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
+                            <i class="fas fa-teeth-open w-5 h-5 mr-3 {{ request()->routeIs('perio-charts.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
+                            Perio Charts
+                        </a>
+
                         <!-- Invoices -->
                         <a href="{{ route('invoices.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('invoices.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
                             <i class="fas fa-file-invoice-dollar w-5 h-5 mr-3 {{ request()->routeIs('invoices.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>

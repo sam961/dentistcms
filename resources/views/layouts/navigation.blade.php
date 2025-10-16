@@ -66,6 +66,10 @@
                             <i class="fas fa-clipboard-list mr-2"></i>
                             {{ __('Treatment Plans') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('perio-charts.index')" :active="request()->routeIs('perio-charts.*')" class="nav-link-modern">
+                            <i class="fas fa-teeth-open mr-2"></i>
+                            {{ __('Perio Charts') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')" class="nav-link-modern">
                             <i class="fas fa-file-invoice-dollar mr-2"></i>
                             {{ __('Invoices') }}

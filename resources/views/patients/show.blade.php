@@ -56,6 +56,12 @@
                         @endif
                     </a>
 
+                    <!-- Perio Charts Button -->
+                    <a href="{{ route('perio-charts.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-teal-700 hover:to-teal-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                        <i class="fas fa-teeth-open mr-2"></i>
+                        New Perio Chart
+                    </a>
+
                     <!-- Schedule Appointment Button -->
                     <a href="{{ route('appointments.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-blue-700 hover:to-blue-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
                         <i class="fas fa-calendar-plus mr-2"></i>
