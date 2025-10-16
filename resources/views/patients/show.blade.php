@@ -57,9 +57,14 @@
                     </a>
 
                     <!-- Perio Charts Button -->
-                    <a href="{{ route('perio-charts.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-teal-700 hover:to-teal-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
+                    <a href="{{ route('patients.perio-charts', $patient) }}" class="inline-flex items-center px-4 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-teal-700 hover:to-teal-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5 relative">
                         <i class="fas fa-teeth-open mr-2"></i>
-                        New Perio Chart
+                        Perio Charts
+                        @if($patient->perioCharts->count() > 0)
+                            <span class="ml-2 px-2.5 py-1 text-xs font-bold rounded-full bg-white text-teal-700 shadow-sm">
+                                {{ $patient->perioCharts->count() }}
+                            </span>
+                        @endif
                     </a>
 
                     <!-- Schedule Appointment Button -->
@@ -335,6 +340,100 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                     </svg>
                                     <p class="mt-2 text-sm text-gray-500">No medical records</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Periodontal Charts -->
+                    <div class="bg-white shadow-lg rounded-xl border border-gray-200 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-teal-50 to-teal-100">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                                    <i class="fas fa-teeth-open text-teal-600 mr-2"></i>
+                                    Periodontal Charts
+                                </h3>
+                                @if($patient->perioCharts->count() > 0)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-600 text-white">
+                                        {{ $patient->perioCharts->count() }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            @if($patient->perioCharts->count() > 0)
+                                <div class="space-y-3">
+                                    @foreach($patient->perioCharts->take(5) as $chart)
+                                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
+                                            <div class="flex items-start justify-between mb-2">
+                                                <div class="flex-1">
+                                                    <p class="text-sm font-medium text-gray-900">
+                                                        <i class="fas fa-calendar text-teal-500 mr-1"></i>
+                                                        {{ \Carbon\Carbon::parse($chart->chart_date)->format('M d, Y') }}
+                                                    </p>
+                                                    <p class="text-xs text-gray-500 mt-1">
+                                                        <i class="fas fa-user-md text-gray-400 mr-1"></i>
+                                                        Dr. {{ $chart->dentist->full_name }}
+                                                    </p>
+                                                </div>
+                                                @php
+                                                    $severityBadges = [
+                                                        'healthy' => 'bg-green-100 text-green-800',
+                                                        'mild' => 'bg-yellow-100 text-yellow-800',
+                                                        'moderate' => 'bg-orange-100 text-orange-800',
+                                                        'severe' => 'bg-red-100 text-red-800',
+                                                    ];
+                                                @endphp
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $severityBadges[$chart->severity_level] }}">
+                                                    {{ ucfirst($chart->severity_level) }}
+                                                </span>
+                                            </div>
+
+                                            <div class="grid grid-cols-3 gap-2 mt-3 text-xs">
+                                                <div class="bg-red-50 rounded p-2">
+                                                    <p class="text-red-600 font-medium">{{ $chart->bleeding_percentage }}%</p>
+                                                    <p class="text-gray-600">BOP</p>
+                                                </div>
+                                                <div class="bg-yellow-50 rounded p-2">
+                                                    <p class="text-yellow-600 font-medium">{{ $chart->plaque_percentage }}%</p>
+                                                    <p class="text-gray-600">Plaque</p>
+                                                </div>
+                                                <div class="bg-blue-50 rounded p-2">
+                                                    <p class="text-blue-600 font-medium">{{ $chart->average_pocket_depth }}mm</p>
+                                                    <p class="text-gray-600">Avg PD</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex gap-2 mt-3">
+                                                <a href="{{ route('perio-charts.show', $chart) }}" class="flex-1 text-center text-xs px-3 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition-colors duration-200">
+                                                    <i class="fas fa-eye mr-1"></i>
+                                                    View
+                                                </a>
+                                                <a href="{{ route('perio-charts.edit', $chart) }}" class="flex-1 text-center text-xs px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200">
+                                                    <i class="fas fa-edit mr-1"></i>
+                                                    Edit
+                                                </a>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                @if($patient->perioCharts->count() > 5)
+                                    <div class="mt-4 text-center">
+                                        <a href="{{ route('patients.perio-charts', $patient) }}" class="text-sm font-medium text-teal-600 hover:text-teal-700">
+                                            View All {{ $patient->perioCharts->count() }} Charts
+                                        </a>
+                                    </div>
+                                @endif
+                            @else
+                                <div class="text-center py-6">
+                                    <div class="w-16 h-16 mx-auto mb-3 bg-teal-50 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-teeth-open text-teal-400 text-2xl"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-3">No periodontal charts yet</p>
+                                    <a href="{{ route('perio-charts.create') }}?patient_id={{ $patient->id }}" class="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-700">
+                                        <i class="fas fa-plus-circle mr-1"></i>
+                                        Create First Chart
+                                    </a>
                                 </div>
                             @endif
                         </div>

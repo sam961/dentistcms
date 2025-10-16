@@ -9,9 +9,10 @@
                 </h2>
                 <p class="text-gray-600 mt-2">Track and monitor periodontal health over time</p>
             </div>
-            <a href="{{ route('perio-charts.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                <i class="fas fa-plus mr-2"></i>
+            <a href="{{ route('perio-charts.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-teal-700 hover:to-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                <i class="fas fa-plus-circle mr-2"></i>
                 New Perio Chart
+                <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
 
@@ -93,12 +94,12 @@
                 </div>
 
                 <!-- Filter Buttons -->
-                <div class="lg:col-span-5 flex gap-2">
-                    <button type="submit" class="btn-modern btn-primary inline-flex items-center">
+                <div class="lg:col-span-5 flex gap-3">
+                    <button type="submit" class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
                         <i class="fas fa-filter mr-2"></i>
                         Apply Filters
                     </button>
-                    <a href="{{ route('perio-charts.index') }}" class="btn-modern btn-secondary inline-flex items-center">
+                    <a href="{{ route('perio-charts.index') }}" class="inline-flex items-center px-5 py-2.5 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                         <i class="fas fa-times mr-2"></i>
                         Clear
                     </a>
@@ -228,12 +229,15 @@
                 </div>
             @else
                 <div class="text-center py-12">
-                    <i class="fas fa-teeth-open text-gray-400 text-6xl mb-4"></i>
-                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Perio Charts Found</h3>
-                    <p class="text-gray-500 mb-4">Get started by creating your first periodontal chart.</p>
-                    <a href="{{ route('perio-charts.create') }}" class="btn-modern btn-primary inline-flex items-center">
-                        <i class="fas fa-plus mr-2"></i>
+                    <div class="w-24 h-24 mx-auto mb-6 bg-teal-50 rounded-full flex items-center justify-center">
+                        <i class="fas fa-teeth-open text-teal-400 text-5xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">No Perio Charts Found</h3>
+                    <p class="text-gray-600 mb-6">Get started by creating your first periodontal chart.</p>
+                    <a href="{{ route('perio-charts.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-teal-700 hover:to-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                        <i class="fas fa-plus-circle mr-2"></i>
                         Create First Perio Chart
+                        <i class="fas fa-arrow-right ml-2"></i>
                     </a>
                 </div>
             @endif

@@ -29,28 +29,103 @@
 
     <!-- Search and Filter Section -->
     <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
-                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                    <div class="flex-1 max-w-md">
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </div>
-                            <input type="text" placeholder="Search patients..." class="input-modern pl-10 w-full">
-                        </div>
+        <form method="GET" action="{{ route('patients.index') }}">
+            <!-- Main Search Bar -->
+            <div class="mb-4">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
                     </div>
-                    <div class="flex gap-3">
-                        <select class="input-modern">
-                            <option>All Status</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
-                        </select>
-                        <button class="btn-elegant bg-gray-100 text-gray-700 hover:bg-gray-200">
-                            <i class="fas fa-filter mr-2"></i>
-                            Filter
-                        </button>
-                    </div>
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search patients by name, email, phone, or ID..."
+                        class="w-full pl-10 pr-4 py-4 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base shadow-sm hover:shadow-md placeholder:text-gray-400"
+                        autofocus>
                 </div>
             </div>
+
+            <!-- Filters Row -->
+            <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                <!-- Gender Filter -->
+                <div class="flex-1 sm:flex-none sm:w-52">
+                    <select
+                        name="gender"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm bg-white">
+                        <option value="">All Genders</option>
+                        <option value="male" {{ request('gender') == 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ request('gender') == 'female' ? 'selected' : '' }}>Female</option>
+                        <option value="other" {{ request('gender') == 'other' ? 'selected' : '' }}>Other</option>
+                    </select>
+                </div>
+
+                <!-- City Filter -->
+                <div class="flex-1 sm:flex-none sm:w-52">
+                    <select
+                        name="city"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm bg-white">
+                        <option value="">All Cities</option>
+                        @foreach(\App\Models\Patient::whereNotNull('city')->distinct('city')->pluck('city')->sort() as $city)
+                            <option value="{{ $city }}" {{ request('city') == $city ? 'selected' : '' }}>{{ $city }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Spacer to push buttons to the right -->
+                <div class="flex-1 hidden sm:block"></div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button
+                        type="submit"
+                        class="flex-1 sm:flex-none inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5">
+                        <i class="fas fa-search mr-2"></i>
+                        Search
+                    </button>
+                    @if(request()->hasAny(['search', 'gender', 'city']))
+                        <a
+                            href="{{ route('patients.index') }}"
+                            class="flex-1 sm:flex-none inline-flex items-center justify-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <i class="fas fa-times mr-2"></i>
+                            Clear
+                        </a>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            @if(request()->hasAny(['search', 'gender', 'city']))
+                <div class="mt-4 flex items-center gap-2 flex-wrap">
+                    <span class="text-sm text-gray-600 font-medium">Active Filters:</span>
+                    @if(request('search'))
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            Search: "{{ request('search') }}"
+                            <a href="{{ route('patients.index', array_diff_key(request()->all(), ['search' => ''])) }}" class="ml-2 hover:text-blue-900">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </span>
+                    @endif
+                    @if(request('gender'))
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            Gender: {{ ucfirst(request('gender')) }}
+                            <a href="{{ route('patients.index', array_diff_key(request()->all(), ['gender' => ''])) }}" class="ml-2 hover:text-purple-900">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </span>
+                    @endif
+                    @if(request('city'))
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            City: {{ request('city') }}
+                            <a href="{{ route('patients.index', array_diff_key(request()->all(), ['city' => ''])) }}" class="ml-2 hover:text-green-900">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </span>
+                    @endif
+                </div>
+            @endif
+        </form>
+    </div>
 
     <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
                 <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-100">
@@ -60,7 +135,11 @@
                             Patient Directory
                         </h3>
                         <span class="text-sm text-gray-600 bg-white px-3 py-1 rounded-full shadow-sm">
-                            {{ \App\Models\Patient::count() }} Total Patients
+                            @if(request()->hasAny(['search', 'gender', 'city']))
+                                {{ $patients->total() }} of {{ \App\Models\Patient::count() }} Patients
+                            @else
+                                {{ $patients->total() }} Total Patients
+                            @endif
                         </span>
                     </div>
                 </div>

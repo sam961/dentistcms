@@ -3,9 +3,15 @@
         <!-- Header -->
         <div class="mb-6">
             <div class="flex items-center gap-4 mb-4">
-                <a href="{{ route('perio-charts.index') }}" class="text-gray-600 hover:text-gray-900">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
+                @if($selectedPatientId)
+                    <a href="{{ route('patients.show', $selectedPatientId) }}" class="text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                @else
+                    <a href="{{ route('perio-charts.index') }}" class="text-gray-600 hover:text-gray-900">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                @endif
                 <div>
                     <h2 class="font-bold text-3xl text-gray-900 leading-tight">
                         <i class="fas fa-plus-circle text-blue-600 mr-3"></i>
@@ -16,33 +22,74 @@
             </div>
         </div>
 
+        <!-- Patient Info Banner (when pre-selected) -->
+        @if($selectedPatientId)
+            @php
+                $selectedPatient = $patients->firstWhere('id', $selectedPatientId);
+            @endphp
+            @if($selectedPatient)
+                <div class="bg-gradient-to-r from-teal-50 to-blue-50 border-l-4 border-teal-500 rounded-xl p-6 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                                <i class="fas fa-user-circle text-teal-600"></i>
+                                Creating chart for: {{ $selectedPatient->full_name }}
+                            </h3>
+                            <p class="text-sm text-gray-600 mt-1">
+                                <i class="fas fa-id-badge text-gray-400 mr-1"></i>
+                                Patient ID: #{{ $selectedPatient->id }}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-birthday-cake text-gray-400 mr-1"></i>
+                                Age: {{ $selectedPatient->age }} years
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-venus-mars text-gray-400 mr-1"></i>
+                                {{ ucfirst($selectedPatient->gender) }}
+                            </p>
+                        </div>
+                        <a href="{{ route('patients.show', $selectedPatient) }}"
+                           class="text-sm text-teal-600 hover:text-teal-700 font-medium">
+                            <i class="fas fa-arrow-right mr-1"></i>
+                            View Profile
+                        </a>
+                    </div>
+                </div>
+            @endif
+        @endif
+
         <!-- Form Card -->
         <div class="bg-white rounded-2xl shadow-sm p-8">
             <form method="POST" action="{{ route('perio-charts.store') }}">
                 @csrf
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Patient Selection -->
-                    <div>
-                        <label for="patient_id" class="block text-sm font-medium text-gray-700 mb-2">
-                            Patient <span class="text-red-500">*</span>
-                        </label>
-                        <select id="patient_id"
-                                name="patient_id"
-                                required
-                                class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('patient_id') border-red-500 @enderror">
-                            <option value="">Select a patient...</option>
-                            @foreach($patients as $patient)
-                                <option value="{{ $patient->id }}"
-                                        {{ old('patient_id', $selectedPatientId) == $patient->id ? 'selected' : '' }}>
-                                    {{ $patient->full_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('patient_id')
-                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
+                <!-- Hidden input for pre-selected patient -->
+                @if($selectedPatientId)
+                    <input type="hidden" name="patient_id" value="{{ $selectedPatientId }}">
+                @endif
+
+                <div class="grid grid-cols-1 md:grid-cols-{{ $selectedPatientId ? '3' : '2' }} gap-6">
+                    <!-- Patient Selection (only show if not pre-selected) -->
+                    @if(!$selectedPatientId)
+                        <div>
+                            <label for="patient_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                Patient <span class="text-red-500">*</span>
+                            </label>
+                            <select id="patient_id"
+                                    name="patient_id"
+                                    required
+                                    class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 @error('patient_id') border-red-500 @enderror">
+                                <option value="">Select a patient...</option>
+                                @foreach($patients as $patient)
+                                    <option value="{{ $patient->id }}"
+                                            {{ old('patient_id') == $patient->id ? 'selected' : '' }}>
+                                        {{ $patient->full_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('patient_id')
+                                <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endif
 
                     <!-- Dentist Selection -->
                     <div>
@@ -135,13 +182,21 @@
 
                 <!-- Form Actions -->
                 <div class="mt-8 flex items-center justify-end gap-4">
-                    <a href="{{ route('perio-charts.index') }}" class="btn-modern btn-secondary">
-                        <i class="fas fa-times mr-2"></i>
-                        Cancel
-                    </a>
-                    <button type="submit" class="btn-modern btn-primary">
-                        <i class="fas fa-save mr-2"></i>
+                    @if($selectedPatientId)
+                        <a href="{{ route('patients.show', $selectedPatientId) }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </a>
+                    @else
+                        <a href="{{ route('perio-charts.index') }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </a>
+                    @endif
+                    <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-teal-600 to-teal-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-teal-700 hover:to-teal-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                        <i class="fas fa-check-circle mr-2"></i>
                         Create Chart
+                        <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
             </form>

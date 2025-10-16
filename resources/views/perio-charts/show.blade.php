@@ -3,24 +3,28 @@
         <!-- Header -->
         <div class="mb-6">
             <div class="flex items-center gap-4 mb-4">
-                <a href="{{ route('perio-charts.index') }}" class="text-gray-600 hover:text-gray-900">
-                    <i class="fas fa-arrow-left"></i>
+                <a href="{{ route('patients.perio-charts', $perioChart->patient) }}" class="text-gray-600 hover:text-gray-900 hover:scale-110 transition-transform duration-200">
+                    <i class="fas fa-arrow-left text-xl"></i>
                 </a>
                 <div class="flex-1">
                     <h2 class="font-bold text-3xl text-gray-900 leading-tight">
-                        <i class="fas fa-teeth-open text-blue-600 mr-3"></i>
+                        <i class="fas fa-teeth-open text-teal-600 mr-3"></i>
                         Periodontal Chart
                     </h2>
                     <p class="text-gray-600 mt-2">
-                        {{ $perioChart->patient->full_name }} - {{ \Carbon\Carbon::parse($perioChart->chart_date)->format('M d, Y') }}
+                        <i class="fas fa-user text-gray-400 mr-1"></i>
+                        {{ $perioChart->patient->full_name }}
+                        <span class="mx-2">•</span>
+                        <i class="fas fa-calendar text-gray-400 mr-1"></i>
+                        {{ \Carbon\Carbon::parse($perioChart->chart_date)->format('M d, Y') }}
                     </p>
                 </div>
-                <div class="flex gap-2">
-                    <a href="{{ route('perio-charts.edit', $perioChart) }}" class="btn-modern btn-primary inline-flex items-center">
+                <div class="flex gap-3">
+                    <a href="{{ route('perio-charts.edit', $perioChart) }}" class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
                         <i class="fas fa-edit mr-2"></i>
                         Edit
                     </a>
-                    <a href="{{ route('perio-charts.print', $perioChart) }}" class="btn-modern btn-secondary inline-flex items-center" target="_blank">
+                    <a href="{{ route('perio-charts.print', $perioChart) }}" class="inline-flex items-center px-5 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-purple-700 hover:to-purple-800 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5" target="_blank">
                         <i class="fas fa-print mr-2"></i>
                         Print
                     </a>
@@ -257,30 +261,104 @@
 
         <!-- Action Buttons -->
         <div class="flex justify-between items-center bg-white rounded-2xl shadow-sm p-6">
-            <a href="{{ route('perio-charts.index') }}" class="btn-modern btn-secondary">
+            <a href="{{ route('patients.perio-charts', $perioChart->patient) }}" class="inline-flex items-center px-5 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                 <i class="fas fa-arrow-left mr-2"></i>
-                Back to List
+                Back to Charts
             </a>
-            <div class="flex gap-2">
-                <a href="{{ route('perio-charts.edit', $perioChart) }}" class="btn-modern btn-primary">
+            <div class="flex gap-3">
+                <a href="{{ route('perio-charts.edit', $perioChart) }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
                     <i class="fas fa-edit mr-2"></i>
                     Edit Chart
+                    <i class="fas fa-arrow-right ml-2"></i>
                 </a>
-                <a href="{{ route('perio-charts.print', $perioChart) }}" class="btn-modern btn-secondary" target="_blank">
+                <a href="{{ route('perio-charts.print', $perioChart) }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-purple-700 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200" target="_blank">
                     <i class="fas fa-print mr-2"></i>
                     Print
+                    <i class="fas fa-external-link-alt ml-2 text-xs"></i>
                 </a>
-                <form action="{{ route('perio-charts.destroy', $perioChart) }}"
-                      method="POST"
-                      class="inline"
-                      onsubmit="return confirm('Are you sure you want to delete this perio chart? This action cannot be undone.');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn-modern bg-red-600 hover:bg-red-700 text-white">
+                <div x-data="{ showDeleteModal: false }">
+                    <button @click="showDeleteModal = true"
+                            class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
                         <i class="fas fa-trash mr-2"></i>
                         Delete
                     </button>
-                </form>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div x-show="showDeleteModal"
+                         x-cloak
+                         @click.self="showDeleteModal = false"
+                         class="fixed inset-0 z-50 overflow-y-auto"
+                         style="display: none;">
+                        <!-- Backdrop -->
+                        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity"></div>
+
+                        <!-- Modal Content -->
+                        <div class="flex min-h-screen items-center justify-center p-4">
+                            <div @click.away="showDeleteModal = false"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 transform scale-95"
+                                 x-transition:enter-end="opacity-100 transform scale-100"
+                                 class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-6">
+
+                                <!-- Warning Icon -->
+                                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+                                    <i class="fas fa-exclamation-triangle text-red-600 text-3xl"></i>
+                                </div>
+
+                                <!-- Title -->
+                                <h3 class="text-2xl font-bold text-gray-900 text-center mb-2">
+                                    Delete Periodontal Chart?
+                                </h3>
+
+                                <!-- Description -->
+                                <div class="mb-6 space-y-3">
+                                    <p class="text-gray-600 text-center">
+                                        You are about to permanently delete this periodontal chart:
+                                    </p>
+                                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-red-500">
+                                        <p class="text-sm text-gray-700">
+                                            <i class="fas fa-user text-blue-600 mr-2"></i>
+                                            <strong>Patient:</strong> {{ $perioChart->patient->full_name }}
+                                        </p>
+                                        <p class="text-sm text-gray-700 mt-1">
+                                            <i class="fas fa-calendar text-indigo-600 mr-2"></i>
+                                            <strong>Chart Date:</strong> {{ \Carbon\Carbon::parse($perioChart->chart_date)->format('F d, Y') }}
+                                        </p>
+                                        <p class="text-sm text-gray-700 mt-1">
+                                            <i class="fas fa-tooth text-purple-600 mr-2"></i>
+                                            <strong>Measurements:</strong> {{ $perioChart->measurements->count() }} teeth recorded
+                                        </p>
+                                    </div>
+                                    <p class="text-red-600 text-sm text-center font-semibold">
+                                        <i class="fas fa-exclamation-circle mr-1"></i>
+                                        This action cannot be undone. All measurements will be permanently deleted.
+                                    </p>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex gap-3">
+                                    <button @click="showDeleteModal = false"
+                                            type="button"
+                                            class="flex-1 inline-flex justify-center items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200">
+                                        <i class="fas fa-times mr-2"></i>
+                                        Cancel
+                                    </button>
+                                    <form action="{{ route('perio-charts.destroy', $perioChart) }}"
+                                          method="POST"
+                                          class="flex-1">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                                class="w-full inline-flex justify-center items-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                                            <i class="fas fa-trash mr-2"></i>
+                                            Delete Chart
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

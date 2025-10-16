@@ -31,8 +31,8 @@ php artisan key:generate
 **Key Differences from Local:**
 - `APP_ENV=staging`
 - `APP_DEBUG=true` (for testing)
-- `APP_URL=https://staging.dentistcms.com`
-- `APP_DOMAIN=staging.dentistcms.com`
+- `APP_URL=https://staging.dentalhub.com`
+- `APP_DOMAIN=staging.dentalhub.com`
 - `DB_CONNECTION=mysql`
 - `SESSION_DRIVER=database`
 - `SESSION_SECURE_COOKIE=true`
@@ -47,8 +47,8 @@ php artisan key:generate
 **Key Differences from Staging:**
 - `APP_ENV=production`
 - `APP_DEBUG=false` (security)
-- `APP_URL=https://dentistcms.com`
-- `APP_DOMAIN=dentistcms.com`
+- `APP_URL=https://dentalhub.com`
+- `APP_DOMAIN=dentalhub.com`
 - `LOG_LEVEL=error`
 - `SESSION_ENCRYPT=true`
 
@@ -56,12 +56,12 @@ php artisan key:generate
 
 ### Application
 ```env
-APP_NAME="Dentist CMS"           # Application name
+APP_NAME="Dental Hub"             # Application name
 APP_ENV=local                     # Environment: local, staging, production
 APP_KEY=                          # Encryption key (generate with: php artisan key:generate)
 APP_DEBUG=true                    # Show debug info (false in production)
 APP_URL=http://localhost          # Base URL
-APP_DOMAIN=dentistcms.test        # Domain for multi-tenancy
+APP_DOMAIN=dentalhub.test         # Domain for multi-tenancy
 ```
 
 ### Database
@@ -69,7 +69,7 @@ APP_DOMAIN=dentistcms.test        # Domain for multi-tenancy
 DB_CONNECTION=sqlite              # Database driver: sqlite, mysql
 DB_HOST=127.0.0.1                 # Database host
 DB_PORT=3306                      # Database port
-DB_DATABASE=dentistcms            # Database name
+DB_DATABASE=dentalhub             # Database name
 DB_USERNAME=root                  # Database username
 DB_PASSWORD=                      # Database password
 ```
@@ -77,7 +77,7 @@ DB_PASSWORD=                      # Database password
 ### Session
 ```env
 SESSION_DRIVER=file               # Session storage: file, database, redis
-SESSION_DOMAIN=null               # Cookie domain (.dentistcms.com for production)
+SESSION_DOMAIN=null               # Cookie domain (.dentalhub.com for production)
 SESSION_SECURE_COOKIE=false       # HTTPS only (true in production)
 ```
 
@@ -90,7 +90,7 @@ MAIL_USERNAME=your@email.com      # SMTP username
 MAIL_PASSWORD=app-password        # SMTP password
 MAIL_ENCRYPTION=tls               # Encryption: tls, ssl
 MAIL_FROM_ADDRESS=noreply@...     # Sender email
-MAIL_FROM_NAME="Dentist CMS"      # Sender name
+MAIL_FROM_NAME="Dental Hub"       # Sender name
 ```
 
 ## Deployment Workflow
@@ -210,9 +210,9 @@ To use Gmail for sending emails:
 
 The `APP_DOMAIN` variable is crucial for multi-tenancy:
 
-- **Local**: `dentistcms.test`
-- **Staging**: `staging.dentistcms.com`
-- **Production**: `dentistcms.com`
+- **Local**: `dentalhub.test`
+- **Staging**: `staging.dentalhub.com`
+- **Production**: `dentalhub.com`
 
 All tenants access the same domain. Tenant identification is handled via user login, not subdomains.
 

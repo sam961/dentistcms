@@ -154,10 +154,11 @@ class PerioChartController extends Controller
      */
     public function destroy(PerioChart $perioChart)
     {
+        $patientId = $perioChart->patient_id;
         $perioChart->delete();
 
         return redirect()
-            ->route('perio-charts.index')
+            ->route('patients.perio-charts', $patientId)
             ->with('success', 'Perio chart deleted successfully.');
     }
 
@@ -179,8 +180,8 @@ class PerioChartController extends Controller
         // Convert value based on field type
         $value = $validated['value'];
         if (in_array($validated['field'], ['bop_mb', 'bop_b', 'bop_db', 'bop_ml', 'bop_l', 'bop_dl',
-                                             'plaque_mb', 'plaque_b', 'plaque_db', 'plaque_ml', 'plaque_l', 'plaque_dl',
-                                             'missing', 'implant'])) {
+            'plaque_mb', 'plaque_b', 'plaque_db', 'plaque_ml', 'plaque_l', 'plaque_dl',
+            'missing', 'implant'])) {
             $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
         } elseif ($value === '' || $value === null) {
             $value = null;

@@ -75,4 +75,9 @@ class Patient extends Model
     {
         return $this->hasMany(TreatmentPlan::class);
     }
+
+    public function perioCharts()
+    {
+        return $this->hasMany(PerioChart::class)->latest('chart_date');
+    }
 }

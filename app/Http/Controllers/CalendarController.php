@@ -150,6 +150,7 @@ class CalendarController extends Controller
                                 'treatment' => $apt->treatments->first()?->name ?? $apt->type,
                                 'duration' => $apt->duration,
                                 'status' => $apt->status,
+                                'time' => $aptStart->format('g:i A'),
                                 'spans' => ceil($apt->duration / 15), // How many 15-min slots it spans
                             ];
                         }

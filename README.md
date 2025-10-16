@@ -1,4 +1,4 @@
-# Dental CMS - Comprehensive Practice Management System
+# Dental Hub - Comprehensive Practice Management System
 
 A modern, full-featured dental practice management system built with Laravel 12, designed to streamline clinic operations, patient management, and appointment scheduling.
 

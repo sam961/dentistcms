@@ -120,11 +120,21 @@
     </div>
 
 <style>
+    table {
+        border-collapse: collapse;
+    }
+
+    table td, table th {
+        box-sizing: border-box;
+    }
+
     .timeline-slot {
-        min-height: 40px;
+        height: 60px;
         border: 1px solid #e5e7eb;
         position: relative;
         transition: all 0.2s;
+        padding: 0 !important;
+        margin: 0;
     }
 
     .timeline-slot.occupied:hover {
@@ -142,19 +152,15 @@
     }
 
     .timeline-appointment {
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        right: 2px;
-        bottom: 2px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
         background-color: #ef4444;
         color: white;
+        padding: 6px 4px;
+        border-radius: 4px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
     }
 
     .time-header {
@@ -171,6 +177,11 @@
         background: white;
         z-index: 10;
         border-bottom: 2px solid #e5e7eb;
+    }
+
+    .dentist-header th {
+        white-space: nowrap;
+        box-sizing: border-box;
     }
 </style>
 
@@ -281,18 +292,18 @@
         }
 
         // Build timeline header with time slots
-        let html = '<table class="w-full border-collapse">';
+        let html = '<table class="w-full border-collapse" style="table-layout: fixed;">';
 
         // Time header row
         html += '<thead><tr class="dentist-header">';
-        html += '<th class="time-header p-3 text-left bg-gray-50 font-medium text-sm w-32">Doctor</th>';
+        html += '<th class="time-header p-3 text-left bg-gray-50 font-medium text-sm" style="width: 150px; min-width: 150px;">Doctor</th>';
 
         // Generate time headers (9 AM to 5 PM in 15-minute slots)
         for (let hour = 9; hour < 17; hour++) {
-            html += `<th class="p-2 text-center bg-gray-50 text-xs font-medium border-l">${hour}:00</th>`;
-            html += `<th class="p-2 text-center bg-gray-50 text-xs font-medium border-l">${hour}:15</th>`;
-            html += `<th class="p-2 text-center bg-gray-50 text-xs font-medium border-l">${hour}:30</th>`;
-            html += `<th class="p-2 text-center bg-gray-50 text-xs font-medium border-l">${hour}:45</th>`;
+            html += `<th class="text-left bg-gray-50 text-[10px] font-medium border-l pl-1 pr-0 py-1" style="width: 50px;">${hour}:00</th>`;
+            html += `<th class="text-left bg-gray-50 text-[10px] font-medium border-l pl-1 pr-0 py-1" style="width: 50px;">${hour}:15</th>`;
+            html += `<th class="text-left bg-gray-50 text-[10px] font-medium border-l pl-1 pr-0 py-1" style="width: 50px;">${hour}:30</th>`;
+            html += `<th class="text-left bg-gray-50 text-[10px] font-medium border-l border-r-2 pl-1 pr-0 py-1" style="width: 50px;">${hour}:45</th>`;
         }
         html += '</tr></thead><tbody>';
 
@@ -301,9 +312,9 @@
             html += '<tr class="border-t hover:bg-gray-50">';
 
             // Dentist info cell
-            html += `<td class="time-header p-3 bg-white border-r-2">
+            html += `<td class="time-header p-3 bg-white border-r-2" style="width: 150px;">
                 <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 rounded-full" style="background-color: ${dentistData.dentist.color}"></div>
+                    <div class="w-3 h-3 rounded-full flex-shrink-0" style="background-color: ${dentistData.dentist.color}"></div>
                     <div>
                         <div class="font-medium text-sm">${dentistData.dentist.name}</div>
                         <div class="text-xs text-gray-500">${dentistData.dentist.specialization}</div>
@@ -324,17 +335,18 @@
                     const spans = slot.appointment.spans || 1;
                     skipSlots = spans - 1;
 
-                    html += `<td colspan="${spans}" class="p-0 border-l relative">
-                        <div class="timeline-appointment cursor-pointer h-full flex items-center justify-center text-xs"
+                    html += `<td colspan="${spans}" class="p-0 border-l relative" style="width: ${spans * 50}px;">
+                        <div class="timeline-appointment cursor-pointer"
                              onclick="showAppointmentDetails(${JSON.stringify(slot.appointment).replace(/"/g, '&quot;')})">
                             <div class="text-center">
-                                <div class="font-medium">${slot.appointment.patient}</div>
-                                <div class="opacity-90">${slot.appointment.treatment}</div>
+                                <div class="font-semibold text-xs">${slot.appointment.patient}</div>
+                                <div class="text-[10px] opacity-90">${slot.appointment.treatment}</div>
+                                <div class="text-[10px] opacity-75">${slot.appointment.time || ''}</div>
                             </div>
                         </div>
                     </td>`;
                 } else {
-                    html += `<td class="timeline-slot available border-l"></td>`;
+                    html += `<td class="timeline-slot available border-l" style="width: 50px;"></td>`;
                 }
             });
 

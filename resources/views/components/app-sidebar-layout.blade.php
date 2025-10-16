@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Dentist CMS') }} - Modern Dental Practice Management</title>
+        <title>{{ config('app.name', 'Dental Hub') }} - Modern Dental Practice Management</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -35,7 +35,7 @@
                             <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
                                 <i class="fas fa-tooth text-blue-600 text-xl"></i>
                             </div>
-                            <span class="text-xl font-bold text-white">DentistCMS</span>
+                            <span class="text-xl font-bold text-white">Dental Hub</span>
                         </a>
                         <button @click="sidebarOpen = false" class="lg:hidden text-white hover:text-gray-200">
                             <i class="fas fa-times text-xl"></i>
@@ -101,12 +101,6 @@
                         <a href="{{ route('treatment-plans.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('treatment-plans.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
                             <i class="fas fa-clipboard-list w-5 h-5 mr-3 {{ request()->routeIs('treatment-plans.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
                             Treatment Plans
-                        </a>
-
-                        <!-- Perio Charts -->
-                        <a href="{{ route('perio-charts.index') }}" class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 {{ request()->routeIs('perio-charts.*') ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100' }}">
-                            <i class="fas fa-teeth-open w-5 h-5 mr-3 {{ request()->routeIs('perio-charts.*') ? 'text-white' : 'text-gray-400 group-hover:text-blue-600' }}"></i>
-                            Perio Charts
                         </a>
 
                         <!-- Invoices -->

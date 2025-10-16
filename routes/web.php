@@ -104,6 +104,7 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
     Route::get('/appointments/{appointment}/invoice', [InvoiceController::class, 'createForAppointment'])->name('appointments.create-invoice');
     Route::get('/patients/{patient}/appointments', [AppointmentController::class, 'patientAppointments'])->name('patients.appointments');
     Route::get('/patients/{patient}/medical-records', [MedicalRecordController::class, 'patientRecords'])->name('patients.medical-records');
+    Route::get('/patients/{patient}/perio-charts', [PatientController::class, 'perioCharts'])->name('patients.perio-charts');
     Route::get('/invoices/{invoice}/print', [InvoiceController::class, 'print'])->name('invoices.print');
     Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus'])->name('appointments.update-status');
 

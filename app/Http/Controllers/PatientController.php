@@ -7,9 +7,34 @@ use Illuminate\Http\Request;
 
 class PatientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $patients = Patient::latest()->paginate(10);
+        $query = Patient::query();
+
+        // Search functionality
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('id', 'like', "%{$search}%")
+                    ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$search}%"]);
+            });
+        }
+
+        // Gender filter
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->gender);
+        }
+
+        // City filter
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+
+        $patients = $query->latest()->paginate(10)->withQueryString();
 
         return view('patients.index', compact('patients'));
     }
@@ -48,7 +73,7 @@ class PatientController extends Controller
 
     public function show(Patient $patient)
     {
-        $patient->load(['appointments.dentist', 'invoices', 'medicalRecords.dentist']);
+        $patient->load(['appointments.dentist', 'invoices', 'medicalRecords.dentist', 'perioCharts.dentist']);
 
         return view('patients.show', compact('patient'));
     }
@@ -91,5 +116,12 @@ class PatientController extends Controller
 
         return redirect()->route('patients.index')
             ->with('success', 'Patient deleted successfully.');
+    }
+
+    public function perioCharts(Patient $patient)
+    {
+        $patient->load(['perioCharts.dentist']);
+
+        return view('patients.perio-charts', compact('patient'));
     }
 }

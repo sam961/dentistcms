@@ -8,7 +8,7 @@
         </h2>
         <p class="text-gray-600 mt-2">Interactive dental chart showing tooth conditions and treatment history</p>
     </div>
-            <a href="{{ route('patients.show', $patient) }}" class="btn-modern btn-secondary inline-flex items-center">
+            <a href="{{ route('patients.show', $patient) }}" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to Patient Profile
             </a>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="mb-4 flex flex-wrap gap-2">
-        <button onclick="toggleChartType()" class="btn-modern btn-secondary text-sm">
+        <button onclick="toggleChartType()" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 border border-transparent rounded-lg font-semibold text-sm text-white hover:from-indigo-700 hover:to-purple-700 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-0.5">
             <i class="fas fa-exchange-alt mr-2"></i>
             Switch to Primary Teeth
         </button>
@@ -158,26 +158,40 @@
                         @php
                             $records = $toothRecords->get((string)$i);
                             $recordCount = $records ? $records->count() : 0;
+                            $imageCount = \App\Models\DentalImage::where('patient_id', $patient->id)->where('tooth_number', $i)->count();
                             $toothData = $records?->first();
                             $condition = $toothData?->condition ?? 'healthy';
                             $color = \App\Models\ToothRecord::getConditionColor($condition);
                         @endphp
-                        <div class="tooth-container">
+                        <div class="tooth-container flex flex-col items-center gap-1.5">
                             <button
                                 onclick="selectTooth('{{ $i }}', '{{ $condition }}', {{ $recordCount }})"
-                                class="tooth tooth-{{ $color }} relative hover:scale-110 transition-all duration-200 hover:shadow-lg"
+                                class="tooth tooth-{{ $color }} hover:scale-110 transition-all duration-200 hover:shadow-lg"
                                 data-tooth="{{ $i }}"
                                 data-condition="{{ $condition }}"
                                 data-record-count="{{ $recordCount }}"
-                                title="Tooth #{{ $i }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}{{ $recordCount > 0 ? ' ('.$recordCount.' record'.($recordCount > 1 ? 's' : '').')' : '' }}"
+                                title="Tooth #{{ $i }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}"
                             >
                                 <span class="tooth-number">{{ $i }}</span>
-                                @if($recordCount > 0)
-                                    <span class="absolute -bottom-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-600 text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center shadow-md">
-                                        {{ $recordCount }}
-                                    </span>
-                                @endif
                             </button>
+
+                            <!-- Info Chips Below Tooth -->
+                            @if($recordCount > 0 || $imageCount > 0)
+                                <div class="flex flex-col gap-1">
+                                    @if($recordCount > 0)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-blue-600 text-white shadow-md hover:shadow-lg transition-shadow">
+                                            <i class="fas fa-file-medical text-sm mr-1"></i>
+                                            {{ $recordCount }}
+                                        </span>
+                                    @endif
+                                    @if($imageCount > 0)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-purple-600 text-white shadow-md hover:shadow-lg transition-shadow">
+                                            <i class="fas fa-image text-sm mr-1"></i>
+                                            {{ $imageCount }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     @endfor
                 </div>
@@ -190,25 +204,39 @@
                         @php
                             $records = $toothRecords->get((string)$i);
                             $recordCount = $records ? $records->count() : 0;
+                            $imageCount = \App\Models\DentalImage::where('patient_id', $patient->id)->where('tooth_number', $i)->count();
                             $toothData = $records?->first();
                             $condition = $toothData?->condition ?? 'healthy';
                             $color = \App\Models\ToothRecord::getConditionColor($condition);
                         @endphp
-                        <div class="tooth-container">
+                        <div class="tooth-container flex flex-col items-center gap-1.5">
+                            <!-- Info Chips Above Tooth (for lower teeth) -->
+                            @if($recordCount > 0 || $imageCount > 0)
+                                <div class="flex flex-col gap-1">
+                                    @if($recordCount > 0)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-blue-600 text-white shadow-md hover:shadow-lg transition-shadow">
+                                            <i class="fas fa-file-medical text-sm mr-1"></i>
+                                            {{ $recordCount }}
+                                        </span>
+                                    @endif
+                                    @if($imageCount > 0)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-purple-600 text-white shadow-md hover:shadow-lg transition-shadow">
+                                            <i class="fas fa-image text-sm mr-1"></i>
+                                            {{ $imageCount }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
+
                             <button
                                 onclick="selectTooth('{{ $i }}', '{{ $condition }}', {{ $recordCount }})"
-                                class="tooth tooth-{{ $color }} relative hover:scale-110 transition-all duration-200 hover:shadow-lg"
+                                class="tooth tooth-{{ $color }} hover:scale-110 transition-all duration-200 hover:shadow-lg"
                                 data-tooth="{{ $i }}"
                                 data-condition="{{ $condition }}"
                                 data-record-count="{{ $recordCount }}"
-                                title="Tooth #{{ $i }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}{{ $recordCount > 0 ? ' ('.$recordCount.' record'.($recordCount > 1 ? 's' : '').')' : '' }}"
+                                title="Tooth #{{ $i }} - {{ ucfirst(str_replace('_', ' ', $condition)) }}"
                             >
                                 <span class="tooth-number">{{ $i }}</span>
-                                @if($recordCount > 0)
-                                    <span class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-blue-600 text-white text-[10px] font-bold rounded-full border-2 border-white flex items-center justify-center shadow-md">
-                                        {{ $recordCount }}
-                                    </span>
-                                @endif
                             </button>
                         </div>
                     @endfor
@@ -299,12 +327,13 @@
                 <!-- History will be loaded here -->
             </div>
 
-            <div class="mt-6 flex justify-end gap-2">
-                <button onclick="openAddRecordForm()" class="btn-modern btn-primary">
-                    <i class="fas fa-plus mr-2"></i>
+            <div class="mt-6 flex justify-end gap-3">
+                <button onclick="openAddRecordForm()" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                    <i class="fas fa-plus-circle mr-2"></i>
                     Add Record
                 </button>
-                <button onclick="closeToothModal()" class="btn-modern btn-secondary">
+                <button onclick="closeToothModal()" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                    <i class="fas fa-times mr-2"></i>
                     Close
                 </button>
             </div>
@@ -366,11 +395,14 @@
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end gap-2">
-                    <button type="submit" class="btn-modern btn-primary">
+                <div class="mt-6 flex justify-end gap-3">
+                    <button type="submit" class="inline-flex items-center px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 border border-transparent rounded-xl font-semibold text-sm text-white hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                        <i class="fas fa-check-circle mr-2"></i>
                         Save Record
+                        <i class="fas fa-arrow-right ml-2"></i>
                     </button>
-                    <button type="button" onclick="closeAddRecordForm()" class="btn-modern btn-secondary">
+                    <button type="button" onclick="closeAddRecordForm()" class="inline-flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-xl font-semibold text-sm text-gray-700 transition-all duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                        <i class="fas fa-times mr-2"></i>
                         Cancel
                     </button>
                 </div>

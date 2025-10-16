@@ -9,7 +9,7 @@
                         <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
                             <i class="fas fa-tooth text-blue-600 text-xl"></i>
                         </div>
-                        <span class="text-xl font-bold text-white">Dentist CMS</span>
+                        <span class="text-xl font-bold text-white">Dental Hub</span>
                     </a>
                 </div>
 
@@ -65,10 +65,6 @@
                         <x-nav-link :href="route('treatment-plans.index')" :active="request()->routeIs('treatment-plans.*')" class="nav-link-modern">
                             <i class="fas fa-clipboard-list mr-2"></i>
                             {{ __('Treatment Plans') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('perio-charts.index')" :active="request()->routeIs('perio-charts.*')" class="nav-link-modern">
-                            <i class="fas fa-teeth-open mr-2"></i>
-                            {{ __('Perio Charts') }}
                         </x-nav-link>
                         <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')" class="nav-link-modern">
                             <i class="fas fa-file-invoice-dollar mr-2"></i>

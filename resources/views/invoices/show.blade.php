@@ -29,7 +29,7 @@
                             <p class="text-lg text-indigo-600 font-semibold mt-2">{{ $invoice->invoice_number }}</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-2xl font-bold text-gray-900">Dentist CMS</div>
+                            <div class="text-2xl font-bold text-gray-900">Dental Hub</div>
                             <p class="text-sm text-gray-600 mt-1">Dental Practice Management</p>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-2
                                 {{ $invoice->status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
