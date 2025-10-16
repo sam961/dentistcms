@@ -65,4 +65,9 @@ class Patient extends Model
     {
         return $this->date_of_birth->age;
     }
+
+    public function treatmentPlans()
+    {
+        return $this->hasMany(TreatmentPlan::class);
+    }
 }

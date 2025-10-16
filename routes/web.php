@@ -17,6 +17,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\TreatmentController;
+use App\Http\Controllers\TreatmentPlanController;
 use Illuminate\Support\Facades\Route;
 
 // ===================================================================
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
     Route::resource('dentists', DentistController::class);
     Route::resource('appointments', AppointmentController::class);
     Route::resource('treatments', TreatmentController::class);
+    Route::resource('treatment-plans', TreatmentPlanController::class);
     Route::resource('invoices', InvoiceController::class);
     Route::resource('medical-records', MedicalRecordController::class);
 
@@ -107,6 +109,12 @@ Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->gr
     Route::get('/patients/{patient}/dental-chart', [DentalChartController::class, 'show'])->name('patients.dental-chart');
     Route::get('/patients/{patient}/dental-chart/tooth/{toothNumber}', [DentalChartController::class, 'getToothHistory'])->name('patients.dental-chart.tooth');
     Route::post('/patients/{patient}/dental-chart/tooth/{toothNumber}', [DentalChartController::class, 'updateTooth'])->name('patients.dental-chart.update');
+
+    // Treatment Plan additional routes
+    Route::post('/treatment-plans/{treatmentPlan}/status/{status}', [TreatmentPlanController::class, 'updateStatus'])->name('treatment-plans.update-status');
+    Route::post('/treatment-plans/{treatmentPlan}/items', [TreatmentPlanController::class, 'addItem'])->name('treatment-plans.add-item');
+    Route::delete('/treatment-plans/{treatmentPlan}/items/{item}', [TreatmentPlanController::class, 'removeItem'])->name('treatment-plans.remove-item');
+    Route::post('/treatment-plans/{treatmentPlan}/items/{item}/status/{status}', [TreatmentPlanController::class, 'updateItemStatus'])->name('treatment-plans.update-item-status');
 
     // Calendar routes
     Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
