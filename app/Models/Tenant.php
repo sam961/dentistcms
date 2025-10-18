@@ -9,6 +9,24 @@ class Tenant extends Model
 {
     use HasFactory;
 
+    /**
+     * Boot the model and configure cascade deletes
+     */
+    protected static function boot(): void
+    {
+        parent::boot();
+
+        static::deleting(function (Tenant $tenant) {
+            // Delete all related records when tenant is deleted
+            $tenant->users()->delete();
+            $tenant->patients()->delete();
+            $tenant->dentists()->delete();
+            $tenant->appointments()->delete();
+            $tenant->invoices()->delete();
+            $tenant->subscriptionHistory()->delete();
+        });
+    }
+
     protected $fillable = [
         'name',
         'subdomain',
