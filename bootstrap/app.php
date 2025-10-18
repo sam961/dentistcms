@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
             'regular_user' => \App\Http\Middleware\EnsureRegularUser::class,
             'check_subscription' => \App\Http\Middleware\CheckSubscriptionStatus::class,
+            'verified' => \App\Http\Middleware\EnsureEmailIsVerifiedOrSuperAdmin::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
