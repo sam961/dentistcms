@@ -16,14 +16,14 @@ class AdminUserSeeder extends Seeder
         // Create admin user
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@dentistcms.com',
+            'email' => 'sam.00961@gmail.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
             'email_verified_at' => now(),
         ]);
 
         $this->command->info('Admin user created successfully!');
-        $this->command->info('Email: admin@dentistcms.com');
+        $this->command->info('Email: sam.00961@gmail.com');
         $this->command->info('Password: password');
     }
 }
