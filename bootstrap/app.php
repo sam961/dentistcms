@@ -13,14 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
-            'tenant_user' => \App\Http\Middleware\EnsureTenantUser::class,
-            'identify_tenant' => \App\Http\Middleware\IdentifyTenant::class,
+            'regular_user' => \App\Http\Middleware\EnsureRegularUser::class,
             'check_subscription' => \App\Http\Middleware\CheckSubscriptionStatus::class,
-        ]);
-
-        // Apply tenant identification to all web requests
-        $middleware->web(append: [
-            \App\Http\Middleware\IdentifyTenant::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -76,12 +76,12 @@ Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('a
 // ===================================================================
 
 // Subscription expired page - accessible without subscription check
-Route::middleware(['auth', 'verified', 'tenant_user'])->get('/subscription-expired', function () {
+Route::middleware(['auth', 'verified', 'regular_user'])->get('/subscription-expired', function () {
     return view('subscription-expired');
 })->name('subscription.expired');
 
 // Main tenant CMS routes - require authentication and active subscription
-Route::middleware(['auth', 'verified', 'tenant_user', 'check_subscription'])->group(function () {
+Route::middleware(['auth', 'verified', 'regular_user', 'check_subscription'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
