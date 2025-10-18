@@ -34,8 +34,8 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        // Check if email is verified
-        if (! $user->hasVerifiedEmail()) {
+        // Check if email is verified (skip for super admins)
+        if (! $user->hasVerifiedEmail() && ! $user->isSuperAdmin()) {
             // Send verification link
             $verificationCode = \App\Models\VerificationCode::createFor(
                 $user,
