@@ -16,9 +16,11 @@ class DatabaseSeeder extends Seeder
         // Create super admin user
         User::create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@dentistcms.com',
+            'email' => 'sam.00961@gmail.com',
             'password' => bcrypt('password'),
             'role' => 'super_admin',
+            'is_super_admin' => true,
+            'email_verified_at' => now(),
         ]);
 
         // Create admin user
