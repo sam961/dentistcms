@@ -1,4 +1,5 @@
 <?php
+
 /**
  * GitHub Webhook Handler for Auto-Deployment
  *
@@ -16,25 +17,25 @@ $payload = file_get_contents('php://input');
 $signature = $_SERVER['HTTP_X_HUB_SIGNATURE_256'] ?? '';
 
 // Verify GitHub signature
-if (!verifySignature($payload, $signature, SECRET_TOKEN)) {
+if (! verifySignature($payload, $signature, SECRET_TOKEN)) {
     http_response_code(403);
     logMessage('ERROR: Invalid signature');
-    die('Invalid signature');
+    exit('Invalid signature');
 }
 
 // Parse the payload
 $data = json_decode($payload, true);
 
-if (!$data) {
+if (! $data) {
     http_response_code(400);
     logMessage('ERROR: Invalid JSON payload');
-    die('Invalid payload');
+    exit('Invalid payload');
 }
 
 // Check if this is a push event
-if (!isset($_SERVER['HTTP_X_GITHUB_EVENT']) || $_SERVER['HTTP_X_GITHUB_EVENT'] !== 'push') {
+if (! isset($_SERVER['HTTP_X_GITHUB_EVENT']) || $_SERVER['HTTP_X_GITHUB_EVENT'] !== 'push') {
     logMessage('INFO: Received non-push event, ignoring');
-    die('Not a push event');
+    exit('Not a push event');
 }
 
 // Get the branch name
@@ -44,7 +45,7 @@ logMessage("INFO: Received push to branch: {$branch}");
 // Only deploy from main branch
 if ($branch !== 'main') {
     logMessage("INFO: Branch '{$branch}' is not configured for deployment");
-    die('Only main branch triggers deployment');
+    exit('Only main branch triggers deployment');
 }
 
 $scriptToRun = DEPLOY_SCRIPT;
@@ -82,7 +83,7 @@ if (file_exists($scriptToRun)) {
 } else {
     logMessage("ERROR: Deployment script not found: {$scriptToRun}");
     http_response_code(500);
-    die('Deployment script not found');
+    exit('Deployment script not found');
 }
 
 /**
@@ -94,7 +95,8 @@ function verifySignature(string $payload, string $signature, string $secret): bo
         return false;
     }
 
-    $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+    $expectedSignature = 'sha256='.hash_hmac('sha256', $payload, $secret);
+
     return hash_equals($expectedSignature, $signature);
 }
 
@@ -108,7 +110,7 @@ function logMessage(string $message): void
 
     // Ensure log directory exists
     $logDir = dirname(LOG_FILE);
-    if (!is_dir($logDir)) {
+    if (! is_dir($logDir)) {
         mkdir($logDir, 0755, true);
     }
 

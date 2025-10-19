@@ -26,8 +26,6 @@ use Illuminate\Support\Facades\Route;
 // PUBLIC ROUTES - Landing Pages
 // ===================================================================
 Route::get('/', [LandingController::class, 'index'])->name('landing.index');
-Route::get('/features', [LandingController::class, 'features'])->name('landing.features');
-Route::get('/pricing', [LandingController::class, 'pricing'])->name('landing.pricing');
 Route::get('/contact', [LandingController::class, 'contact'])->name('landing.contact');
 Route::post('/contact', [LandingController::class, 'submitContact'])->name('landing.contact.submit');
 

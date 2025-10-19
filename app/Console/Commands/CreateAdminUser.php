@@ -51,14 +51,16 @@ class CreateAdminUser extends Command
         if ($validator->fails()) {
             $this->error('Validation failed:');
             foreach ($validator->errors()->all() as $error) {
-                $this->error('  - ' . $error);
+                $this->error('  - '.$error);
             }
+
             return self::FAILURE;
         }
 
         // Check password confirmation
         if ($password !== $passwordConfirmation) {
             $this->error('Passwords do not match!');
+
             return self::FAILURE;
         }
 

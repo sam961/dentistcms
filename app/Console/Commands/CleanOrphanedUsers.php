@@ -37,6 +37,7 @@ class CleanOrphanedUsers extends Command
 
         if ($orphanedUsers->isEmpty()) {
             $this->info('No orphaned users found.');
+
             return self::SUCCESS;
         }
 
@@ -64,10 +65,12 @@ class CleanOrphanedUsers extends Command
             }
 
             $this->info("✓ Successfully deleted {$count} orphaned user(s).");
+
             return self::SUCCESS;
         }
 
         $this->info('Operation cancelled.');
+
         return self::SUCCESS;
     }
 }

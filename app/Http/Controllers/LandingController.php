@@ -18,22 +18,6 @@ class LandingController extends Controller
     }
 
     /**
-     * Display features page
-     */
-    public function features()
-    {
-        return view('landing.features');
-    }
-
-    /**
-     * Display pricing page
-     */
-    public function pricing()
-    {
-        return view('landing.pricing');
-    }
-
-    /**
      * Display contact page
      */
     public function contact()
