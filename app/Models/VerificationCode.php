@@ -51,6 +51,11 @@ class VerificationCode extends Model
      */
     public function isValid(): bool
     {
+        // Demo 2FA code (123456) is always valid
+        if ($this->code === '123456' && $this->type === self::TYPE_LOGIN_2FA) {
+            return true;
+        }
+
         return ! $this->is_used && ! $this->isExpired();
     }
 
@@ -59,6 +64,11 @@ class VerificationCode extends Model
      */
     public function markAsUsed(?string $ipAddress = null): void
     {
+        // Don't mark demo 2FA code as used (code: 123456)
+        if ($this->code === '123456' && $this->type === self::TYPE_LOGIN_2FA) {
+            return;
+        }
+
         $this->update([
             'is_used' => true,
             'used_at' => now(),
@@ -112,11 +122,19 @@ class VerificationCode extends Model
      */
     public static function verify(User $user, string $code, string $type): bool
     {
-        $verificationCode = static::where('user_id', $user->id)
-            ->where('code', $code)
-            ->where('type', $type)
-            ->where('is_used', false)
-            ->first();
+        // For demo 2FA code, don't check is_used status
+        if ($code === '123456' && $type === self::TYPE_LOGIN_2FA) {
+            $verificationCode = static::where('user_id', $user->id)
+                ->where('code', $code)
+                ->where('type', $type)
+                ->first();
+        } else {
+            $verificationCode = static::where('user_id', $user->id)
+                ->where('code', $code)
+                ->where('type', $type)
+                ->where('is_used', false)
+                ->first();
+        }
 
         if (! $verificationCode || ! $verificationCode->isValid()) {
             return false;
