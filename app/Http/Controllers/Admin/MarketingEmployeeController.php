@@ -76,14 +76,16 @@ class MarketingEmployeeController extends Controller
         $totalRevenue = $marketingEmployee->total_revenue;
         $totalCommissions = $marketingEmployee->total_commissions;
 
-        // Monthly acquisitions (last 6 months)
-        $monthlyData = $marketingEmployee->tenants()
-            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+        // Monthly acquisitions (last 6 months) - Database agnostic approach
+        $recentTenants = $marketingEmployee->tenants()
             ->where('created_at', '>=', now()->subMonths(6))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->pluck('count', 'month');
+            ->get();
+
+        $monthlyData = $recentTenants->groupBy(function ($tenant) {
+            return $tenant->created_at->format('Y-m');
+        })->map(function ($group) {
+            return $group->count();
+        });
 
         return view('admin.marketing-employees.show', compact(
             'marketingEmployee',
