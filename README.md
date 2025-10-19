@@ -1,438 +1,482 @@
-# Dental Hub - Comprehensive Practice Management System
+# Dental CMS - Multi-Tenant Practice Management System
 
-A modern, full-featured dental practice management system built with Laravel 12, designed to streamline clinic operations, patient management, and appointment scheduling.
+A modern, full-featured dental practice management system built with **Laravel 12** and **multi-tenant architecture**. Each dental clinic gets their own isolated environment with a unique subdomain.
 
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat-square&logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.4.1-777BB4?style=flat-square&logo=php)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-3.x-38B2AC?style=flat-square&logo=tailwind-css)
 ![Alpine.js](https://img.shields.io/badge/Alpine.js-3.x-8BC0D0?style=flat-square&logo=alpine.js)
 
-## Table of Contents
+---
 
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Key Features Deep Dive](#key-features-deep-dive)
-- [Industry Standards & Roadmap](#industry-standards--roadmap)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
+## 🎯 Project Overview
 
-## Features
+This is a comprehensive **SaaS dental practice management system** with:
+- **Multi-tenancy**: Each clinic gets a subdomain (e.g., `clinic1.yourdomain.com`)
+- **Patient Management**: Complete patient profiles with medical history
+- **Appointment Scheduling**: Real-time availability with conflict detection
+- **Dentist Management**: Staff profiles and schedules
+- **Treatment Catalog**: Service management with pricing
+- **Invoice & Billing**: Payment tracking and reporting
+- **Super Admin Panel**: Subscription management and system monitoring
+- **Demo Account**: Live demo with auto-reset every hour
 
-### Patient Management
-- **Comprehensive Patient Profiles**: Complete patient records with personal information, medical history, and contact details
-- **Nationality Support**: Searchable Select2 dropdown with 190+ nationalities
-- **Flexible Contact Information**: Optional email, address, and city fields for improved data collection
-- **Emergency Contacts**: Store emergency contact information for each patient
-- **Medical History Tracking**: Detailed medical history, allergies, and current medications
-- **Visit History**: Complete treatment and visit history for each patient
+---
 
-### Appointment System
-- **Multi-Step Booking Process**: Intuitive 3-step appointment creation and editing
-  1. Basic Information (patient, dentist, treatment selection)
-  2. Time Selection (real-time availability checking)
-  3. Review and Confirmation
-- **Real-Time Availability**: Live checking of available time slots based on dentist schedules
-- **Conflict Prevention**: Duration-based overlap detection prevents double-bookings
-- **Time Slot Management**: 30-minute intervals from 9 AM to 5 PM
-- **Weekend Blocking**: Automatically excludes weekends from available slots
-- **Status Management**: Tag-based filtering (scheduled, confirmed, in_progress, completed, cancelled, no_show)
-- **Calendar Integration**: Flatpickr calendar widget for seamless date selection
-- **Smart Editing**: Excludes current appointment when checking for conflicts during edits
+## 🏗️ Architecture
 
-### Dentist Management
-- **Staff Profiles**: Complete dentist information with specializations
-- **Schedule Management**: Define working hours and availability
-- **Specialization Tracking**: Track dentist specialties and expertise areas
-- **Performance Metrics**: View appointment and treatment statistics per dentist
+### Multi-Tenant Structure
+```
+yourdomain.com/admin          → Super Admin Panel
+demo.yourdomain.com           → Demo Account (resets hourly)
+clinic1.yourdomain.com        → Tenant 1
+clinic2.yourdomain.com        → Tenant 2
+...
+```
 
-### Treatment Catalog
-- **Service Management**: Comprehensive treatment catalog with descriptions
-- **Pricing Configuration**: Set and manage treatment prices
-- **Duration Tracking**: Define expected duration for each treatment type
-- **Treatment Categories**: Organize treatments by categories
+### Technology Stack
+- **Backend**: Laravel 12, PHP 8.4.1
+- **Frontend**: Tailwind CSS 3.x, Alpine.js 3.x
+- **Database**: MySQL/PostgreSQL (production), SQLite (testing)
+- **Authentication**: Laravel Breeze with 2FA
+- **Deployment**: Namecheap hosting, GoDaddy domain
 
-### Invoice & Billing
-- **Invoice Generation**: Automatic invoice creation from appointments
-- **Payment Tracking**: Record and track payments
-- **Payment Status**: Monitor paid, pending, and overdue invoices
-- **Payment Methods**: Support for multiple payment methods (cash, card, transfer)
-- **Financial Reports**: Generate revenue and payment reports
+---
 
-### Notifications System
-- **Real-Time Notifications**: In-app notification system for important events
-- **Unread Counter**: Visual indicator for unread notifications in header
-- **Notification Center**: Dedicated page to view all notifications
-- **Mark as Read**: Individual and bulk mark-as-read functionality
-- **Notification Types**: Appointment reminders, payment notifications, system alerts
+## 🚀 Quick Start
 
-### Super Admin Dashboard
-- **Subscription Analytics**: Comprehensive subscription metrics and insights
-- **Error Log Management**: Track and resolve application errors
-- **User Management**: Manage clinic users and permissions
-- **System Monitoring**: Monitor application health and performance
-- **Activity Logs**: Track user actions and system events
+### For Local Development
 
-### Modern UI/UX
-- **Responsive Design**: Fully responsive across all device sizes
-- **Tailwind CSS**: Modern utility-first CSS framework
-- **Alpine.js**: Lightweight JavaScript framework for interactivity
-- **Font Awesome Icons**: Comprehensive icon library
-- **Success Notifications**: Consistent notification design with green alerts
-- **3-Line Headers**: Modern header design with icons and descriptions
-- **Card-Based Layout**: Clean, modern card-based UI components
-
-## Technology Stack
-
-### Backend
-- **PHP**: 8.4.1
-- **Laravel Framework**: 12.x
-- **Laravel Breeze**: 2.x (Authentication scaffolding)
-- **Laravel Pint**: 1.x (Code formatting)
-- **Laravel Sail**: 1.x (Docker development environment)
-- **PHPUnit**: 11.x (Testing framework)
-
-### Frontend
-- **Tailwind CSS**: 3.x
-- **Alpine.js**: 3.x
-- **Flatpickr**: Date/time picker
-- **Select2**: Enhanced select dropdowns
-- **Font Awesome**: Icon library
-- **Chart.js**: Data visualization (for analytics)
-
-### Database
-- **MySQL**: 8.x (Production)
-- **SQLite**: (Testing)
-
-### Development Tools
-- **Vite**: Fast frontend build tool
-- **Laravel Debugbar**: Development debugging
-- **Composer**: PHP dependency management
-- **NPM**: JavaScript package management
-
-## Installation
-
-### Prerequisites
-- PHP >= 8.4.1
-- Composer
-- Node.js & NPM
-- MySQL or MariaDB
-- Git
-
-### Step 1: Clone the Repository
 ```bash
-git clone git@github.com:sam961/dentistcms.git
+# Clone repository
+git clone https://github.com/sam961/dentistcms.git
 cd dentistcms
-```
 
-### Step 2: Install Dependencies
-```bash
-# Install PHP dependencies
+# Install dependencies
 composer install
-
-# Install JavaScript dependencies
 npm install
-```
 
-### Step 3: Environment Configuration
-```bash
-# Copy environment file
+# Setup environment
 cp .env.example .env
-
-# Generate application key
 php artisan key:generate
-```
 
-### Step 4: Database Setup
-```bash
-# Update .env with your database credentials
+# Configure database in .env
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=dentist_cms
+DB_DATABASE=your_database
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 
 # Run migrations
 php artisan migrate
 
-# (Optional) Seed the database with sample data
-php artisan db:seed
-```
-
-### Step 5: Build Frontend Assets
-```bash
-# Development build
+# Build assets
 npm run dev
 
-# Production build
-npm run build
-```
-
-### Step 6: Start Development Server
-```bash
+# Start server
 php artisan serve
 ```
 
-Visit `http://localhost:8000` in your browser.
+Visit: `http://localhost:8000`
 
-## Configuration
+### For Production Deployment (Cloud)
 
-### Mail Configuration
-Configure your mail settings in `.env` for appointment reminders and notifications:
+After uploading to your server via SSH:
+
+```bash
+# 1. Run migrations
+php artisan migrate --force
+
+# 2. Create super admin
+php artisan setup:superadmin
+
+# 3. (Optional) Setup demo account
+php artisan setup:demo
+
+# 4. Add cron job (for scheduled tasks)
+* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+---
+
+## ⚙️ Important Configuration
+
+### Environment Variables (.env)
+
 ```env
+# Application
+APP_NAME="Dental CMS"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+APP_DOMAIN=yourdomain.com              # Your base domain (NO http/https)
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# Session (CRITICAL for multi-tenant subdomains)
+SESSION_DRIVER=database
+SESSION_DOMAIN=.yourdomain.com         # Note the leading dot!
+SESSION_SECURE_COOKIE=true
+
+# Mail (for 2FA and notifications)
 MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailtrap.io
-MAIL_PORT=2525
-MAIL_USERNAME=your_username
+MAIL_HOST=smtp.yourdomain.com
+MAIL_PORT=587
+MAIL_USERNAME=noreply@yourdomain.com
 MAIL_PASSWORD=your_password
 MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=noreply@dentalcms.com
-MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-### Queue Configuration
-For handling background jobs (notifications, emails):
+### DNS Configuration (GoDaddy)
+
+For multi-tenant subdomains to work, add these **A records** at GoDaddy:
+
+```
+Type   Host     Value (Namecheap Server IP)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+A      @        123.45.67.89
+A      www      123.45.67.89
+A      demo     123.45.67.89
+A      *        123.45.67.89  ← WILDCARD (enables all subdomains)
+```
+
+The **wildcard (`*`)** is essential for tenant subdomains to work.
+
+---
+
+## 🎭 Demo Account
+
+The system includes a fully-functional demo account:
+
+- **URL**: `demo.yourdomain.com`
+- **Email**: `demo@dentistcms.com`
+- **Password**: `demo123456`
+- **2FA Code**: `123456` (static, reusable)
+
+**Features:**
+- Pre-loaded with 30 patients, 3 dentists, 60 appointments
+- Auto-resets every hour to maintain clean demo environment
+- Fully functional - test all features
+
+**Setup Demo:**
 ```bash
-# Run queue worker
-php artisan queue:work
-
-# Or use Laravel Horizon for advanced queue management
-composer require laravel/horizon
-php artisan horizon:install
-php artisan horizon
+php artisan setup:demo
 ```
 
-### File Storage
-Configure file storage for patient documents:
+---
+
+## 👤 Super Admin
+
+Create super admin account for managing the entire system:
+
 ```bash
-php artisan storage:link
+php artisan setup:superadmin
 ```
 
-## Usage
+**Super Admin Panel:**
+- URL: `https://yourdomain.com/admin`
+- Manage all tenants (dental clinics)
+- View subscription analytics
+- Monitor system errors
+- Track marketing employees
 
-### Default User Accounts
-After seeding, you can log in with:
+---
 
-**Admin Account:**
-- Email: admin@example.com
-- Password: password
+## 📋 Core Features
 
-**Dentist Account:**
-- Email: dentist@example.com
-- Password: password
+### Patient Management
+✅ Complete patient profiles with medical history  
+✅ Nationality support (190+ countries)  
+✅ Emergency contacts  
+✅ Allergies and current medications tracking  
+✅ Visit history  
 
-### Creating Your First Patient
-1. Navigate to **Patients** → **Add New Patient**
-2. Fill in patient information (required fields: name, date of birth, gender, phone)
-3. Add optional information (email, address, nationality, medical history)
-4. Click **Create Patient**
+### Appointment System
+✅ Multi-step booking (Basic Info → Time Selection → Review)  
+✅ Real-time availability checking  
+✅ Duration-based conflict detection  
+✅ 30-minute time slots (9 AM - 5 PM)  
+✅ Weekend blocking  
+✅ Status management (scheduled, confirmed, in_progress, completed, cancelled, no_show)  
 
-### Booking an Appointment
-1. Navigate to **Appointments** → **Schedule Appointment**
-2. **Step 1**: Select patient, dentist, and treatment
-3. **Step 2**: Choose available date and time slot
-4. **Step 3**: Review and confirm appointment details
-5. Click **Book Appointment**
+### Dentist Management
+✅ Staff profiles with specializations  
+✅ Working hours and availability  
+✅ Performance metrics  
 
-### Managing Invoices
-1. Navigate to **Invoices**
-2. Create invoices from appointments or manually
-3. Record payments as they are received
-4. Generate invoice reports
+### Treatment Catalog
+✅ Service management with descriptions  
+✅ Pricing configuration  
+✅ Duration tracking  
+✅ Categories  
 
-## Key Features Deep Dive
+### Invoicing & Billing
+✅ Automatic invoice generation  
+✅ Payment tracking  
+✅ Multiple payment methods  
+✅ Financial reports  
 
-### Appointment Availability API
-The system includes a sophisticated availability checking API:
+### Notifications
+✅ Real-time in-app notifications  
+✅ Unread counter in header  
+✅ Mark as read functionality  
 
-**Endpoint:** `/api/appointments/available-slots`
+### Modern UI/UX
+✅ Fully responsive design  
+✅ Tailwind CSS styling  
+✅ Alpine.js interactivity  
+✅ Font Awesome icons  
+✅ 3-line headers with descriptions  
 
-**Parameters:**
-- `dentist_id`: ID of the dentist
-- `date`: Date to check (YYYY-MM-DD)
-- `duration`: Appointment duration in minutes
-- `exclude_appointment`: (Optional) Appointment ID to exclude from conflict checking
+---
 
-**Response:**
-```json
+## 🔒 Security Features
+
+- **2FA Authentication**: Email-based two-factor authentication
+- **Password Protection**: Bcrypt hashing
+- **CSRF Protection**: Laravel built-in protection
+- **SQL Injection Prevention**: Eloquent ORM
+- **XSS Protection**: Blade templating engine
+- **Email Verification**: Required for new users
+- **Session Security**: Secure cookies with domain isolation
+
+---
+
+## 📱 API Endpoints
+
+### Appointment Availability
+```bash
+GET /api/appointments/available-slots
+Parameters:
+  - dentist_id: integer
+  - date: YYYY-MM-DD
+  - duration: integer (minutes)
+  - exclude_appointment: integer (optional)
+
+Response:
 {
-  "available_slots": [
-    "09:00", "09:30", "10:00", "10:30",
-    "14:00", "14:30", "15:00"
-  ]
+  "available_slots": ["09:00", "09:30", "10:00", ...]
 }
 ```
 
-### Notification System
-Notifications are stored in the database and displayed in real-time:
+---
 
-**Creating a Notification:**
-```php
-$user->notify(new AppointmentReminder($appointment));
+## 🗄️ Database Structure
+
+**Key Tables:**
+- `tenants` - Dental clinic accounts (multi-tenant)
+- `users` - System users (super admin, clinic admin, dentist, receptionist)
+- `patients` - Patient records
+- `dentists` - Dentist profiles
+- `appointments` - Appointment bookings
+- `treatments` - Service catalog
+- `invoices` - Billing records
+- `notifications` - User notifications
+- `verification_codes` - 2FA codes
+- `marketing_employees` - Marketing team tracking
+
+---
+
+## 🔧 Deployment Notes
+
+### File Structure on Server (Namecheap)
+
+```
+public_html/
+├── .env                    ← Production settings
+├── .htaccess               ← From public/ folder
+├── index.php               ← From public/ folder
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── public/                 ← Keep for assets
+├── resources/
+├── routes/
+├── storage/
+├── vendor/
+└── artisan
 ```
 
-**Notification Structure:**
-```php
-[
-    'title' => 'Appointment Reminder',
-    'message' => 'You have an appointment tomorrow at 10:00 AM',
-    'action_url' => route('appointments.show', $appointment),
-    'icon' => 'calendar'
-]
+**Important**: Move `public/.htaccess` and `public/index.php` to root `public_html/` folder.
+
+### Staging Environment
+
+For testing before production:
+
+```bash
+# Copy production to staging folder
+cp -r ~/public_html ~/staging
+
+# Update staging .env
+APP_ENV=staging
+APP_DEBUG=true
+APP_URL=https://staging.yourdomain.com
+
+# Use separate database
+DB_DATABASE=staging_database
+
+# Run migrations
+php artisan migrate --force
 ```
 
-### Database Structure
-Key tables and relationships:
-- **patients**: Patient information and medical history
-- **dentists**: Dentist profiles and specializations
-- **appointments**: Appointment bookings (links patients, dentists, treatments)
-- **treatments**: Service catalog with pricing
-- **invoices**: Billing and payment records
-- **notifications**: User notifications
-- **error_logs**: Application error tracking (super admin)
+### Cron Jobs (Required)
 
-## Testing
+Add to cPanel cron jobs:
 
-Run the test suite:
+```bash
+* * * * * cd /home/USERNAME/public_html && php artisan schedule:run >> /dev/null 2>&1
+```
+
+**Scheduled Tasks:**
+- Update past appointment status (every 15 minutes)
+- Reset demo data (every hour, only if demo exists)
+
+---
+
+## 🐛 Troubleshooting
+
+### Subdomains Not Working
+
+**Check these 3 critical settings:**
+
+1. **DNS Wildcard at GoDaddy**
+   - Must have `*` A record pointing to Namecheap IP
+
+2. **Session Domain in .env**
+   ```env
+   SESSION_DOMAIN=.yourdomain.com  # Leading dot is CRITICAL!
+   SESSION_DRIVER=database
+   ```
+
+3. **Clear Cache**
+   ```bash
+   php artisan config:cache
+   ```
+
+### Demo 2FA Code Not Working
+
+The demo 2FA code is: `123456` (static, never expires)
+
+If still not working:
+```bash
+php artisan setup:demo --fresh
+```
+
+### 500 Error
+
+Check permissions:
+```bash
+chmod -R 755 storage bootstrap/cache
+```
+
+Check logs:
+```bash
+tail -50 storage/logs/laravel.log
+```
+
+---
+
+## 📚 Testing
+
 ```bash
 # Run all tests
 php artisan test
 
-# Run specific test file
+# Run specific test
 php artisan test tests/Feature/AppointmentTest.php
 
 # Run with coverage
 php artisan test --coverage
 ```
 
-## Code Style
+---
 
-This project follows Laravel best practices and uses Laravel Pint for code formatting:
+## 🎨 Code Standards
+
+This project uses **Laravel Pint** for code formatting:
+
 ```bash
-# Format code
-./vendor/bin/pint
+# Format all files
+vendor/bin/pint
 
-# Check code without fixing
-./vendor/bin/pint --test
+# Format only changed files
+vendor/bin/pint --dirty
+
+# Check without fixing
+vendor/bin/pint --test
 ```
 
-## API Documentation
-
-### Available Endpoints
-- `GET /api/appointments/available-slots` - Get available appointment slots
-- `GET /api/treatments` - List all treatments
-- `GET /api/dentists/{id}/schedule` - Get dentist schedule
-
-### Authentication
-API endpoints require Bearer token authentication:
-```bash
-Authorization: Bearer {your-token}
-```
-
-## Deployment
-
-### Production Checklist
-- [ ] Set `APP_ENV=production` and `APP_DEBUG=false`
-- [ ] Configure production database credentials
-- [ ] Set up queue workers
-- [ ] Configure mail server
-- [ ] Enable SSL/HTTPS
-- [ ] Set up regular database backups
-- [ ] Configure cron for scheduled tasks
-- [ ] Optimize application (`php artisan optimize`)
-- [ ] Build production assets (`npm run build`)
-
-### Scheduled Tasks
-Add to crontab:
-```bash
-* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-```
-
-## Industry Standards & Roadmap
-
-### 📊 Current Status vs Industry Leaders
-
-This CMS has been benchmarked against leading dental practice management systems including **Dentrix**, **Open Dental**, **Curve Dental**, **Eaglesoft**, and **CareStack**.
-
-**Current Feature Completeness:** ~60% vs industry standard
-
-**Strengths:**
-- ✅ Modern tech stack (Laravel 12, Tailwind CSS, Alpine.js)
-- ✅ Excellent appointment scheduling with real-time availability
-- ✅ Beautiful, intuitive dental chart UI
-- ✅ Multi-tenant SaaS architecture
-- ✅ Cloud-native (no server maintenance)
-
-**Planned Enhancements:**
-
-**Phase 1 (Q2 2025):** Core Competitive Features
-- 📋 Treatment Planning Module
-- 📸 Image Management System
-- 🌐 Patient Portal (online booking, payment, forms)
-- 📧 Automated Communication System (reminders, recalls)
-
-**Phase 2 (Q3 2025):** Advanced Features
-- 🦷 Periodontal Charting
-- 📊 Enhanced Reporting Suite
-- 💰 Payment Plans & Advanced Billing
-- 📝 Enhanced Medical Records
-
-**Phase 3 (Q4 2025):** Enterprise Features
-- 💼 Insurance Claims Management
-- 💊 E-Prescription Integration
-- 📱 Mobile Apps (iOS/Android)
-
-For a comprehensive analysis of industry standards, competitive positioning, and detailed feature roadmap, see [INDUSTRY_STANDARDS.md](INDUSTRY_STANDARDS.md).
-
-### 🎯 Target Market
-
-**Small to medium dental practices (1-5 dentists)** looking for:
-- Affordable, modern cloud-based solution
-- Essential features without overwhelming complexity
-- No upfront hardware costs or IT maintenance
-- Intuitive interface with minimal training required
-
-### 🚀 Competitive Advantages
-
-- **Lower Cost:** $79-199/month vs $139-560/month (competitors)
-- **Modern UI/UX:** Built with 2025 design standards
-- **True SaaS:** Each practice gets isolated environment
-- **Quick Setup:** Ready in minutes, not weeks
-- **Transparent Pricing:** No hidden fees or expensive add-ons
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability, please send an email to security@dentalcms.com. All security vulnerabilities will be promptly addressed.
-
-## License
-
-This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-## Support
-
-For support, please open an issue on GitHub or contact support@dentalcms.com.
-
-## Acknowledgments
-
-- Built with [Laravel](https://laravel.com)
-- UI components styled with [Tailwind CSS](https://tailwindcss.com)
-- Icons by [Font Awesome](https://fontawesome.com)
-- Enhanced by [Alpine.js](https://alpinejs.dev)
+**Standards:**
+- PSR-12 coding standard
+- Laravel best practices
+- Type declarations required
+- PHPDoc blocks for complex logic
 
 ---
+
+## 📦 Composer Commands
+
+```bash
+# Install production dependencies
+composer install --optimize-autoloader --no-dev
+
+# Update dependencies
+composer update
+
+# Run code formatter
+composer run format
+
+# Run tests
+composer run test
+```
+
+---
+
+## 🔗 Important Links
+
+- **Repository**: https://github.com/sam961/dentistcms
+- **Production**: https://general-station.com
+- **Demo**: https://demo.general-station.com
+- **Super Admin**: https://general-station.com/admin
+
+---
+
+## 📝 Development Workflow
+
+1. **Local Development** → Test on localhost
+2. **Staging** → Deploy to `staging.yourdomain.com`
+3. **Production** → Deploy to `yourdomain.com`
+
+Always test on staging before pushing to production!
+
+---
+
+## 🆘 Support
+
+For issues or questions:
+- Check `storage/logs/laravel.log` for errors
+- Review this README
+- Open an issue on GitHub
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 🙏 Credits
+
+Built with:
+- [Laravel Framework](https://laravel.com)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Alpine.js](https://alpinejs.dev)
+- [Font Awesome](https://fontawesome.com)
 
 **Developed with ❤️ for dental practices worldwide**
