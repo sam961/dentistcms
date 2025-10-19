@@ -32,6 +32,11 @@
                             Subscriptions
                         </a>
 
+                        <a href="{{ route('admin.marketing-employees.index') }}" class="inline-flex items-center px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.marketing-employees.*') ? 'bg-white/30 text-white shadow-lg' : 'text-white/90 hover:bg-white/20 hover:text-white' }}">
+                            <i class="fas fa-users-cog mr-2"></i>
+                            Marketing Team
+                        </a>
+
                         @php
                             $newErrorCount = \App\Models\ErrorLog::where('status', 'new')->count();
                         @endphp
@@ -144,6 +149,11 @@
                 <a href="{{ route('admin.subscriptions.analytics') }}" class="flex items-center px-4 py-3 text-white font-semibold rounded-lg mx-2 transition-all {{ request()->routeIs('admin.subscriptions.*') ? 'bg-white/30' : 'hover:bg-white/20' }}">
                     <i class="fas fa-chart-line mr-3 text-lg"></i>
                     Subscriptions
+                </a>
+
+                <a href="{{ route('admin.marketing-employees.index') }}" class="flex items-center px-4 py-3 text-white font-semibold rounded-lg mx-2 transition-all {{ request()->routeIs('admin.marketing-employees.*') ? 'bg-white/30' : 'hover:bg-white/20' }}">
+                    <i class="fas fa-users-cog mr-3 text-lg"></i>
+                    Marketing Team
                 </a>
 
                 @php
