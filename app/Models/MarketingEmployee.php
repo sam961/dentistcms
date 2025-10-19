@@ -29,6 +29,44 @@ class MarketingEmployee extends Model
     }
 
     /**
+     * Boot method to auto-generate employee code
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($employee) {
+            if (empty($employee->employee_code)) {
+                $employee->employee_code = self::generateEmployeeCode();
+            }
+        });
+    }
+
+    /**
+     * Generate unique employee code
+     */
+    private static function generateEmployeeCode(): string
+    {
+        do {
+            // Format: ME-YYYY-XXXX (Marketing Employee - Year - Sequential Number)
+            $year = date('Y');
+            $lastEmployee = self::whereYear('created_at', $year)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($lastEmployee && preg_match('/ME-'.$year.'-(\d+)/', $lastEmployee->employee_code, $matches)) {
+                $sequential = intval($matches[1]) + 1;
+            } else {
+                $sequential = 1;
+            }
+
+            $code = sprintf('ME-%s-%04d', $year, $sequential);
+        } while (self::where('employee_code', $code)->exists());
+
+        return $code;
+    }
+
+    /**
      * Get the tenants (clients) acquired by this marketing employee
      */
     public function tenants(): HasMany

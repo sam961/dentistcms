@@ -66,16 +66,16 @@
                                     @enderror
                                 </div>
 
-                                <!-- Employee Code -->
+                                <!-- Employee Code (Read-only) -->
                                 <div>
-                                    <label for="employee_code" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Employee Code <span class="text-red-500">*</span>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Employee Code
                                     </label>
-                                    <input type="text" name="employee_code" id="employee_code" value="{{ old('employee_code', $marketingEmployee->employee_code) }}" required
-                                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('employee_code') border-red-500 @enderror">
-                                    @error('employee_code')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <div class="flex items-center px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg">
+                                        <i class="fas fa-lock text-gray-400 mr-3"></i>
+                                        <span class="text-sm text-gray-700 font-mono font-semibold">{{ $marketingEmployee->employee_code }}</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Employee code cannot be changed</p>
                                 </div>
 
                                 <!-- Commission Percentage -->

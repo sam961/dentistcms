@@ -68,17 +68,16 @@
                                     @enderror
                                 </div>
 
-                                <!-- Employee Code -->
+                                <!-- Employee Code (Auto-generated) -->
                                 <div>
-                                    <label for="employee_code" class="block text-sm font-medium text-gray-700 mb-2">
-                                        Employee Code <span class="text-red-500">*</span>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                                        Employee Code
                                     </label>
-                                    <input type="text" name="employee_code" id="employee_code" value="{{ old('employee_code') }}" required
-                                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring-blue-500 @error('employee_code') border-red-500 @enderror"
-                                        placeholder="MKT001">
-                                    @error('employee_code')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                    <div class="flex items-center px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <i class="fas fa-magic text-blue-600 mr-3"></i>
+                                        <span class="text-sm text-blue-700 font-medium">Auto-generated (e.g., ME-2025-0001)</span>
+                                    </div>
+                                    <p class="mt-1 text-xs text-gray-500">Employee code will be automatically generated upon creation</p>
                                 </div>
 
                                 <!-- Commission Percentage -->
