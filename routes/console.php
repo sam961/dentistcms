@@ -13,3 +13,9 @@ Schedule::command('appointments:update-past')
     ->everyFifteenMinutes()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Schedule demo data reset every hour
+Schedule::command('demo:reset --force')
+    ->hourly()
+    ->withoutOverlapping()
+    ->runInBackground();

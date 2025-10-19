@@ -6,9 +6,7 @@ use App\Models\Appointment;
 use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\Treatment;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class TenantDataSeeder extends Seeder
 {
@@ -16,28 +14,16 @@ class TenantDataSeeder extends Seeder
     {
         $this->command->info('🌱 Starting tenant data seeding...');
 
-        $tenant = \App\Models\Tenant::first();
+        // Only seed for demo tenant
+        $tenant = \App\Models\Tenant::where('subdomain', 'demo')->first();
 
         if (! $tenant) {
-            $this->command->error('❌ No tenant found! Please create a tenant first.');
+            $this->command->error('❌ Demo tenant not found! Run DemoAdminSeeder first.');
 
             return;
         }
 
-        $this->command->info("✅ Seeding data for tenant: {$tenant->name}");
-
-        // Admin user
-        $adminUser = User::firstOrCreate(
-            ['email' => 'admin@'.($tenant->subdomain ?? 'clinic').'.com'],
-            [
-                'name' => 'Dr. Admin',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'tenant_id' => $tenant->id,
-                'is_super_admin' => false,
-                'email_verified_at' => now(),
-            ]
-        );
+        $this->command->info("✅ Seeding data for demo tenant: {$tenant->name}");
 
         // Treatments
         $treatments = [

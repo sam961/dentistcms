@@ -26,6 +26,57 @@
 
     <div class="py-8">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+            {{-- Demo Account Banner --}}
+            @if(auth()->user()->email === 'demo@dentistcms.com')
+                <div class="relative overflow-hidden bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 border-l-4 border-orange-400 rounded-2xl shadow-lg">
+                    <div class="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-yellow-400/5"></div>
+                    <div class="relative px-6 py-5">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-400 to-amber-500 rounded-xl flex items-center justify-center shadow-lg animate-pulse">
+                                    <i class="fas fa-info-circle text-white text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="text-lg font-bold text-gray-900 flex items-center">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-orange-500 to-amber-500 text-white mr-3 shadow-md">
+                                                <i class="fas fa-flask mr-1.5 animate-bounce"></i>
+                                                DEMO MODE
+                                            </span>
+                                            Welcome to the Demo Account!
+                                        </h3>
+                                        <div class="mt-2 text-sm text-gray-700 space-y-1">
+                                            <p class="flex items-center">
+                                                <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                                <span>You're viewing a <strong>live demo</strong> of the Dental CMS with sample data.</span>
+                                            </p>
+                                            <p class="flex items-center">
+                                                <i class="fas fa-sync-alt text-blue-600 mr-2"></i>
+                                                <span>All data <strong>resets automatically every hour</strong> to ensure a fresh experience.</span>
+                                            </p>
+                                            <p class="flex items-center">
+                                                <i class="fas fa-user-shield text-purple-600 mr-2"></i>
+                                                <span>Feel free to explore, create, edit, and test all features without restrictions!</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="ml-6 text-right flex-shrink-0">
+                                        <div class="bg-white rounded-xl shadow-md px-4 py-3 border border-orange-200">
+                                            <div class="text-xs font-medium text-gray-600 mb-1">Next Reset</div>
+                                            <div class="text-lg font-bold text-orange-600 flex items-center justify-center">
+                                                <i class="fas fa-clock mr-2 animate-spin-slow"></i>
+                                                {{ now()->addHour()->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
             <!-- Quick Stats Section -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 <!-- Patients Card -->
