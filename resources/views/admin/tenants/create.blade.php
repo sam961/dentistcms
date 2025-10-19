@@ -44,6 +44,25 @@
                                 @enderror
                             </div>
 
+                            <div class="col-span-2">
+                                <label for="marketing_employee_id" class="block text-sm font-medium text-gray-700">
+                                    Marketing Employee (Optional)
+                                </label>
+                                <select name="marketing_employee_id" id="marketing_employee_id"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="">-- Select Marketing Employee --</option>
+                                    @foreach(\App\Models\MarketingEmployee::where('status', 'active')->orderBy('name')->get() as $employee)
+                                        <option value="{{ $employee->id }}" {{ old('marketing_employee_id') == $employee->id ? 'selected' : '' }}>
+                                            {{ $employee->name }} ({{ $employee->employee_code }}) - {{ $employee->commission_percentage }}% commission
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <p class="text-sm text-gray-500 mt-1">Assign this client to a marketing employee for commission tracking</p>
+                                @error('marketing_employee_id')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
                             <!-- Contact Information -->
                             <div class="col-span-2 mt-6">
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Contact Information</h3>
