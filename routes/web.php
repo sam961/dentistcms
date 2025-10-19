@@ -29,6 +29,7 @@ Route::get('/', [LandingController::class, 'index'])->name('landing.index');
 Route::get('/features', [LandingController::class, 'features'])->name('landing.features');
 Route::get('/pricing', [LandingController::class, 'pricing'])->name('landing.pricing');
 Route::get('/contact', [LandingController::class, 'contact'])->name('landing.contact');
+Route::post('/contact', [LandingController::class, 'submitContact'])->name('landing.contact.submit');
 
 // ===================================================================
 // AUTHENTICATION ROUTES (shared by all users)
@@ -81,7 +82,7 @@ Route::middleware(['auth', 'verified', 'regular_user'])->get('/subscription-expi
 })->name('subscription.expired');
 
 // Main tenant CMS routes - require authentication and active subscription
-Route::middleware(['auth', 'verified', 'regular_user', 'check_subscription'])->group(function () {
+Route::middleware(['auth', 'verified', 'regular_user', 'identify_tenant', 'check_subscription'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

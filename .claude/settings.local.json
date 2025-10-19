@@ -33,7 +33,11 @@
       "Read(//Users/salamelkadri/.config/valet/Nginx/**)",
       "Bash(composer search:*)",
       "Bash(composer require:*)",
-      "Bash(composer show:*)"
+      "Bash(composer show:*)",
+      "Bash(scp:*)",
+      "Bash(rm:*)",
+      "Bash(git restore:*)",
+      "Bash(git log:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

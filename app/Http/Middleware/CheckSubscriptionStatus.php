@@ -20,8 +20,13 @@ class CheckSubscriptionStatus
             return $next($request);
         }
 
-        // Get current tenant
+        // Get current tenant and refresh from database
         $tenant = app(\App\Services\TenantContext::class)->getTenant();
+
+        // Refresh tenant data from database to get latest subscription status
+        if ($tenant) {
+            $tenant = $tenant->fresh();
+        }
 
         // If no tenant or subscription is not active or expired
         if (! $tenant ||
