@@ -37,7 +37,12 @@
       "Bash(scp:*)",
       "Bash(rm:*)",
       "Bash(git restore:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(tree:*)",
+      "Bash(for file in app/Http/Controllers/Tenant/*.php)",
+      "Bash(do)",
+      "Bash(done)",
+      "Bash(find:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

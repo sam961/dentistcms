@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tenant;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTreatmentPlanRequest;
 use App\Http\Requests\UpdateTreatmentPlanRequest;
 use App\Mail\TreatmentPlanMail;

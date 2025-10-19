@@ -4,22 +4,22 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\Admin\TenantSubscriptionController;
 use App\Http\Controllers\Api\AppointmentAvailabilityController;
-use App\Http\Controllers\AppointmentController;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DentalChartController;
-use App\Http\Controllers\DentalImageController;
-use App\Http\Controllers\DentistController;
-use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\MedicalRecordController;
-use App\Http\Controllers\PatientController;
-use App\Http\Controllers\PerioChartController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\TreatmentController;
-use App\Http\Controllers\TreatmentPlanController;
+use App\Http\Controllers\Tenant\AppointmentController;
+use App\Http\Controllers\Tenant\CalendarController;
+use App\Http\Controllers\Tenant\DashboardController;
+use App\Http\Controllers\Tenant\DentalChartController;
+use App\Http\Controllers\Tenant\DentalImageController;
+use App\Http\Controllers\Tenant\DentistController;
+use App\Http\Controllers\Tenant\InvoiceController;
+use App\Http\Controllers\Tenant\MedicalRecordController;
+use App\Http\Controllers\Tenant\PatientController;
+use App\Http\Controllers\Tenant\PerioChartController;
+use App\Http\Controllers\Tenant\ProfileController;
+use App\Http\Controllers\Tenant\ReportController;
+use App\Http\Controllers\Tenant\SubscriptionController;
+use App\Http\Controllers\Tenant\TreatmentController;
+use App\Http\Controllers\Tenant\TreatmentPlanController;
 use Illuminate\Support\Facades\Route;
 
 // ===================================================================
@@ -140,10 +140,10 @@ Route::middleware(['auth', 'verified', 'regular_user', 'identify_tenant', 'check
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 
     // Notification routes
-    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
-    Route::delete('/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::get('/notifications', [\App\Http\Controllers\Tenant\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\Tenant\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\Tenant\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    Route::delete('/notifications/{id}', [\App\Http\Controllers\Tenant\NotificationController::class, 'destroy'])->name('notifications.destroy');
 
     // Subscription routes - View subscription history only
     Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');

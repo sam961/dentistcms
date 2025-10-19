@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tenant;
+
+use App\Http\Controllers\Controller;
 
 class SubscriptionController extends Controller
 {
