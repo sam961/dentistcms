@@ -36,12 +36,26 @@ class TenantController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'subdomain' => [
+                'required',
+                'string',
+                'max:63',
+                'regex:/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/',
+                'unique:tenants,subdomain',
+                'not_in:www,admin,api,mail,ftp,demo,staging,test,dev,localhost',
+            ],
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'status' => 'required|in:active,inactive,suspended',
             'admin_email' => 'required|email|max:255|unique:users,email',
             'admin_password' => 'required|string|min:8',
+        ], [
+            'subdomain.required' => 'The subdomain field is required.',
+            'subdomain.regex' => 'The subdomain may only contain lowercase letters, numbers, and hyphens. It must start and end with a letter or number.',
+            'subdomain.unique' => 'This subdomain is already taken. Please choose another.',
+            'subdomain.not_in' => 'This subdomain is reserved and cannot be used.',
+            'subdomain.max' => 'The subdomain may not be greater than 63 characters.',
         ]);
 
         $tenant = Tenant::create($validated);
@@ -116,12 +130,26 @@ class TenantController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'subdomain' => [
+                'required',
+                'string',
+                'max:63',
+                'regex:/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/',
+                'unique:tenants,subdomain,'.$tenant->id,
+                'not_in:www,admin,api,mail,ftp,demo,staging,test,dev,localhost',
+            ],
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string',
             'status' => 'required|in:active,inactive,suspended',
             'admin_email' => 'required|email|max:255|unique:users,email,'.($adminUser ? $adminUser->id : 'NULL'),
             'admin_password' => 'nullable|string|min:8',
+        ], [
+            'subdomain.required' => 'The subdomain field is required.',
+            'subdomain.regex' => 'The subdomain may only contain lowercase letters, numbers, and hyphens. It must start and end with a letter or number.',
+            'subdomain.unique' => 'This subdomain is already taken. Please choose another.',
+            'subdomain.not_in' => 'This subdomain is reserved and cannot be used.',
+            'subdomain.max' => 'The subdomain may not be greater than 63 characters.',
         ]);
 
         $tenant->update($validated);

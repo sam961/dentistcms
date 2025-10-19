@@ -50,12 +50,29 @@
                                 <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
                             </div>
 
-                            <div class="col-span-2">
+                            <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700">Clinic Name *</label>
                                 <input type="text" name="name" id="name" value="{{ old('name', $tenant->name) }}" required
                                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     placeholder="e.g., Smile Dental Clinic">
                                 @error('name')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div>
+                                <label for="subdomain" class="block text-sm font-medium text-gray-700">Subdomain *</label>
+                                <div class="mt-1 flex rounded-md shadow-sm">
+                                    <input type="text" name="subdomain" id="subdomain" value="{{ old('subdomain', $tenant->subdomain) }}" required
+                                        class="flex-1 rounded-l-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                                        placeholder="e.g., smiledental" pattern="[a-z0-9-]+"
+                                        title="Only lowercase letters, numbers, and hyphens">
+                                    <span class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                                        .{{ config('app.domain', 'general-station.com') }}
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Only lowercase letters, numbers, and hyphens. Changes will affect the clinic's login URL.</p>
+                                @error('subdomain')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
