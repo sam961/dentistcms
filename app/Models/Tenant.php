@@ -48,6 +48,7 @@ class Tenant extends Model
         'max_patients',
         'max_dentists',
         'logo_path',
+        'marketing_employee_id',
         // Subscription fields
         'subscription_status',
         'subscription_tier',
@@ -106,6 +107,11 @@ class Tenant extends Model
     public function subscriptionHistory()
     {
         return $this->hasMany(TenantSubscriptionHistory::class)->orderBy('created_at', 'desc');
+    }
+
+    public function marketingEmployee()
+    {
+        return $this->belongsTo(MarketingEmployee::class);
     }
 
     // Helper methods

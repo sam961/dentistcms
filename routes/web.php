@@ -51,6 +51,9 @@ Route::middleware(['auth', 'verified', 'super_admin'])->prefix('admin')->name('a
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::resource('tenants', TenantController::class);
 
+    // Marketing Employees Management
+    Route::resource('marketing-employees', \App\Http\Controllers\Admin\MarketingEmployeeController::class);
+
     // Revenue & Financial Analytics
     Route::get('/revenue-analytics', [\App\Http\Controllers\Admin\RevenueAnalyticsController::class, 'index'])->name('revenue.analytics');
 
