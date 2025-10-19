@@ -14,8 +14,11 @@ Schedule::command('appointments:update-past')
     ->withoutOverlapping()
     ->runInBackground();
 
-// Schedule demo data reset every hour
+// Schedule demo data reset every hour (only if demo tenant exists)
 Schedule::command('demo:reset --force')
     ->hourly()
+    ->when(function () {
+        return \App\Models\Tenant::where('subdomain', 'demo')->exists();
+    })
     ->withoutOverlapping()
     ->runInBackground();
