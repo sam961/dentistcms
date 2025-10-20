@@ -11,16 +11,11 @@ class SubdomainRedirect
     /**
      * Handle an incoming request.
      *
-     * NOTE: This middleware is currently DISABLED (see bootstrap/app.php)
-     * It will be enabled in the future when implementing per-subdomain customization:
-     * - Custom logos per clinic subdomain
-     * - Custom branding and colors
-     * - Subdomain-specific login screens
-     * - Tenant-specific landing pages
-     *
-     * When enabled, this middleware will handle subdomain-based routing:
-     * - Root domain (general-station.com): Serves landing page and /admin routes
-     * - Subdomains (clinic.general-station.com): Redirect to dashboard or login
+     * This middleware redirects users from main domain to their appropriate subdomain:
+     * - Regular users: Redirected to their tenant subdomain
+     * - Demo access: Redirected to demo.general-station.com
+     * - Super admin: Stays on main domain at /admin
+     * - Landing page: Stays on main domain
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
@@ -28,44 +23,80 @@ class SubdomainRedirect
     {
         $host = $request->getHost();
         $appDomain = config('app.domain', 'general-station.com');
-
-        // Extract subdomain from host
         $subdomain = $this->extractSubdomain($host, $appDomain);
+        $path = $request->path();
 
-        // If there's a subdomain (not root domain)
-        if ($subdomain) {
-            // Skip redirect for API routes, auth routes, and asset requests
-            if ($this->shouldSkipRedirect($request)) {
+        // Skip redirect for certain paths
+        if ($this->shouldSkipRedirect($request)) {
+            return $next($request);
+        }
+
+        // ================================================================
+        // MAIN DOMAIN LOGIC (general-station.com)
+        // ================================================================
+        if (! $subdomain) {
+            // Allow super admin routes on main domain
+            if (str_starts_with($path, 'admin')) {
                 return $next($request);
             }
 
-            // If user is authenticated
-            if ($request->user()) {
-                // Super admin should not be on subdomains
-                if ($request->user()->isSuperAdmin()) {
-                    return redirect()->away('https://'.$appDomain.'/admin/dashboard');
-                }
+            // Allow landing pages
+            if ($path === '/' || $path === '' || str_starts_with($path, 'contact')) {
+                return $next($request);
+            }
 
-                // Regular users: redirect to dashboard if on root of subdomain
-                if ($request->path() === '/' || $request->path() === '') {
-                    return redirect()->route('dashboard');
-                }
-            } else {
-                // Guest users: redirect to login if on root of subdomain
-                if ($request->path() === '/' || $request->path() === '') {
-                    return redirect()->route('login');
+            // If user tries to access /login or /dashboard on main domain
+            if (str_starts_with($path, 'login') || str_starts_with($path, 'register')) {
+                // For now, redirect to demo subdomain
+                // Later: Show subdomain selection page or tenant-specific login
+                $scheme = $request->isSecure() ? 'https' : 'http';
+                $targetUrl = $scheme.'://demo.'.$appDomain.'/login';
+
+                return redirect()->away($targetUrl);
+            }
+
+            // If authenticated regular user tries to access /dashboard on main domain
+            if (str_starts_with($path, 'dashboard')) {
+                if ($request->user() && ! $request->user()->isSuperAdmin()) {
+                    $tenant = $request->user()->tenant;
+                    if ($tenant && $tenant->subdomain) {
+                        $scheme = $request->isSecure() ? 'https' : 'http';
+                        $targetUrl = $scheme.'://'.$tenant->subdomain.'.'.$appDomain.'/dashboard';
+
+                        return redirect()->away($targetUrl);
+                    }
                 }
             }
-        } else {
-            // Root domain: Only allow landing pages and /admin routes
-            // If authenticated regular user is on root domain, redirect to their subdomain
+
+            // For any authenticated regular user on main domain, redirect to their subdomain
             if ($request->user() && ! $request->user()->isSuperAdmin()) {
                 $tenant = $request->user()->tenant;
                 if ($tenant && $tenant->subdomain) {
                     $scheme = $request->isSecure() ? 'https' : 'http';
-                    $targetUrl = $scheme.'://'.$tenant->subdomain.'.'.$appDomain.'/dashboard';
+                    $targetUrl = $scheme.'://'.$tenant->subdomain.'.'.$appDomain.'/'.$path;
 
                     return redirect()->away($targetUrl);
+                }
+            }
+        }
+
+        // ================================================================
+        // SUBDOMAIN LOGIC (demo.general-station.com, clinic.general-station.com, etc.)
+        // ================================================================
+        if ($subdomain) {
+            // Super admin should not be on subdomains - redirect to main domain admin
+            if ($request->user() && $request->user()->isSuperAdmin()) {
+                return redirect()->away('https://'.$appDomain.'/admin/dashboard');
+            }
+
+            // If user visits subdomain root, redirect appropriately
+            if ($path === '/' || $path === '') {
+                if ($request->user()) {
+                    // Authenticated: go to dashboard
+                    return redirect()->route('dashboard');
+                } else {
+                    // Guest: go to login
+                    return redirect()->route('login');
                 }
             }
         }
@@ -114,34 +145,22 @@ class SubdomainRedirect
             return true;
         }
 
-        // Skip for auth routes (login, register, password reset, 2fa, etc.)
-        if (str_starts_with($path, 'login') ||
-            str_starts_with($path, 'register') ||
-            str_starts_with($path, 'password') ||
-            str_starts_with($path, 'forgot-password') ||
-            str_starts_with($path, 'reset-password') ||
+        // Skip for 2FA verification and email verification
+        if (str_starts_with($path, 'login/verify') ||
             str_starts_with($path, 'verify-email') ||
             str_starts_with($path, 'email/verify')) {
             return true;
         }
 
-        // Skip for dashboard and other protected routes (they're already being accessed)
-        if (str_starts_with($path, 'dashboard') ||
-            str_starts_with($path, 'patients') ||
-            str_starts_with($path, 'dentists') ||
-            str_starts_with($path, 'appointments') ||
-            str_starts_with($path, 'treatments') ||
-            str_starts_with($path, 'invoices') ||
-            str_starts_with($path, 'reports') ||
-            str_starts_with($path, 'calendar') ||
-            str_starts_with($path, 'profile') ||
-            str_starts_with($path, 'subscriptions') ||
-            str_starts_with($path, 'notifications')) {
+        // Skip for password reset routes
+        if (str_starts_with($path, 'password') ||
+            str_starts_with($path, 'forgot-password') ||
+            str_starts_with($path, 'reset-password')) {
             return true;
         }
 
-        // Skip for subscription expired page
-        if (str_starts_with($path, 'subscription-expired')) {
+        // Skip for logout
+        if (str_starts_with($path, 'logout')) {
             return true;
         }
 

@@ -11,9 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Note: SubdomainRedirect middleware is available but disabled for now
-        // Enable it when ready to implement per-subdomain customization (logos, branding, etc.)
-        // $middleware->append(\App\Http\Middleware\SubdomainRedirect::class);
+        // Register global middleware - redirects main domain to subdomains
+        $middleware->append(\App\Http\Middleware\SubdomainRedirect::class);
 
         // Register middleware aliases
         $middleware->alias([
@@ -22,7 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'check_subscription' => \App\Http\Middleware\CheckSubscriptionStatus::class,
             'verified' => \App\Http\Middleware\EnsureEmailIsVerifiedOrSuperAdmin::class,
             'identify_tenant' => \App\Http\Middleware\IdentifyTenant::class,
-            'subdomain_redirect' => \App\Http\Middleware\SubdomainRedirect::class, // Available as alias
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
