@@ -11,7 +11,14 @@ class SubdomainRedirect
     /**
      * Handle an incoming request.
      *
-     * This middleware handles subdomain-based routing:
+     * NOTE: This middleware is currently DISABLED (see bootstrap/app.php)
+     * It will be enabled in the future when implementing per-subdomain customization:
+     * - Custom logos per clinic subdomain
+     * - Custom branding and colors
+     * - Subdomain-specific login screens
+     * - Tenant-specific landing pages
+     *
+     * When enabled, this middleware will handle subdomain-based routing:
      * - Root domain (general-station.com): Serves landing page and /admin routes
      * - Subdomains (clinic.general-station.com): Redirect to dashboard or login
      *
