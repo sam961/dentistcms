@@ -6,12 +6,14 @@ use App\Models\Appointment;
 use App\Models\Dentist;
 use App\Models\Patient;
 use App\Models\Treatment;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
 class TenantDataSeeder extends Seeder
 {
     public function run(): void
     {
+        $faker = Faker::create();
         $this->command->info('🌱 Starting tenant data seeding...');
 
         // Only seed for demo tenant
@@ -49,11 +51,11 @@ class TenantDataSeeder extends Seeder
             $dentists[] = Dentist::firstOrCreate(
                 ['specialization' => $spec, 'tenant_id' => $tenant->id],
                 [
-                    'first_name' => fake()->firstName(),
-                    'last_name' => fake()->lastName(),
-                    'email' => fake()->unique()->safeEmail(),
-                    'phone' => fake()->phoneNumber(),
-                    'license_number' => fake()->numerify('DEN-#####'),
+                    'first_name' => $faker->firstName(),
+                    'last_name' => $faker->lastName(),
+                    'email' => $faker->unique()->safeEmail(),
+                    'phone' => $faker->phoneNumber(),
+                    'license_number' => $faker->numerify('DEN-#####'),
                     'years_of_experience' => rand(5, 20),
                     'qualifications' => 'DDS',
                     'working_days' => json_encode(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']),
@@ -67,16 +69,16 @@ class TenantDataSeeder extends Seeder
         $patients = [];
         for ($i = 0; $i < 30; $i++) {
             $patients[] = Patient::create([
-                'first_name' => fake()->firstName(),
-                'last_name' => fake()->lastName(),
-                'date_of_birth' => fake()->dateTimeBetween('-60 years', '-18 years')->format('Y-m-d'),
-                'gender' => fake()->randomElement(['male', 'female']),
-                'email' => fake()->unique()->safeEmail(),
-                'phone' => fake()->phoneNumber(),
-                'address' => fake()->streetAddress(),
-                'city' => fake()->city(),
-                'emergency_contact_name' => fake()->name(),
-                'emergency_contact_phone' => fake()->phoneNumber(),
+                'first_name' => $faker->firstName(),
+                'last_name' => $faker->lastName(),
+                'date_of_birth' => $faker->dateTimeBetween('-60 years', '-18 years')->format('Y-m-d'),
+                'gender' => $faker->randomElement(['male', 'female']),
+                'email' => $faker->unique()->safeEmail(),
+                'phone' => $faker->phoneNumber(),
+                'address' => $faker->streetAddress(),
+                'city' => $faker->city(),
+                'emergency_contact_name' => $faker->name(),
+                'emergency_contact_phone' => $faker->phoneNumber(),
                 'tenant_id' => $tenant->id,
             ]);
         }
@@ -85,18 +87,18 @@ class TenantDataSeeder extends Seeder
         $appointmentCount = 0;
         foreach ($patients as $patient) {
             for ($i = 0; $i < 2; $i++) {
-                $appointmentDate = fake()->dateTimeBetween('-3 months', '+2 months');
+                $appointmentDate = $faker->dateTimeBetween('-3 months', '+2 months');
                 $status = $appointmentDate < now() ? 'completed' : 'scheduled';
 
                 Appointment::create([
                     'patient_id' => $patient->id,
-                    'dentist_id' => fake()->randomElement($dentists)->id,
+                    'dentist_id' => $faker->randomElement($dentists)->id,
                     'appointment_date' => $appointmentDate->format('Y-m-d'),
-                    'appointment_time' => fake()->randomElement(['09:00', '10:00', '14:00', '15:00']),
+                    'appointment_time' => $faker->randomElement(['09:00', '10:00', '14:00', '15:00']),
                     'duration' => 30,
                     'status' => $status,
-                    'type' => fake()->randomElement(['checkup', 'follow-up', 'emergency']),
-                    'reason' => fake()->sentence(),
+                    'type' => $faker->randomElement(['checkup', 'follow-up', 'emergency']),
+                    'reason' => $faker->sentence(),
                     'tenant_id' => $tenant->id,
                 ]);
                 $appointmentCount++;
