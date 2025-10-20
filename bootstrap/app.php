@@ -11,6 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Register global middleware that runs on every request
+        $middleware->append(\App\Http\Middleware\SubdomainRedirect::class);
+
+        // Register middleware aliases
         $middleware->alias([
             'super_admin' => \App\Http\Middleware\EnsureSuperAdmin::class,
             'regular_user' => \App\Http\Middleware\EnsureRegularUser::class,
