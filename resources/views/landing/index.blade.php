@@ -1,3 +1,23 @@
+@php
+function getFeatureImages($featureName) {
+    $images = [];
+    $basePath = public_path('images/features/');
+
+    // Check for single image
+    if (file_exists($basePath . $featureName . '.png')) {
+        $images[] = asset('images/features/' . $featureName . '.png');
+    }
+
+    // Check for numbered images (feature-name-1.png, feature-name-2.png, etc.)
+    $index = 1;
+    while (file_exists($basePath . $featureName . '-' . $index . '.png')) {
+        $images[] = asset('images/features/' . $featureName . '-' . $index . '.png');
+        $index++;
+    }
+
+    return $images;
+}
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
@@ -39,7 +59,7 @@
         }
     </style>
 </head>
-<body class="antialiased bg-white">
+<body class="antialiased bg-white" x-data="{ lightbox: false, lightboxImages: [], lightboxTitle: '', currentImageIndex: 0 }">
 
     <!-- Navigation -->
     <nav class="bg-white/95 backdrop-blur-md border-b border-gray-100 fixed w-full top-0 z-50 shadow-sm">
@@ -56,6 +76,9 @@
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#features" class="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200">Features</a>
                     <a href="#contact" class="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200">Contact</a>
+                    @guest
+                        <a href="#demo" class="text-gray-700 hover:text-purple-600 font-medium transition-colors duration-200">Request Demo</a>
+                    @endguest
                 </div>
                 <div class="flex items-center space-x-4">
                     @auth
@@ -157,91 +180,296 @@
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Feature Card 1: Patient Management -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-users text-white text-2xl"></i>
+                <!-- NEW ACCURATE FEATURES START -->
+                                <!-- Feature Card 1: Patient Management -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-users text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Patient Management</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Comprehensive patient profiles with demographics, contact information, medical history, and nationality tracking with international phone codes.</p>
+
+                        @php
+                            $patientImages = getFeatureImages('patients');
+                        @endphp
+                        @if(count($patientImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($patientImages) }}; lightboxTitle = 'Patient Management'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($patientImages) > 1 ? count($patientImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Patient Management</h3>
-                    <p class="text-gray-600 leading-relaxed">Comprehensive patient profiles with contact information, medical history, treatment records, and nationality tracking.</p>
                 </div>
 
-                <!-- Feature Card 2: Appointment Scheduling -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-calendar-check text-white text-2xl"></i>
+                <!-- Feature Card 2: Smart Appointment Scheduling -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-calendar-check text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Smart Appointment Scheduling</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Real-time availability checking, conflict prevention, duration-based slot management, and calendar view with easy rescheduling.</p>
+
+                        @php
+                            $appointmentsImages = getFeatureImages('appointments');
+                        @endphp
+                        @if(count($appointmentsImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($appointmentsImages) }}; lightboxTitle = 'Smart Appointment Scheduling'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($appointmentsImages) > 1 ? count($appointmentsImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Smart Scheduling</h3>
-                    <p class="text-gray-600 leading-relaxed">Real-time availability checking, conflict prevention, duration-based slot management, and multi-step booking process.</p>
                 </div>
 
-                <!-- Feature Card 3: Dentist Management -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-user-md text-white text-2xl"></i>
+                <!-- Feature Card 3: Dentist & Staff Management -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-user-md text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Dentist & Staff Management</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Manage dentist profiles, specializations, licenses, schedules, and track individual performance across your practice.</p>
+
+                        @php
+                            $dentistsImages = getFeatureImages('dentists');
+                        @endphp
+                        @if(count($dentistsImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($dentistsImages) }}; lightboxTitle = 'Dentist & Staff Management'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($dentistsImages) > 1 ? count($dentistsImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Staff Management</h3>
-                    <p class="text-gray-600 leading-relaxed">Manage dentist profiles, specializations, schedules, and track performance across your practice.</p>
                 </div>
 
-                <!-- Feature Card 4: Treatment Catalog -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-procedures text-white text-2xl"></i>
+                <!-- Feature Card 4: Treatment Plans & Procedures -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-procedures text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Treatment Plans & Procedures</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Create detailed treatment plans with multiple procedures, pricing, duration tracking, and status management from planned to completed.</p>
+
+                        @php
+                            $treatmentPlansImages = getFeatureImages('treatment-plans');
+                        @endphp
+                        @if(count($treatmentPlansImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($treatmentPlansImages) }}; lightboxTitle = 'Treatment Plans & Procedures'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($treatmentPlansImages) > 1 ? count($treatmentPlansImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Treatment Plans</h3>
-                    <p class="text-gray-600 leading-relaxed">Create detailed treatment plans with procedures, pricing, duration tracking, and multi-item support.</p>
                 </div>
 
-                <!-- Feature Card 5: Digital Records -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-tooth text-white text-2xl"></i>
+                <!-- Feature Card 5: Digital Dental Charts -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-tooth text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Digital Dental Charts</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Interactive dental charts with tooth-by-tooth tracking, periodontal charting, dental imaging storage, and comprehensive tooth records.</p>
+
+                        @php
+                            $dentalChartImages = getFeatureImages('dental-chart');
+                        @endphp
+                        @if(count($dentalChartImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($dentalChartImages) }}; lightboxTitle = 'Digital Dental Charts'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($dentalChartImages) > 1 ? count($dentalChartImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Digital Dental Charts</h3>
-                    <p class="text-gray-600 leading-relaxed">Tooth-by-tooth tracking, periodontal charts, dental imaging storage, and comprehensive medical records.</p>
                 </div>
 
-                <!-- Feature Card 6: Billing -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-file-invoice-dollar text-white text-2xl"></i>
+                <!-- Feature Card 6: Invoicing & Billing -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-file-invoice-dollar text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Invoicing & Billing</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Professional invoicing with multi-item support, payment tracking, partial payments, status management, and financial reporting.</p>
+
+                        @php
+                            $invoicesImages = getFeatureImages('invoices');
+                        @endphp
+                        @if(count($invoicesImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($invoicesImages) }}; lightboxTitle = 'Invoicing & Billing'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($invoicesImages) > 1 ? count($invoicesImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Invoicing & Billing</h3>
-                    <p class="text-gray-600 leading-relaxed">Professional invoicing with multi-item support, payment tracking, status management, and financial reporting.</p>
                 </div>
 
-                <!-- Feature Card 7: Multi-Tenancy -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-building text-white text-2xl"></i>
+                <!-- Feature Card 7: Medical Records & History -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-notes-medical text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Medical Records & History</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Complete medical history tracking with allergies, medications, conditions, and detailed notes for each patient visit.</p>
+
+                        @php
+                            $medicalRecordsImages = getFeatureImages('medical-records');
+                        @endphp
+                        @if(count($medicalRecordsImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($medicalRecordsImages) }}; lightboxTitle = 'Medical Records & History'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($medicalRecordsImages) > 1 ? count($medicalRecordsImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Multi-Clinic Support</h3>
-                    <p class="text-gray-600 leading-relaxed">Manage multiple dental clinics with isolated data, subscription management, and centralized administration.</p>
                 </div>
 
-                <!-- Feature Card 8: Analytics -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                <!-- Feature Card 8: Reports & Analytics Dashboard -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Reports & Analytics Dashboard</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Visual analytics with interactive charts, appointment trends, revenue tracking, patient demographics, and treatment statistics.</p>
+
+                        @php
+                            $dashboardImages = getFeatureImages('dashboard');
+                        @endphp
+                        @if(count($dashboardImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($dashboardImages) }}; lightboxTitle = 'Reports & Analytics Dashboard'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($dashboardImages) > 1 ? count($dashboardImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Analytics Dashboard</h3>
-                    <p class="text-gray-600 leading-relaxed">Visual analytics with charts, appointment trends, revenue tracking, and subscription analytics for admins.</p>
                 </div>
 
-                <!-- Feature Card 9: Security -->
-                <div class="group bg-white p-8 rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
-                    <div class="w-16 h-16 bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <i class="fas fa-shield-alt text-white text-2xl"></i>
+                <!-- Feature Card 9: Notifications & Reminders -->
+                <div class="group bg-white rounded-3xl border border-gray-200 hover:border-purple-300 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                    <div class="p-6 lg:p-8">
+                        <div class="flex items-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                <i class="fas fa-bell text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900">Notifications & Reminders</h3>
+                        </div>
+                        <p class="text-gray-600 leading-relaxed mb-6">Real-time notification system for appointments, updates, and important events with unread counter and notification center.</p>
+
+                        @php
+                            $notificationsImages = getFeatureImages('notifications');
+                        @endphp
+                        @if(count($notificationsImages) > 0)
+                            <button @click="lightbox = true; lightboxImages = {{ json_encode($notificationsImages) }}; lightboxTitle = 'Notifications & Reminders'; currentImageIndex = 0"
+                                    class="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center group/btn shadow-lg hover:shadow-xl">
+                                <i class="fas fa-eye mr-2 group-hover/btn:scale-110 transition-transform"></i>
+                                Click to Preview {{ count($notificationsImages) > 1 ? count($notificationsImages) . ' Screenshots' : 'Screenshot' }}
+                            </button>
+                        @endif
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Security & Access Control</h3>
-                    <p class="text-gray-600 leading-relaxed">Role-based access (Admin, Receptionist), 2FA authentication, email verification, and secure error logging.</p>
                 </div>
+
             </div>
         </div>
     </div>
 
     <!-- Final CTA Section -->
+    <!-- Request Demo Section -->
+    <div id="demo" class="py-24 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg mb-6">
+                    <i class="fas fa-rocket text-white text-3xl"></i>
+                </div>
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-6">
+                    Request a Demo Account
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Contact us to get your personalized demo account and explore all features
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">
+                <!-- WhatsApp Button -->
+                <a href="https://wa.me/96171231845?text=Hello!%20I%20would%20like%20to%20request%20a%20demo%20account%20for%20the%20Dental%20CMS."
+                   target="_blank"
+                   class="group flex items-center justify-center px-8 py-6 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <i class="fab fa-whatsapp text-3xl mr-4 group-hover:scale-110 transition-transform"></i>
+                    <div class="text-left">
+                        <div class="text-lg font-bold">Contact via WhatsApp</div>
+                        <div class="text-sm text-green-100">+961 71 231 845</div>
+                    </div>
+                </a>
+
+                <!-- Phone Button -->
+                <a href="tel:+96171231845"
+                   class="group flex items-center justify-center px-8 py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+                    <i class="fas fa-phone-alt text-2xl mr-4 group-hover:rotate-12 transition-transform"></i>
+                    <div class="text-left">
+                        <div class="text-lg font-bold">Call Us</div>
+                        <div class="text-sm text-purple-100">+961 71 231 845</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Info Box -->
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-2xl p-8 max-w-3xl mx-auto">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 text-2xl mr-4 mt-1"></i>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">What You'll Get:</h3>
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                <span class="text-gray-700">Fully configured demo account</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                <span class="text-gray-700">Sample data to explore</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                <span class="text-gray-700">Personalized walkthrough</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                                <span class="text-gray-700">No credit card required</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="contact" class="py-24 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-700 relative overflow-hidden">
         <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20"></div>
 
@@ -330,5 +558,80 @@
             observer.observe(el);
         });
     </script>
+
+    <!-- Lightbox Modal -->
+    <div x-show="lightbox"
+         x-cloak
+         @click.away="lightbox = false"
+         @keydown.escape.window="lightbox = false"
+         @keydown.arrow-left.window="currentImageIndex = Math.max(0, currentImageIndex - 1)"
+         @keydown.arrow-right.window="currentImageIndex = Math.min(lightboxImages.length - 1, currentImageIndex + 1)"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+
+        <!-- Close Button -->
+        <button @click="lightbox = false"
+                class="absolute top-4 right-4 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full text-white transition-all duration-200 backdrop-blur-sm z-10">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+
+        <!-- Image Title & Counter -->
+        <div class="absolute top-4 left-4 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full z-10">
+            <h3 class="text-white font-bold text-lg">
+                <span x-text="lightboxTitle"></span>
+                <span x-show="lightboxImages.length > 1" class="ml-2 text-sm font-normal">
+                    (<span x-text="currentImageIndex + 1"></span>/<span x-text="lightboxImages.length"></span>)
+                </span>
+            </h3>
+        </div>
+
+        <!-- Previous Button -->
+        <button x-show="lightboxImages.length > 1 && currentImageIndex > 0"
+                @click="currentImageIndex--"
+                class="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full text-white transition-all duration-200 backdrop-blur-sm z-10">
+            <i class="fas fa-chevron-left text-xl"></i>
+        </button>
+
+        <!-- Next Button -->
+        <button x-show="lightboxImages.length > 1 && currentImageIndex < lightboxImages.length - 1"
+                @click="currentImageIndex++"
+                class="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 flex items-center justify-center bg-white/10 hover:bg-white/20 rounded-full text-white transition-all duration-200 backdrop-blur-sm z-10">
+            <i class="fas fa-chevron-right text-xl"></i>
+        </button>
+
+        <!-- Image Container -->
+        <div class="relative max-w-7xl max-h-[90vh] w-full"
+             @click.stop
+             x-transition:enter="transition ease-out duration-300 delay-100"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95">
+            <img :src="lightboxImages[currentImageIndex]"
+                 :alt="lightboxTitle"
+                 class="w-full h-full object-contain rounded-2xl shadow-2xl"
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100">
+        </div>
+
+        <!-- Hint Text -->
+        <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-sm px-6 py-2 rounded-full">
+            <p class="text-white text-sm">
+                <kbd class="px-2 py-1 bg-white/20 rounded">ESC</kbd> to close
+                <span x-show="lightboxImages.length > 1"> • <kbd class="px-2 py-1 bg-white/20 rounded">←</kbd> <kbd class="px-2 py-1 bg-white/20 rounded">→</kbd> to navigate</span>
+            </p>
+        </div>
+    </div>
+
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
 </body>
 </html>
